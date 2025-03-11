@@ -24,7 +24,7 @@ vi.stubGlobal("window", mockWindow);
 
 describe("PlayerController", () => {
   let playerController: PlayerController;
-  let camera: Camera;
+  let camera: THREE.PerspectiveCamera;
   let keydownHandler: (event: KeyboardEvent) => void;
   let keyupHandler: (event: KeyboardEvent) => void;
 
@@ -33,7 +33,7 @@ describe("PlayerController", () => {
     vi.clearAllMocks();
 
     // Initialize Camera
-    camera = new Camera();
+    camera = new Camera().getPerspectiveCamera();
 
     // Initialize PlayerController
     playerController = new PlayerController(camera);
@@ -58,7 +58,7 @@ describe("PlayerController", () => {
   it("should initialize with default position", () => {
     const position = playerController.getPosition();
     expect(position.x).toBe(0);
-    expect(position.y).toBe(0);
+    expect(position.y).toBe(5);
     expect(position.z).toBe(0);
   });
 
@@ -85,7 +85,7 @@ describe("PlayerController", () => {
     }
 
     // Update with a delta time of 1 second
-    playerController.update(1);
+    playerController.update();
 
     // Check that the player moved in the -Z direction (forward)
     const position = playerController.getPosition();

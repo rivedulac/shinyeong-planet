@@ -20,7 +20,9 @@ const GameScene: React.FC = () => {
     const camera = new Camera();
 
     // Initialize player controller with the camera
-    const playerController = new PlayerController(camera);
+    const playerController = new PlayerController(
+      camera.getPerspectiveCamera()
+    );
 
     // Variables for game loop timing
     let lastTime = 0;
@@ -102,13 +104,9 @@ const GameScene: React.FC = () => {
     // Animation loop
     let animationId: number;
 
-    const animate = (time: number) => {
-      // Calculate delta time in seconds
-      const deltaTime = (time - lastTime) / 1000;
-      lastTime = time;
-
+    const animate = () => {
       // Update player controller with deltaTime
-      playerController.update(deltaTime);
+      playerController.update();
 
       // Update camera position state on each frame
       setCameraPosition(camera.getPosition());
@@ -168,6 +166,8 @@ const GameScene: React.FC = () => {
         Controls:
         <div>W - Move Forward</div>
         <div>S - Move Backward</div>
+        <div>A - Rotate Left</div>
+        <div>D - Rotate Right</div>
       </div>
     </>
   );

@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Camera } from "./Camera";
 
 export interface IPlayerController {
   update(deltaTime: number): void;
@@ -7,28 +6,30 @@ export interface IPlayerController {
 }
 
 export class PlayerController implements IPlayerController {
-  private position: THREE.Vector3;
   private velocity: THREE.Vector3;
-  private camera: Camera;
-  private moveSpeed: number;
+  private camera: THREE.PerspectiveCamera;
   private handleKeyDown: (event: KeyboardEvent) => void = () => {};
   private handleKeyUp: (event: KeyboardEvent) => void = () => {};
+  private movementSpeed = 0.25;
+  private rotationSpeed = 0.05;
 
   // Input state
   private keys: {
     w: boolean;
     s: boolean;
+    a: boolean;
+    d: boolean;
   };
 
-  constructor(camera: Camera, initialPosition = new THREE.Vector3(0, 0, 0)) {
-    this.position = initialPosition.clone();
+  constructor(camera: THREE.PerspectiveCamera) {
     this.velocity = new THREE.Vector3();
     this.camera = camera;
-    this.moveSpeed = 5; // Units per second
 
     this.keys = {
       w: false,
       s: false,
+      a: false,
+      d: false,
     };
 
     // Set up event listeners for keyboard input
@@ -37,12 +38,19 @@ export class PlayerController implements IPlayerController {
 
   private setupInputListeners(): void {
     const handleKeyDown = (event: KeyboardEvent) => {
+      console.log("*** handleKeyDown", event.key);
       switch (event.key.toLowerCase()) {
         case "w":
           this.keys.w = true;
           break;
         case "s":
           this.keys.s = true;
+          break;
+        case "a":
+          this.keys.a = true;
+          break;
+        case "d":
+          this.keys.d = true;
           break;
       }
     };
@@ -54,6 +62,12 @@ export class PlayerController implements IPlayerController {
           break;
         case "s":
           this.keys.s = false;
+          break;
+        case "a":
+          this.keys.a = false;
+          break;
+        case "d":
+          this.keys.d = false;
           break;
       }
     };
@@ -67,40 +81,49 @@ export class PlayerController implements IPlayerController {
     this.handleKeyUp = handleKeyUp;
   }
 
-  public update(deltaTime: number): void {
-    // Reset velocity
-    this.velocity.set(0, 0, 0);
+  public update(): void {
+    // Handle yaw rotation (left/right)
+    if (this.keys.a) {
+      // Rotate left
+      console.log("rotating left");
+      this.camera.rotation.y += this.rotationSpeed;
+    }
 
-    // Get camera's forward direction (ignoring Y component for ground movement)
-    const cameraDirection = new THREE.Vector3(0, 0, -1); // Forward is -Z in Three.js
-    cameraDirection.normalize();
+    if (this.keys.d) {
+      // Rotate right
+      console.log("rotating right");
+      this.camera.rotation.y -= this.rotationSpeed;
+    }
+
+    this.velocity.set(0, 0, 0);
 
     // Apply movement based on keys pressed
     if (this.keys.w) {
       // Move forward
-      this.velocity.add(cameraDirection.clone().multiplyScalar(this.moveSpeed));
+      console.log("moving forward");
+      this.velocity.x = -Math.sin(this.camera.rotation.y) * this.movementSpeed;
+      this.velocity.z = -Math.cos(this.camera.rotation.y) * this.movementSpeed;
     }
 
     if (this.keys.s) {
       // Move backward
-      this.velocity.add(
-        cameraDirection.clone().multiplyScalar(-this.moveSpeed)
-      );
+      console.log("moving backward");
+      this.velocity.x = Math.sin(this.camera.rotation.y) * this.movementSpeed;
+      this.velocity.z = Math.cos(this.camera.rotation.y) * this.movementSpeed;
     }
 
-    // Apply velocity to position
-    const movement = this.velocity.clone().multiplyScalar(deltaTime);
-    this.position.add(movement);
-
-    // Update camera position to follow player
-    const cameraPosition = this.camera.getPerspectiveCamera().position;
-    cameraPosition.copy(this.position);
-    // Keep the camera's height (y value)
-    cameraPosition.y = 5;
+    if (this.velocity.lengthSq() > 0) {
+      this.camera.position.x += this.velocity.x;
+      this.camera.position.z += this.velocity.z;
+      this.camera.updateMatrix();
+      console.log("camera position", this.camera.position);
+    } else {
+      console.log("no velocity");
+    }
   }
 
   public getPosition(): THREE.Vector3 {
-    return this.position.clone();
+    return this.camera.position.clone();
   }
 
   // Cleanup method to remove event listeners
