@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as THREE from "three";
 import { Camera } from "./Camera";
+import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "./CameraPositionDisplay";
 
 // We'll use string paths instead of imports
@@ -17,6 +18,12 @@ const GameScene: React.FC = () => {
     // Set up scene
     const scene = new THREE.Scene();
     const camera = new Camera();
+
+    // Initialize player controller with the camera
+    const playerController = new PlayerController(camera);
+
+    // Variables for game loop timing
+    let lastTime = 0;
 
     // Initial camera position
     setCameraPosition(camera.getPosition());
@@ -70,7 +77,7 @@ const GameScene: React.FC = () => {
     );
 
     // Create floor
-    const floorGeometry = new THREE.PlaneGeometry(20, 20);
+    const floorGeometry = new THREE.PlaneGeometry(100, 100); // Make the floor bigger
     const floorMaterial = new THREE.MeshStandardMaterial({
       map: floorTexture,
       side: THREE.DoubleSide,
@@ -79,6 +86,10 @@ const GameScene: React.FC = () => {
     floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
     floor.position.y = -2; // Position floor below the origin
     scene.add(floor);
+
+    // Add grid helper for better spatial reference
+    const gridHelper = new THREE.GridHelper(100, 100);
+    scene.add(gridHelper);
 
     // Add lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -91,7 +102,14 @@ const GameScene: React.FC = () => {
     // Animation loop
     let animationId: number;
 
-    const animate = () => {
+    const animate = (time: number) => {
+      // Calculate delta time in seconds
+      const deltaTime = (time - lastTime) / 1000;
+      lastTime = time;
+
+      // Update player controller with deltaTime
+      playerController.update(deltaTime);
+
       // Update camera position state on each frame
       setCameraPosition(camera.getPosition());
 
@@ -99,7 +117,7 @@ const GameScene: React.FC = () => {
       renderer.render(scene, camera.getPerspectiveCamera());
     };
 
-    animate();
+    animationId = requestAnimationFrame(animate);
 
     // Handle window resize
     const handleResize = () => {
@@ -111,6 +129,9 @@ const GameScene: React.FC = () => {
 
     // Cleanup function
     return () => {
+      // Clean up player controller
+      playerController.dispose();
+
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationId);
 
@@ -130,6 +151,24 @@ const GameScene: React.FC = () => {
     <>
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
       <CameraPositionDisplay position={cameraPosition} />
+      <div
+        style={{
+          position: "absolute",
+          top: "20px",
+          left: "20px",
+          padding: "10px",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          color: "white",
+          fontFamily: "monospace",
+          fontSize: "14px",
+          borderRadius: "4px",
+          zIndex: 1000,
+        }}
+      >
+        Controls:
+        <div>W - Move Forward</div>
+        <div>S - Move Backward</div>
+      </div>
     </>
   );
 };

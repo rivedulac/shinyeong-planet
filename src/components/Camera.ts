@@ -1,7 +1,6 @@
 /**
  * Camera management class for the game engine.
  * Handles camera positioning, movement, and various camera modes.
- * Integrates with the ECS system to follow entities and handle collisions.
  */
 import * as THREE from "three";
 
@@ -15,9 +14,7 @@ const FIRST_PERSON_HEIGHT = 5;
 
 export class Camera {
   private camera: THREE.PerspectiveCamera;
-
-  private currentPosition: THREE.Vector3;
-  private desiredPosition: THREE.Vector3;
+  private position: THREE.Vector3;
 
   constructor() {
     this.camera = new THREE.PerspectiveCamera(
@@ -27,17 +24,11 @@ export class Camera {
       1000 // Far clipping plane
     );
 
-    this.currentPosition = new THREE.Vector3();
-    this.desiredPosition = new THREE.Vector3();
+    this.position = new THREE.Vector3(0, FIRST_PERSON_HEIGHT, 0);
+    this.camera.position.copy(this.position);
 
-    this.desiredPosition.copy(this.currentPosition);
-    this.desiredPosition.y += FIRST_PERSON_HEIGHT;
-
-    this.currentPosition.copy(this.desiredPosition);
-    this.camera.position.copy(this.currentPosition);
-    console.log("88888");
-    console.log("currentPosition", this.currentPosition);
-    console.log("camera.position", this.camera.position);
+    // Point camera in -Z direction (Three.js default forward direction)
+    this.camera.lookAt(0, FIRST_PERSON_HEIGHT, -1);
   }
 
   getPerspectiveCamera() {
@@ -50,6 +41,11 @@ export class Camera {
       y: this.camera.position.y,
       z: this.camera.position.z,
     };
+  }
+
+  public setPosition(x: number, y: number, z: number): void {
+    this.position.set(x, y, z);
+    this.camera.position.copy(this.position);
   }
 
   public handleResize(width: number, height: number): void {
