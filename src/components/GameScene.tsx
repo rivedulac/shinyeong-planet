@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import * as THREE from "three";
+import { Camera } from "./Camera";
 
 // We'll use string paths instead of imports
 const backgroundTexturePath = "src/assets/background-texture.svg";
@@ -12,12 +13,8 @@ const GameScene: React.FC = () => {
 
     // Set up scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+    const camera = new Camera();
+
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -85,22 +82,17 @@ const GameScene: React.FC = () => {
     directionalLight.position.set(5, 10, 7.5);
     scene.add(directionalLight);
 
-    // Position camera
-    camera.position.z = 5;
-    camera.position.y = 1;
-
     // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
-      renderer.render(scene, camera);
+      renderer.render(scene, camera.getPerspectiveCamera());
     };
 
     animate();
 
     // Handle window resize
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
+      camera.handleResize(window.innerWidth, window.innerHeight);
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
