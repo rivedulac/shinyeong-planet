@@ -1,12 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as THREE from "three";
 import { Camera } from "./Camera";
+import CameraPositionDisplay from "./CameraPositionDisplay";
 
 // We'll use string paths instead of imports
 const backgroundTexturePath = "src/assets/background-texture.svg";
 const floorTexturePath = "src/assets/floor-texture.svg";
 
 const GameScene: React.FC = () => {
+  const [cameraPosition, setCameraPosition] = useState({ x: 0, y: 0, z: 0 });
+
   useEffect(() => {
     const container = document.getElementById("game-container");
     if (!container) return;
@@ -14,6 +17,9 @@ const GameScene: React.FC = () => {
     // Set up scene
     const scene = new THREE.Scene();
     const camera = new Camera();
+
+    // Initial camera position
+    setCameraPosition(camera.getPosition());
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -83,8 +89,13 @@ const GameScene: React.FC = () => {
     scene.add(directionalLight);
 
     // Animation loop
+    let animationId: number;
+
     const animate = () => {
-      requestAnimationFrame(animate);
+      // Update camera position state on each frame
+      setCameraPosition(camera.getPosition());
+
+      animationId = requestAnimationFrame(animate);
       renderer.render(scene, camera.getPerspectiveCamera());
     };
 
@@ -101,9 +112,12 @@ const GameScene: React.FC = () => {
     // Cleanup function
     return () => {
       window.removeEventListener("resize", handleResize);
-      if (container) {
+      cancelAnimationFrame(animationId);
+
+      if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
+
       // Dispose resources
       floorGeometry.dispose();
       floorMaterial.dispose();
@@ -112,7 +126,12 @@ const GameScene: React.FC = () => {
     };
   }, []);
 
-  return <div id="game-container" style={{ width: "100%", height: "100vh" }} />;
+  return (
+    <>
+      <div id="game-container" style={{ width: "100%", height: "100vh" }} />
+      <CameraPositionDisplay position={cameraPosition} />
+    </>
+  );
 };
 
 export default GameScene;
