@@ -1,3 +1,12 @@
-# Welcome to Shinyeong Planet
+# 3D Game Project
 
-A simple 3D game built with Three.js.
+## Setup
+```bash
+npm install
+npm run dev
+```
+
+## Testing
+```bash
+npm test
+```
