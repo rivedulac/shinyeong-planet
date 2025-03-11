@@ -8,4 +8,9 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  // Add SVG handling
+  optimizeDeps: {
+    include: ["**/*.svg"],
+  },
+  assetsInclude: ["**/*.svg"],
 });
