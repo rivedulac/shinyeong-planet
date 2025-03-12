@@ -26,6 +26,7 @@ export class Camera {
 
     this.position = new THREE.Vector3(0, FIRST_PERSON_HEIGHT, 0);
     this.camera.position.copy(this.position);
+    this.camera.rotation.set(0, 0, 0);
 
     // Point camera in -Z direction (Three.js default forward direction)
     this.camera.lookAt(0, FIRST_PERSON_HEIGHT, -1);
@@ -35,11 +36,21 @@ export class Camera {
     return this.camera;
   }
 
-  getPosition(): { x: number; y: number; z: number } {
+  getPerspective(): {
+    position: { x: number; y: number; z: number };
+    rotation: { pitch: number; yaw: number; roll: number };
+  } {
     return {
-      x: this.camera.position.x,
-      y: this.camera.position.y,
-      z: this.camera.position.z,
+      position: {
+        x: this.camera.position.x,
+        y: this.camera.position.y,
+        z: this.camera.position.z,
+      },
+      rotation: {
+        pitch: this.camera.rotation.x,
+        yaw: this.camera.rotation.y,
+        roll: this.camera.rotation.z,
+      },
     };
   }
 

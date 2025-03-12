@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Camera } from "../Camera";
+import * as THREE from "three";
 
 // Create a mock window object
 const mockWindow = {
@@ -38,11 +39,18 @@ describe("Camera", () => {
   });
 
   it("should initialize currentPosition and desiredPosition", () => {
-    const position = camera.getPosition();
-    expect(position).toEqual({
-      x: 0,
-      y: 5,
-      z: 0,
+    const perspective = camera.getPerspective();
+    expect(perspective).toStrictEqual({
+      position: {
+        x: 0,
+        y: 5,
+        z: 0,
+      },
+      rotation: {
+        pitch: -0,
+        yaw: 0,
+        roll: -0,
+      },
     });
   });
 

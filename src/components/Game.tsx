@@ -5,7 +5,10 @@ import CameraPositionDisplay from "./CameraPositionDisplay";
 import { Scene } from "./Scene";
 
 const Game: React.FC = () => {
-  const [cameraPosition, setCameraPosition] = useState({ x: 0, y: 0, z: 0 });
+  const [cameraPosition, setCameraPosition] = useState({
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { pitch: 0, yaw: 0, roll: 0 },
+  });
 
   useEffect(() => {
     // Set up scene
@@ -18,7 +21,7 @@ const Game: React.FC = () => {
     );
 
     // Initial camera position
-    setCameraPosition(camera.getPosition());
+    setCameraPosition(camera.getPerspective());
 
     scene.setup();
 
@@ -30,7 +33,7 @@ const Game: React.FC = () => {
       playerController.update();
 
       // Update camera position state on each frame
-      setCameraPosition(camera.getPosition());
+      setCameraPosition(camera.getPerspective());
 
       animationId = requestAnimationFrame(animate);
       scene.render(camera.getPerspectiveCamera());
@@ -62,7 +65,7 @@ const Game: React.FC = () => {
   return (
     <>
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
-      <CameraPositionDisplay position={cameraPosition} />
+      <CameraPositionDisplay perspective={cameraPosition} />
       <div
         style={{
           position: "absolute",

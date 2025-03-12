@@ -1,15 +1,22 @@
 import React from "react";
 
 interface CameraPositionDisplayProps {
-  position: {
-    x: number;
-    y: number;
-    z: number;
+  perspective: {
+    position: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    rotation: {
+      yaw: number;
+      pitch: number;
+      roll: number;
+    };
   };
 }
 
 const CameraPositionDisplay: React.FC<CameraPositionDisplayProps> = ({
-  position,
+  perspective,
 }) => {
   return (
     <div
@@ -28,9 +35,12 @@ const CameraPositionDisplay: React.FC<CameraPositionDisplayProps> = ({
       }}
     >
       <div>Camera Position</div>
-      <div>X: {position.x.toFixed(2)}</div>
-      <div>Y: {position.y.toFixed(2)}</div>
-      <div>Z: {position.z.toFixed(2)}</div>
+      <div>X: {perspective.position.x.toFixed(2)}</div>
+      <div>Y: {perspective.position.y.toFixed(2)}</div>
+      <div>Z: {perspective.position.z.toFixed(2)}</div>
+      <div>Yaw: {perspective.rotation.yaw.toFixed(2)}</div>
+      <div>Pitch: {perspective.rotation.pitch.toFixed(2)}</div>
+      <div>Roll: {perspective.rotation.roll.toFixed(2)}</div>
     </div>
   );
 };
