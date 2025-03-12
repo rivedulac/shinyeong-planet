@@ -1,0 +1,28 @@
+{
+  "gameName": "신영 행성",
+  "cameraPosition": {
+    "title": "카메라 위치",
+    "x": "X: {{value}}",
+    "y": "Y: {{value}}",
+    "z": "Z: {{value}}",
+    "pitch": "Pitch: {{value}}",
+    "yaw": "Yaw: {{value}}",
+    "roll": "Roll: {{value}}"
+  },
+  "controls": {
+    "title": "조작법:",
+    "moveForward": "W - 앞으로 이동",
+    "moveBackward": "S - 뒤로 이동",
+    "rotateLeft": "A - 왼쪽으로 회전",
+    "rotateRight": "D - 오른쪽으로 회전",
+    "lookUp": "↑ - 위쪽 보기",
+    "lookDown": "↓ - 아래쪽 보기",
+    "zoomIn": "+ - 확대 (FOV 감소)",
+    "zoomOut": "- - 축소 (FOV 증가)"
+  },
+  "language": {
+    "title": "언어",
+    "en": "English",
+    "ko": "한국어"
+  }
+}

@@ -22,6 +22,10 @@ npm install -D typescript \
               @testing-library/react \
               @testing-library/jest-dom \
               @types/three \
-              eslint
+              eslint \
+              i18next \
+              react-i18next \
+              i18next-http-backend \
+              i18next-browser-languagedetector
 
 echo "Project setup complete! Run 'npm run dev' to start the development server."

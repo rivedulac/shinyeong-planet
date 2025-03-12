@@ -14,7 +14,7 @@ export class PlayerController implements IPlayerController {
   private movementSpeed = 10;
   private rotationSpeed = 1;
   private pitchSpeed = 0.5; // Slower pitch rotation for more natural movement
-  private fovAdjustSpeed = 5; // Degrees per second for FOV adjustment
+  private fovAdjustSpeed = 20; // Degrees per second for FOV adjustment
 
   // Input state
   private keys: {

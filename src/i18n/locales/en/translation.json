@@ -1,0 +1,28 @@
+{
+  "gameName": "Shinyeong Planet",
+  "cameraPosition": {
+    "title": "Camera Position",
+    "x": "X: {{value}}",
+    "y": "Y: {{value}}",
+    "z": "Z: {{value}}",
+    "pitch": "Pitch: {{value}}",
+    "yaw": "Yaw: {{value}}",
+    "roll": "Roll: {{value}}"
+  },
+  "controls": {
+    "title": "Controls:",
+    "moveForward": "W - Move Forward",
+    "moveBackward": "S - Move Backward",
+    "rotateLeft": "A - Rotate Left",
+    "rotateRight": "D - Rotate Right",
+    "lookUp": "↑ - Look Up",
+    "lookDown": "↓ - Look Down",
+    "zoomIn": "+ - Zoom In (Decrease FOV)",
+    "zoomOut": "- - Zoom Out (Increase FOV)"
+  },
+  "language": {
+    "title": "Language",
+    "en": "English",
+    "ko": "한국어"
+  }
+}

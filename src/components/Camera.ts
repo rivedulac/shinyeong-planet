@@ -29,9 +29,9 @@ export class Camera {
   private currentPitch: number = 0;
 
   /** Default, min and max FOV values in degrees */
-  private defaultFOV: number = 60;
+  private defaultFOV: number = 75;
   private minFOV: number = 45;
-  private maxFOV: number = 75;
+  private maxFOV: number = 120;
 
   constructor() {
     this.camera = new THREE.PerspectiveCamera(
