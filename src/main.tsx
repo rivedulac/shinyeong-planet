@@ -1,9 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import GameScene from "./components/GameScene";
+import Game from "./components/Game";
 
 // Render the game scene
 const root = createRoot(document.getElementById("root")!);
-root.render(<GameScene />);
+root.render(<Game />);
 
 export default root;

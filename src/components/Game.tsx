@@ -8,7 +8,7 @@ import CameraPositionDisplay from "./CameraPositionDisplay";
 const backgroundTexturePath = "src/assets/background-texture.svg";
 const floorTexturePath = "src/assets/floor-texture.svg";
 
-const GameScene: React.FC = () => {
+const Game: React.FC = () => {
   const [cameraPosition, setCameraPosition] = useState({ x: 0, y: 0, z: 0 });
 
   useEffect(() => {
@@ -23,9 +23,6 @@ const GameScene: React.FC = () => {
     const playerController = new PlayerController(
       camera.getPerspectiveCamera()
     );
-
-    // Variables for game loop timing
-    let lastTime = 0;
 
     // Initial camera position
     setCameraPosition(camera.getPosition());
@@ -173,4 +170,4 @@ const GameScene: React.FC = () => {
   );
 };
 
-export default GameScene;
+export default Game;
