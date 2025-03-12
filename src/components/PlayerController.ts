@@ -13,6 +13,8 @@ export class PlayerController implements IPlayerController {
   private handleKeyUp: (event: KeyboardEvent) => void = () => {};
   private movementSpeed = 10;
   private rotationSpeed = 1;
+  private pitchSpeed = 0.5; // Slower pitch rotation for more natural movement
+  private fovAdjustSpeed = 5; // Degrees per second for FOV adjustment
 
   // Input state
   private keys: {
@@ -20,6 +22,10 @@ export class PlayerController implements IPlayerController {
     s: boolean;
     a: boolean;
     d: boolean;
+    arrowup: boolean;
+    arrowdown: boolean;
+    plus: boolean; // For increasing FOV
+    minus: boolean; // For decreasing FOV
   };
 
   constructor(camera: Camera) {
@@ -31,6 +37,10 @@ export class PlayerController implements IPlayerController {
       s: false,
       a: false,
       d: false,
+      arrowup: false,
+      arrowdown: false,
+      plus: false,
+      minus: false,
     };
 
     // Set up event listeners for keyboard input
@@ -52,6 +62,20 @@ export class PlayerController implements IPlayerController {
         case "d":
           this.keys.d = true;
           break;
+        case "arrowup":
+          this.keys.arrowup = true;
+          break;
+        case "arrowdown":
+          this.keys.arrowdown = true;
+          break;
+        case "+":
+        case "=": // Same key on most keyboards
+          this.keys.plus = true;
+          break;
+        case "-":
+        case "_": // Same key on most keyboards
+          this.keys.minus = true;
+          break;
       }
     };
 
@@ -68,6 +92,20 @@ export class PlayerController implements IPlayerController {
           break;
         case "d":
           this.keys.d = false;
+          break;
+        case "arrowup":
+          this.keys.arrowup = false;
+          break;
+        case "arrowdown":
+          this.keys.arrowdown = false;
+          break;
+        case "+":
+        case "=": // Same key on most keyboards
+          this.keys.plus = false;
+          break;
+        case "-":
+        case "_": // Same key on most keyboards
+          this.keys.minus = false;
           break;
       }
     };
@@ -104,6 +142,28 @@ export class PlayerController implements IPlayerController {
     if (this.keys.d) {
       // Rotate right
       this.camera.rotateYaw(-this.rotationSpeed * deltaTime);
+    }
+
+    // Apply pitch rotation - looking up and down
+    if (this.keys.arrowup) {
+      // Look up (positive angle to look up)
+      this.camera.rotatePitch(this.pitchSpeed * deltaTime);
+    }
+
+    if (this.keys.arrowdown) {
+      // Look down (negative angle to look down)
+      this.camera.rotatePitch(-this.pitchSpeed * deltaTime);
+    }
+
+    // Handle FOV adjustments
+    if (this.keys.plus) {
+      // Decrease FOV (zoom in)
+      this.camera.adjustFOV(-this.fovAdjustSpeed * deltaTime);
+    }
+
+    if (this.keys.minus) {
+      // Increase FOV (zoom out)
+      this.camera.adjustFOV(this.fovAdjustSpeed * deltaTime);
     }
 
     // If there's movement to apply, use the Camera's moveOnPlanet method

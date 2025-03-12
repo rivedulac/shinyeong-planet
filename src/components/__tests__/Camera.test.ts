@@ -421,6 +421,99 @@ describe("Camera", () => {
 
       expect(upVector.dot(expectedUpVector)).toBeCloseTo(1);
     });
+
+    it("should rotate the camera up and down when rotatePitch is called", () => {
+      const initialOrientation = camera
+        .getPerspectiveCamera()
+        .quaternion.clone();
+      const initialPosition = camera.getPerspectiveCamera().position.clone();
+
+      // Apply pitch rotation (looking down)
+      camera.rotatePitch(Math.PI / 6); // 30 degrees
+
+      const afterPitchOrientation = camera.getPerspectiveCamera().quaternion;
+      const afterPitchPosition = camera.getPerspectiveCamera().position;
+
+      // Quaternion should change
+      expect(afterPitchOrientation).not.toEqual(initialOrientation);
+
+      // Position should remain the same
+      expect(afterPitchPosition.distanceTo(initialPosition)).toBeCloseTo(0);
+
+      // The up vector should remain unchanged (still pointing away from planet center)
+      const upVector = camera.getUpVector();
+      const expectedUpVector = new THREE.Vector3()
+        .subVectors(camera.getPerspectiveCamera().position, PLANET_CENTER)
+        .normalize();
+
+      expect(upVector.dot(expectedUpVector)).toBeCloseTo(1);
+    });
+
+    it("should clamp pitch rotation to maximum angle", () => {
+      // Apply rotation beyond the maximum (which should be clamped)
+      camera.rotatePitch(Math.PI); // 180 degrees (way beyond the limit)
+
+      // Get the current direction vector and up vector
+      const directionVector = camera.calculateDirectionVector(
+        camera.getPerspectiveCamera().quaternion
+      );
+      const upVector = camera.getUpVector();
+
+      // Calculate the angle between direction and up vector
+      // For a 45-degree max pitch, the minimum angle between direction and up should be around 45 degrees
+      const angle = Math.acos(Math.abs(directionVector.dot(upVector)));
+
+      // Allow small rounding errors
+      expect(angle).toBeGreaterThanOrEqual(Math.PI / 4 - 0.01); // Should be at least ~45 degrees
+    });
+  });
+
+  describe("FOV control", () => {
+    it("should initialize with the default FOV value", () => {
+      expect(camera.getFOV()).toBe(75);
+    });
+
+    it("should adjust FOV within the allowed range", () => {
+      const initialFOV = camera.getFOV();
+
+      // Decrease FOV (zoom in)
+      camera.adjustFOV(-10);
+      expect(camera.getFOV()).toBe(initialFOV - 10);
+
+      // Increase FOV (zoom out)
+      camera.adjustFOV(15);
+      expect(camera.getFOV()).toBe(initialFOV + 5);
+    });
+
+    it("should not allow FOV to exceed maximum value", () => {
+      // Set FOV to maximum allowed value
+      camera.setFOV(120);
+      expect(camera.getFOV()).toBe(120);
+
+      // Try to exceed maximum
+      camera.adjustFOV(10);
+      expect(camera.getFOV()).toBe(120); // Should remain at maximum
+    });
+
+    it("should not allow FOV to go below minimum value", () => {
+      // Set FOV to minimum allowed value
+      camera.setFOV(45);
+      expect(camera.getFOV()).toBe(45);
+
+      // Try to go below minimum
+      camera.adjustFOV(-10);
+      expect(camera.getFOV()).toBe(45); // Should remain at minimum
+    });
+
+    it("should clamp FOV when setting to values outside the allowed range", () => {
+      // Try setting above maximum
+      camera.setFOV(200);
+      expect(camera.getFOV()).toBe(120); // Should clamp to maximum
+
+      // Try setting below minimum
+      camera.setFOV(30);
+      expect(camera.getFOV()).toBe(45); // Should clamp to minimum
+    });
   });
 
   it("should update aspect ratio when handleResize is called", () => {

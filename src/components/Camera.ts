@@ -22,9 +22,20 @@ export class Camera {
   /** Camera's local up direction */
   private up: THREE.Vector3;
 
+  /** Maximum pitch angle in radians (to prevent over-rotation) */
+  private maxPitchAngle: number = Math.PI / 4; // 45 degrees
+
+  /** Current pitch angle */
+  private currentPitch: number = 0;
+
+  /** Default, min and max FOV values in degrees */
+  private defaultFOV: number = 60;
+  private minFOV: number = 45;
+  private maxFOV: number = 75;
+
   constructor() {
     this.camera = new THREE.PerspectiveCamera(
-      75, // FOV
+      this.defaultFOV, // More realistic vertical FOV
       window.innerWidth / window.innerHeight, // Aspect ratio
       0.1, // Near clipping plane
       1000 // Far clipping plane
@@ -108,6 +119,11 @@ export class Camera {
 
     // Make the camera look at the target
     this.camera.lookAt(lookTarget);
+
+    // Reapply pitch if we had any
+    if (Math.abs(this.currentPitch) > EPSILON) {
+      this.applyStoredPitch();
+    }
   }
 
   /**
@@ -142,6 +158,97 @@ export class Camera {
 
     // Make the camera look at the new target
     this.camera.lookAt(lookTarget);
+
+    // Reapply pitch if we had any
+    if (Math.abs(this.currentPitch) > EPSILON) {
+      this.applyStoredPitch();
+    }
+  }
+
+  /**
+   * Rotates the camera around its right vector (pitch)
+   * @param angle The angle to rotate in radians
+   */
+  public rotatePitch(angle: number): void {
+    if (Math.abs(angle) < EPSILON) return;
+
+    // Update the current pitch angle and clamp it within limits
+    this.currentPitch += angle;
+
+    // Clamp the pitch to prevent over-rotation
+    this.currentPitch = Math.max(
+      -this.maxPitchAngle,
+      Math.min(this.maxPitchAngle, this.currentPitch)
+    );
+
+    this.applyStoredPitch();
+  }
+
+  /**
+   * Applies the stored pitch angle to the camera
+   * This is needed to maintain pitch when moving or rotating
+   */
+  private applyStoredPitch(): void {
+    // Get the current up vector and forward direction
+    const upVector = this.up.clone();
+
+    // Get the base forward direction (projected on tangent plane)
+    const baseForward = this.calculateDirectionVector(this.camera.quaternion);
+    const tangentDirection = this.projectOnPlanet(baseForward, upVector);
+
+    // Calculate the right vector (perpendicular to both up and tangent direction)
+    const rightVector = new THREE.Vector3();
+    rightVector.crossVectors(tangentDirection, upVector).normalize();
+
+    // Create a rotation quaternion around the right vector
+    const rotationQuaternion = new THREE.Quaternion();
+    rotationQuaternion.setFromAxisAngle(rightVector, this.currentPitch);
+
+    // Apply the rotation to the forward direction
+    const pitchedDirection = tangentDirection.clone();
+    pitchedDirection.applyQuaternion(rotationQuaternion);
+
+    // Calculate the new point to look at
+    const lookTarget = new THREE.Vector3();
+    lookTarget.addVectors(this.camera.position, pitchedDirection);
+
+    // Make the camera look at the new target
+    this.camera.lookAt(lookTarget);
+  }
+
+  /**
+   * Adjusts the camera's field of view
+   * @param amount Amount to change FOV by (in degrees)
+   */
+  public adjustFOV(amount: number): void {
+    // Update FOV
+    const newFOV = this.camera.fov + amount;
+
+    // Clamp FOV between min and max values
+    this.camera.fov = Math.max(this.minFOV, Math.min(this.maxFOV, newFOV));
+
+    // Update the projection matrix to apply the changes
+    this.camera.updateProjectionMatrix();
+  }
+
+  /**
+   * Sets the camera's field of view directly
+   * @param fov New FOV value in degrees
+   */
+  public setFOV(fov: number): void {
+    // Clamp FOV between min and max values
+    this.camera.fov = Math.max(this.minFOV, Math.min(this.maxFOV, fov));
+
+    // Update the projection matrix to apply the changes
+    this.camera.updateProjectionMatrix();
+  }
+
+  /**
+   * Gets the current FOV value
+   * @returns Current FOV in degrees
+   */
+  public getFOV(): number {
+    return this.camera.fov;
   }
 
   public handleResize(width: number, height: number): void {

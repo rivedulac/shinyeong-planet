@@ -87,6 +87,10 @@ const Game: React.FC = () => {
         <div>S - Move Backward</div>
         <div>A - Rotate Left</div>
         <div>D - Rotate Right</div>
+        <div>↑ - Look Up</div>
+        <div>↓ - Look Down</div>
+        <div>+ - Zoom In (Decrease FOV)</div>
+        <div>- - Zoom Out (Increase FOV)</div>
       </div>
     </>
   );

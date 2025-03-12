@@ -111,6 +111,106 @@ describe("PlayerController", () => {
     expect(playerController.getPosition()).not.toBe(originalPosition);
   });
 
+  it("should look up when arrow up key is pressed", () => {
+    const rotatePitchSpy = vi.spyOn(camera, "rotatePitch");
+
+    const mockEvent = new KeyboardEvent("keydown", { key: "arrowup" });
+
+    if (keydownHandler) {
+      keydownHandler(mockEvent);
+    } else {
+      throw new Error("Keydown handler not found");
+    }
+
+    playerController.update(1);
+
+    // Check that rotatePitch was called with a positive value (looking up)
+    expect(rotatePitchSpy).toHaveBeenCalledWith(expect.any(Number));
+    const callValue = rotatePitchSpy.mock.calls[0][0];
+    expect(callValue).toBeGreaterThan(0);
+  });
+
+  it("should look down when arrow down key is pressed", () => {
+    const rotatePitchSpy = vi.spyOn(camera, "rotatePitch");
+
+    const mockEvent = new KeyboardEvent("keydown", { key: "arrowdown" });
+
+    if (keydownHandler) {
+      keydownHandler(mockEvent);
+    } else {
+      throw new Error("Keydown handler not found");
+    }
+
+    // Update with a delta time of 1 second
+    playerController.update(1);
+
+    // Check that rotatePitch was called with a negative value (looking down)
+    expect(rotatePitchSpy).toHaveBeenCalledWith(expect.any(Number));
+    const callValue = rotatePitchSpy.mock.calls[0][0];
+    expect(callValue).toBeLessThan(0);
+  });
+
+  it("should increase FOV when minus key is pressed", () => {
+    // Spy on the camera's adjustFOV method
+    const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
+
+    // Simulate minus key press
+    const mockEvent = new KeyboardEvent("keydown", { key: "-" });
+
+    // Execute the keydown handler
+    if (keydownHandler) {
+      keydownHandler(mockEvent);
+    } else {
+      throw new Error("Keydown handler not found");
+    }
+
+    playerController.update(1);
+
+    // Check that adjustFOV was called with a positive value (increasing FOV)
+    expect(adjustFOVSpy).toHaveBeenCalledWith(expect.any(Number));
+    const callValue = adjustFOVSpy.mock.calls[0][0];
+    expect(callValue).toBeGreaterThan(0);
+  });
+
+  it("should decrease FOV when plus key is pressed", () => {
+    const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
+
+    const mockEvent = new KeyboardEvent("keydown", { key: "+" });
+
+    if (keydownHandler) {
+      keydownHandler(mockEvent);
+    } else {
+      throw new Error("Keydown handler not found");
+    }
+
+    playerController.update(1);
+
+    // Check that adjustFOV was called with a negative value (decreasing FOV)
+    expect(adjustFOVSpy).toHaveBeenCalledWith(expect.any(Number));
+    const callValue = adjustFOVSpy.mock.calls[0][0];
+    expect(callValue).toBeLessThan(0);
+  });
+
+  it("should scale FOV adjustment by delta time", () => {
+    const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
+
+    const mockEvent = new KeyboardEvent("keydown", { key: "+" });
+
+    if (keydownHandler) {
+      keydownHandler(mockEvent);
+    } else {
+      throw new Error("Keydown handler not found");
+    }
+
+    playerController.update(0.5);
+
+    expect(adjustFOVSpy).toHaveBeenCalled();
+    // The actual value depends on the fovAdjustSpeed, but it should be
+    // proportional to the delta time
+    const expectedValue = -0.5 * 20; // deltaTime * fovAdjustSpeed
+    expect(adjustFOVSpy.mock.calls[0][0]).toBeCloseTo(expectedValue);
+  });
+
   it("should clean up event listeners when disposed", () => {
     playerController.dispose();
     expect(mockRemoveEventListener).toHaveBeenCalledWith(
