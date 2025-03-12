@@ -3,6 +3,11 @@
  * Handles camera positioning, movement, and various camera modes.
  */
 import * as THREE from "three";
+import {
+  PLANET_RADIUS,
+  FIRST_PERSON_HEIGHT,
+  PLANET_CENTER,
+} from "../config/constants";
 
 export enum CameraMode {
   /** First-person view from player's perspective */
@@ -10,11 +15,8 @@ export enum CameraMode {
   // TODO: Follow (Third-person view), Fixed (Static view), Orbit (Around a point)
 }
 
-const FIRST_PERSON_HEIGHT = 5;
-
 export class Camera {
   private camera: THREE.PerspectiveCamera;
-  private position: THREE.Vector3;
 
   constructor() {
     this.camera = new THREE.PerspectiveCamera(
@@ -24,12 +26,9 @@ export class Camera {
       1000 // Far clipping plane
     );
 
-    this.position = new THREE.Vector3(0, FIRST_PERSON_HEIGHT, 0);
-    this.camera.position.copy(this.position);
-    this.camera.rotation.set(0, 0, 0);
-
-    // Point camera in -Z direction (Three.js default forward direction)
-    this.camera.lookAt(0, FIRST_PERSON_HEIGHT, -1);
+    this.camera.position.copy(PLANET_CENTER);
+    this.camera.position.y += PLANET_RADIUS + FIRST_PERSON_HEIGHT;
+    this.camera.lookAt(0, PLANET_RADIUS + FIRST_PERSON_HEIGHT, -1);
   }
 
   getPerspectiveCamera() {
@@ -52,11 +51,6 @@ export class Camera {
         roll: this.camera.rotation.z,
       },
     };
-  }
-
-  public setPosition(x: number, y: number, z: number): void {
-    this.position.set(x, y, z);
-    this.camera.position.copy(this.position);
   }
 
   public handleResize(width: number, height: number): void {

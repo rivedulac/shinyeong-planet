@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Camera } from "../Camera";
-import * as THREE from "three";
+import { PLANET_RADIUS, FIRST_PERSON_HEIGHT } from "../../config/constants";
 
 // Create a mock window object
 const mockWindow = {
@@ -43,7 +43,7 @@ describe("Camera", () => {
     expect(perspective).toStrictEqual({
       position: {
         x: 0,
-        y: 5,
+        y: PLANET_RADIUS + FIRST_PERSON_HEIGHT,
         z: 0,
       },
       rotation: {

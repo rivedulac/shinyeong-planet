@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { PlayerController } from "../PlayerController";
 import { Camera } from "../Camera";
 import * as THREE from "three";
-
+import { PLANET_RADIUS, FIRST_PERSON_HEIGHT } from "../../config/constants";
 // Mock the window object
 const mockAddEventListener = vi.fn();
 const mockRemoveEventListener = vi.fn();
@@ -58,7 +58,7 @@ describe("PlayerController", () => {
   it("should initialize with default position", () => {
     const position = playerController.getPosition();
     expect(position.x).toBe(0);
-    expect(position.y).toBe(5);
+    expect(position.y).toBe(PLANET_RADIUS + FIRST_PERSON_HEIGHT);
     expect(position.z).toBe(0);
   });
 

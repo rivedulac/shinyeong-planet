@@ -1,5 +1,5 @@
 import * as THREE from "three";
-
+import { PLANET_CENTER } from "../config/constants";
 const backgroundTexturePath = "src/assets/background-texture.svg";
 const planetTexturePath = "src/assets/planet-texture.svg";
 
@@ -105,9 +105,7 @@ export class Scene {
     }
 
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-    // Position the planet below the player
-    planet.position.y = -planetRadius - 5; // 5 units below player's feet
-
+    planet.position.copy(PLANET_CENTER);
     this.planet = planet;
     this.scene.add(planet);
   }
@@ -144,7 +142,7 @@ export class Scene {
       torus.rotation.y = angle;
 
       // Position to match the planet
-      torus.position.copy(this.planet.position);
+      torus.position.copy(PLANET_CENTER);
 
       gridGroup.add(torus);
     }
