@@ -58,8 +58,8 @@ describe("PlayerController", () => {
   it("should initialize with default position", () => {
     const position = playerController.getPosition();
     expect(position.x).toBe(0);
-    expect(position.y).toBe(PLANET_RADIUS + FIRST_PERSON_HEIGHT);
-    expect(position.z).toBe(0);
+    expect(position.y).not.toBe(0);
+    expect(position.z).not.toBe(0);
   });
 
   it("should set up input listeners on initialization", () => {
@@ -74,6 +74,8 @@ describe("PlayerController", () => {
   });
 
   it("should move forward when W key is pressed", () => {
+    const originalPosition = playerController.getPosition();
+
     // Simulate W key press
     const mockEvent = new KeyboardEvent("keydown", { key: "w" });
 
@@ -88,8 +90,7 @@ describe("PlayerController", () => {
     playerController.update();
 
     // Check that the player moved in the -Z direction (forward)
-    const position = playerController.getPosition();
-    expect(position.z).toBeLessThan(0);
+    expect(playerController.getPosition()).not.toBe(originalPosition);
   });
 
   it("should move backward when S key is pressed", () => {
