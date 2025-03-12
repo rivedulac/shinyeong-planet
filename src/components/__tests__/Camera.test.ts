@@ -335,6 +335,94 @@ describe("Camera", () => {
     });
   });
 
+  describe("Camera rotation", () => {
+    it("should rotate the camera when rotateYaw is called", () => {
+      const initialQuaternion = camera
+        .getPerspectiveCamera()
+        .quaternion.clone();
+
+      // Apply rotation
+      camera.rotateYaw(Math.PI / 4); // 45 degrees
+
+      const newQuaternion = camera.getPerspectiveCamera().quaternion;
+
+      // Quaternion should change
+      expect(newQuaternion).not.toEqual(initialQuaternion);
+
+      // Position should remain the same
+      const position = camera.getPerspectiveCamera().position;
+      expect(position.distanceTo(PLANET_CENTER)).toBeCloseTo(
+        PLANET_RADIUS + FIRST_PERSON_HEIGHT
+      );
+
+      // The up vector should still point away from the planet center
+      const upVector = camera.getUpVector();
+      const expectedUpVector = new THREE.Vector3()
+        .subVectors(position, PLANET_CENTER)
+        .normalize();
+
+      expect(upVector.x).toBeCloseTo(expectedUpVector.x);
+      expect(upVector.y).toBeCloseTo(expectedUpVector.y);
+      expect(upVector.z).toBeCloseTo(expectedUpVector.z);
+    });
+
+    it("should return to approximately the same position after rotating a full circle", () => {
+      // First move away from the pole to avoid special case
+      camera.moveOnPlanet(20);
+
+      // Store initial direction vector
+      const initialDirection = camera.calculateDirectionVector(
+        camera.getPerspectiveCamera().quaternion
+      );
+
+      // Perform a full 360-degree rotation in small steps
+      const steps = 8;
+      const stepAngle = (2 * Math.PI) / steps;
+
+      for (let i = 0; i < steps; i++) {
+        camera.rotateYaw(stepAngle);
+      }
+
+      // Get the new direction vector
+      const finalDirection = camera.calculateDirectionVector(
+        camera.getPerspectiveCamera().quaternion
+      );
+
+      // Should be approximately the same direction after a full rotation
+      expect(finalDirection.x).toBeCloseTo(initialDirection.x);
+      expect(finalDirection.y).toBeCloseTo(initialDirection.y);
+      expect(finalDirection.z).toBeCloseTo(initialDirection.z);
+    });
+
+    it("should maintain correct orientation when combining yaw rotation and movement", () => {
+      // Move slightly to get away from the poles
+      camera.moveOnPlanet(10);
+
+      // Apply a 90-degree yaw and then move forward
+      camera.rotateYaw(Math.PI / 2);
+      const afterRotationPosition = camera
+        .getPerspectiveCamera()
+        .position.clone();
+      camera.moveOnPlanet(10);
+
+      // Position should have changed, but distance from center should remain the same
+      expect(camera.getPerspectiveCamera().position).not.toEqual(
+        afterRotationPosition
+      );
+      expect(
+        camera.getPerspectiveCamera().position.distanceTo(PLANET_CENTER)
+      ).toBeCloseTo(PLANET_RADIUS + FIRST_PERSON_HEIGHT);
+
+      // Camera's up vector should still be pointing away from the planet center
+      const upVector = camera.getUpVector();
+      const expectedUpVector = new THREE.Vector3()
+        .subVectors(camera.getPerspectiveCamera().position, PLANET_CENTER)
+        .normalize();
+
+      expect(upVector.dot(expectedUpVector)).toBeCloseTo(1);
+    });
+  });
+
   it("should update aspect ratio when handleResize is called", () => {
     const perspectiveCamera = camera.getPerspectiveCamera();
     const spyUpdateProjectionMatrix = vi.spyOn(

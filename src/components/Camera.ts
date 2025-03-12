@@ -110,6 +110,40 @@ export class Camera {
     this.camera.lookAt(lookTarget);
   }
 
+  /**
+   * Rotates the camera around its up vector (yaw)
+   * @param angle The angle to rotate in radians
+   */
+  public rotateYaw(angle: number): void {
+    if (Math.abs(angle) < EPSILON) return;
+
+    // Get the current up vector (from planet center to camera)
+    const upVector = this.calculateUpVector(this.camera.position);
+
+    // Create a rotation quaternion around the up vector
+    const rotationQuaternion = new THREE.Quaternion();
+    rotationQuaternion.setFromAxisAngle(upVector, angle);
+
+    // Get the current forward direction
+    const forward = this.calculateDirectionVector(this.camera.quaternion);
+
+    // Rotate the forward direction
+    forward.applyQuaternion(rotationQuaternion);
+
+    // Project the rotated forward direction onto the tangent plane
+    const tangentDirection = this.projectOnPlanet(forward, upVector);
+
+    // Calculate the new point to look at
+    const lookTarget = new THREE.Vector3();
+    lookTarget.addVectors(this.camera.position, tangentDirection);
+
+    // Update the camera's up vector (should still be the same as before)
+    this.camera.up.copy(upVector);
+
+    // Make the camera look at the new target
+    this.camera.lookAt(lookTarget);
+  }
+
   public handleResize(width: number, height: number): void {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();

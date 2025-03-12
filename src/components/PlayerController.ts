@@ -12,7 +12,7 @@ export class PlayerController implements IPlayerController {
   private handleKeyDown: (event: KeyboardEvent) => void = () => {};
   private handleKeyUp: (event: KeyboardEvent) => void = () => {};
   private movementSpeed = 10;
-  private rotationSpeed = 0.05;
+  private rotationSpeed = 1;
 
   // Input state
   private keys: {
@@ -98,12 +98,12 @@ export class PlayerController implements IPlayerController {
     // Apply rotation (yaw) - rotation around the up vector
     if (this.keys.a) {
       // Rotate left
-      this.perspectiveCamera.rotation.y += this.rotationSpeed * deltaTime;
+      this.camera.rotateYaw(this.rotationSpeed * deltaTime);
     }
 
     if (this.keys.d) {
       // Rotate right
-      this.perspectiveCamera.rotation.y -= this.rotationSpeed * deltaTime;
+      this.camera.rotateYaw(-this.rotationSpeed * deltaTime);
     }
 
     // If there's movement to apply, use the Camera's moveOnPlanet method
