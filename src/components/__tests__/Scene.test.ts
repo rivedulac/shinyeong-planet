@@ -50,13 +50,13 @@ describe("Scene", () => {
     expect(scene.getScene()).toBeDefined();
   });
 
-  it("should initialize background, floor, gridHelper, and lights", () => {
+  it("should initialize background, planet, gridHelper, and lights", () => {
     const addSpy = vi.spyOn(scene.getScene(), "add");
 
     scene.setup();
 
     // Check that add was called appropriate number of times
-    // Floor, grid helper, ambient light, directional light
+    // Planet, grid helper, ambient light, directional light
     expect(addSpy).toHaveBeenCalledTimes(4);
   });
 
@@ -78,24 +78,32 @@ describe("Scene", () => {
     expect(scene.getScene().background).toBe(texture);
   });
 
-  it("should set floor to color if color is provided", () => {
+  it("should set planet to color if color is provided", () => {
     const color = new THREE.Color(0x000000);
-    scene.setFloor(color, null);
+    scene.setPlanet(color, null);
     // @ts-ignore: Material is a single object
-    expect(scene.getFloor()?.material.color).toStrictEqual(color);
+    expect(scene.getPlanet()?.material.color).toStrictEqual(color);
   });
 
-  it("should set floor to texture if texture is provided", () => {
-    const texture = scene.loadTexture("src/assets/floor-texture.svg");
-    scene.setFloor(null, texture);
+  it("should set planet to texture if texture is provided", () => {
+    const texture = scene.loadTexture("src/assets/planet-texture.svg");
+    scene.setPlanet(null, texture);
     // @ts-ignore: Material is a single object
-    expect(scene.getFloor()?.material.map).toBe(texture);
+    expect(scene.getPlanet()?.material.map).toBe(texture);
   });
 
-  it("should add gridHelper", () => {
-    const addSpy = vi.spyOn(scene.getScene(), "add");
+  it("should not add gridHelper if planet is not set", () => {
+    const spy = vi.spyOn(scene.getScene(), "add");
     scene.addGridHelper();
-    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it("should add gridHelper if planet is set", () => {
+    const spy = vi.spyOn(scene.getScene(), "add");
+    scene.setPlanet(new THREE.Color("#000000"));
+    scene.addGridHelper();
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(scene.getScene().children[1]).toBeInstanceOf(THREE.Group);
   });
 
   it("should add lights", () => {

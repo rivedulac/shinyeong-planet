@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 const backgroundTexturePath = "src/assets/background-texture.svg";
-const floorTexturePath = "src/assets/floor-texture.svg";
+const planetTexturePath = "src/assets/planet-texture.svg";
 
 export class Scene {
   private container: HTMLDivElement;
@@ -12,7 +12,7 @@ export class Scene {
 
   private textureLoader: THREE.TextureLoader;
 
-  private floor: THREE.Mesh | null = null;
+  private planet: THREE.Mesh | null = null;
 
   constructor(
     documentDI?: HTMLDivElement,
@@ -43,7 +43,7 @@ export class Scene {
 
   public setup() {
     this.setBackground(null, this.loadTexture(backgroundTexturePath));
-    this.setFloor(null, this.loadTexture(floorTexturePath));
+    this.setPlanet(undefined, this.loadTexture(planetTexturePath));
     this.addGridHelper();
     this.addLights();
   }
@@ -79,34 +79,105 @@ export class Scene {
     }
   }
 
-  public setFloor(color: THREE.Color | null, texture: THREE.Texture | null) {
-    // TODO: prevent adding multiple floors
-    const floorGeometry = new THREE.PlaneGeometry(100, 100);
-    let floorMaterial: THREE.Material;
-    if (color) {
-      floorMaterial = new THREE.MeshStandardMaterial({
-        color: color,
-        side: THREE.DoubleSide,
-      });
-    } else if (texture) {
-      floorMaterial = new THREE.MeshStandardMaterial({
-        map: texture,
-        side: THREE.DoubleSide,
-      });
-    } else {
-      throw new Error("No floor material provided");
+  public setPlanet(color?: THREE.Color, texture?: THREE.Texture) {
+    // Remove existing planet if present to prevent multiple planets
+    if (this.planet) {
+      this.scene.remove(this.planet);
     }
 
-    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.rotation.x = Math.PI / 2; // Rotate to be horizontal
-    floor.position.y = -2; // Position floor below the origin
-    this.floor = floor;
-    this.scene.add(floor);
+    // Create a sphere for the planet instead of a plane
+    const planetRadius = 50;
+    const planetGeometry = new THREE.SphereGeometry(planetRadius, 32, 32);
+
+    let planetMaterial: THREE.Material;
+    if (color) {
+      planetMaterial = new THREE.MeshStandardMaterial({
+        color: color,
+        side: THREE.FrontSide,
+      });
+    } else if (texture) {
+      planetMaterial = new THREE.MeshStandardMaterial({
+        map: texture,
+        side: THREE.FrontSide,
+      });
+    } else {
+      throw new Error("No planet material provided");
+    }
+
+    const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+    // Position the planet below the player
+    planet.position.y = -planetRadius - 5; // 5 units below player's feet
+
+    this.planet = planet;
+    this.scene.add(planet);
   }
 
   public addGridHelper() {
-    const gridHelper = new THREE.GridHelper(100, 100);
-    this.scene.add(gridHelper);
+    // Instead of a grid helper, let's add latitude/longitude lines for the planet
+    if (!this.planet) return; // Make sure planet exists
+
+    const planetRadius = 50; // Match the radius used in setPlanet
+
+    // Create a group to hold all the grid lines
+    const gridGroup = new THREE.Group();
+    this.scene.add(gridGroup);
+
+    // Create longitude lines (vertical circles)
+    const longitudeCount = 24; // 24 segments
+    for (let i = 0; i < longitudeCount; i++) {
+      const angle = (i / longitudeCount) * Math.PI * 2;
+      const geometry = new THREE.TorusGeometry(
+        planetRadius,
+        0.1,
+        16,
+        100,
+        Math.PI * 2
+      );
+      const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const torus = new THREE.Mesh(geometry, material);
+
+      // Rotate to create longitude lines
+      torus.rotation.y = angle;
+
+      // Position to match the planet
+      torus.position.copy(this.planet.position);
+
+      gridGroup.add(torus);
+    }
+
+    // Create latitude lines (horizontal circles)
+    const latitudeCount = 12; // 12 horizontal lines
+    for (let i = 1; i < latitudeCount; i++) {
+      const radius = Math.sin((i / latitudeCount) * Math.PI) * planetRadius;
+      const height = Math.cos((i / latitudeCount) * Math.PI) * planetRadius;
+
+      const geometry = new THREE.TorusGeometry(
+        radius,
+        0.1,
+        16,
+        100,
+        Math.PI * 2
+      );
+      const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const torus = new THREE.Mesh(geometry, material);
+
+      // Rotate to make horizontal
+      torus.rotation.x = Math.PI / 2;
+
+      // Position to match the planet surface
+      torus.position.copy(this.planet.position);
+      torus.position.y += height;
+
+      gridGroup.add(torus);
+    }
   }
 
   public addLights() {
@@ -129,8 +200,8 @@ export class Scene {
     return this.scene;
   }
 
-  public getFloor() {
-    return this.floor;
+  public getPlanet() {
+    return this.planet;
   }
 
   public getWidth() {
