@@ -1,7 +1,30 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 // Import the component to test
 import CameraPositionDisplay from "../CameraPositionDisplay";
+
+// Mock react-i18next
+vi.mock("react-i18next", () => ({
+  useTranslation: () => {
+    return {
+      t: (str: string, params: Record<string, unknown> = {}) => {
+        // Simple mock implementation of t function
+        if (str === "cameraPosition.title") return "Camera Position";
+        if (str === "cameraPosition.x") return `X: ${params.value}`;
+        if (str === "cameraPosition.y") return `Y: ${params.value}`;
+        if (str === "cameraPosition.z") return `Z: ${params.value}`;
+        if (str === "cameraPosition.pitch") return `Pitch: ${params.value}`;
+        if (str === "cameraPosition.yaw") return `Yaw: ${params.value}`;
+        if (str === "cameraPosition.roll") return `Roll: ${params.value}`;
+        return str;
+      },
+      i18n: {
+        changeLanguage: vi.fn(),
+        language: "en",
+      },
+    };
+  },
+}));
 
 describe("CameraPositionDisplay", () => {
   it("should render camera position coordinates", () => {

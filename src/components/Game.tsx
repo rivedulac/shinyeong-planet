@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Camera } from "./Camera";
 import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "./CameraPositionDisplay";
+import LanguageSelector from "./LanguageSelector";
 import { Scene } from "./Scene";
 
 const Game: React.FC = () => {
+  const { t } = useTranslation();
   const [cameraPosition, setCameraPosition] = useState({
     position: { x: 0, y: 0, z: 0 },
     rotation: { pitch: 0, yaw: 0, roll: 0 },
@@ -68,6 +71,7 @@ const Game: React.FC = () => {
     <>
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
       <CameraPositionDisplay perspective={cameraPosition} />
+      <LanguageSelector />
       <div
         style={{
           position: "absolute",
@@ -82,15 +86,15 @@ const Game: React.FC = () => {
           zIndex: 1000,
         }}
       >
-        Controls:
-        <div>W - Move Forward</div>
-        <div>S - Move Backward</div>
-        <div>A - Rotate Left</div>
-        <div>D - Rotate Right</div>
-        <div>↑ - Look Up</div>
-        <div>↓ - Look Down</div>
-        <div>+ - Zoom In (Decrease FOV)</div>
-        <div>- - Zoom Out (Increase FOV)</div>
+        {t("controls.title")}
+        <div>{t("controls.moveForward")}</div>
+        <div>{t("controls.moveBackward")}</div>
+        <div>{t("controls.rotateLeft")}</div>
+        <div>{t("controls.rotateRight")}</div>
+        <div>{t("controls.lookUp")}</div>
+        <div>{t("controls.lookDown")}</div>
+        <div>{t("controls.zoomIn")}</div>
+        <div>{t("controls.zoomOut")}</div>
       </div>
     </>
   );

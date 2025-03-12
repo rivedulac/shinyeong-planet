@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface CameraPositionDisplayProps {
   perspective: {
@@ -18,6 +19,8 @@ interface CameraPositionDisplayProps {
 const CameraPositionDisplay: React.FC<CameraPositionDisplayProps> = ({
   perspective,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div
       style={{
@@ -34,13 +37,31 @@ const CameraPositionDisplay: React.FC<CameraPositionDisplayProps> = ({
         userSelect: "none",
       }}
     >
-      <div>Camera Position</div>
-      <div>X: {perspective.position.x.toFixed(2)}</div>
-      <div>Y: {perspective.position.y.toFixed(2)}</div>
-      <div>Z: {perspective.position.z.toFixed(2)}</div>
-      <div>Yaw: {perspective.rotation.yaw.toFixed(2)}</div>
-      <div>Pitch: {perspective.rotation.pitch.toFixed(2)}</div>
-      <div>Roll: {perspective.rotation.roll.toFixed(2)}</div>
+      <div>{t("cameraPosition.title")}</div>
+      <div>
+        {t("cameraPosition.x", { value: perspective.position.x.toFixed(2) })}
+      </div>
+      <div>
+        {t("cameraPosition.y", { value: perspective.position.y.toFixed(2) })}
+      </div>
+      <div>
+        {t("cameraPosition.z", { value: perspective.position.z.toFixed(2) })}
+      </div>
+      <div>
+        {t("cameraPosition.yaw", {
+          value: perspective.rotation.yaw.toFixed(2),
+        })}
+      </div>
+      <div>
+        {t("cameraPosition.pitch", {
+          value: perspective.rotation.pitch.toFixed(2),
+        })}
+      </div>
+      <div>
+        {t("cameraPosition.roll", {
+          value: perspective.rotation.roll.toFixed(2),
+        })}
+      </div>
     </div>
   );
 };
