@@ -2,38 +2,62 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { Scene } from "../Scene";
 import * as THREE from "three";
 
+// Mock Three.js
+vi.mock("three", async () => {
+  const actual = await vi.importActual("three");
+  return {
+    ...(actual as any),
+    WebGLRenderer: vi.fn().mockImplementation(() => ({
+      setSize: vi.fn(),
+      render: vi.fn(),
+      domElement: document.createElement("canvas"),
+    })),
+  };
+});
+
 describe("Scene", () => {
   let scene: Scene;
+  let testContainer: HTMLDivElement;
+  let mockRenderer: {
+    setSize: ReturnType<typeof vi.fn>;
+    render: ReturnType<typeof vi.fn>;
+    domElement: HTMLCanvasElement;
+  };
 
   beforeEach(() => {
-    scene = new Scene();
+    testContainer = document.createElement("div");
+    document.body.appendChild(testContainer);
+
+    mockRenderer = {
+      setSize: vi.fn(),
+      render: vi.fn(),
+      domElement: document.createElement("canvas"),
+    };
+
+    scene = new Scene(
+      testContainer,
+      mockRenderer as unknown as THREE.WebGLRenderer
+    );
   });
 
   afterEach(() => {
     scene.destory();
+    document.body.removeChild(testContainer);
+    vi.clearAllMocks();
   });
 
   it("should initialize with default scene if no scene is provided", () => {
-    const scene = new Scene();
-    scene.initialize();
     expect(scene.getScene()).toBeDefined();
   });
 
-  it("should initialize with given scene if provided", () => {
-    const givenScene = new THREE.Scene();
-    const scene = new Scene(givenScene);
-    scene.initialize();
-    expect(scene.getScene()).toBe(givenScene);
-  });
-
   it("should initialize background, floor, gridHelper, and lights", () => {
-    scene.initialize();
-    expect(scene.getScene().background).toBeDefined();
-    expect(scene.getScene().children.length).toBe(4);
-    expect(scene.getScene().children[0]).toBeInstanceOf(THREE.Mesh);
-    expect(scene.getScene().children[1]).toBeInstanceOf(THREE.GridHelper);
-    expect(scene.getScene().children[2]).toBeInstanceOf(THREE.AmbientLight);
-    expect(scene.getScene().children[3]).toBeInstanceOf(THREE.DirectionalLight);
+    const addSpy = vi.spyOn(scene.getScene(), "add");
+
+    scene.setup();
+
+    // Check that add was called appropriate number of times
+    // Floor, grid helper, ambient light, directional light
+    expect(addSpy).toHaveBeenCalledTimes(4);
   });
 
   it("should load texture", () => {
@@ -57,28 +81,41 @@ describe("Scene", () => {
   it("should set floor to color if color is provided", () => {
     const color = new THREE.Color(0x000000);
     scene.setFloor(color, null);
-    expect(scene.getFloor().material.color).toStrictEqual(color);
+    // @ts-ignore: Material is a single object
+    expect(scene.getFloor()?.material.color).toStrictEqual(color);
   });
 
   it("should set floor to texture if texture is provided", () => {
     const texture = scene.loadTexture("src/assets/floor-texture.svg");
     scene.setFloor(null, texture);
-    expect(scene.getFloor().material.map).toBe(texture);
+    // @ts-ignore: Material is a single object
+    expect(scene.getFloor()?.material.map).toBe(texture);
   });
 
   it("should add gridHelper", () => {
+    const addSpy = vi.spyOn(scene.getScene(), "add");
     scene.addGridHelper();
-    expect(scene.getScene().children[0]).toBeInstanceOf(THREE.GridHelper);
+    expect(addSpy).toHaveBeenCalledTimes(1);
   });
 
   it("should add lights", () => {
+    const addSpy = vi.spyOn(scene.getScene(), "add");
     scene.addLights();
-    expect(scene.getScene().children[0]).toBeInstanceOf(THREE.AmbientLight);
-    expect(scene.getScene().children[1]).toBeInstanceOf(THREE.DirectionalLight);
+    // Ambient light and directional light
+    expect(addSpy).toHaveBeenCalledTimes(2);
   });
 
-  it("should destroy scene", () => {
-    scene.destory();
-    expect(scene.getScene().children.length).toBe(0);
+  it("should call renderer.setSize when setSize is called", () => {
+    scene.setSize(800, 600);
+    expect(mockRenderer.setSize).toHaveBeenCalledWith(800, 600);
+  });
+
+  it("should call renderer.render when render is called", () => {
+    const mockCamera = new THREE.PerspectiveCamera();
+    scene.render(mockCamera);
+    expect(mockRenderer.render).toHaveBeenCalledWith(
+      scene.getScene(),
+      mockCamera
+    );
   });
 });

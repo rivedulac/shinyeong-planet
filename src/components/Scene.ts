@@ -4,18 +4,44 @@ const backgroundTexturePath = "src/assets/background-texture.svg";
 const floorTexturePath = "src/assets/floor-texture.svg";
 
 export class Scene {
+  private container: HTMLDivElement;
+
   private scene: THREE.Scene;
+
+  private renderer: THREE.WebGLRenderer;
 
   private textureLoader: THREE.TextureLoader;
 
-  private floor: THREE.Mesh;
+  private floor: THREE.Mesh | null = null;
 
-  constructor(scene: THREE.Scene | null = null) {
+  constructor(
+    documentDI?: HTMLDivElement,
+    renderer?: THREE.WebGLRenderer,
+    scene?: THREE.Scene
+  ) {
+    this.container =
+      documentDI ||
+      (document.getElementById("game-container") as HTMLDivElement);
+    if (!this.container) {
+      throw new Error("Game container not found");
+    }
+    this.renderer = renderer || new THREE.WebGLRenderer({ antialias: true });
+    this.setSize(this.container.clientWidth, this.container.clientHeight);
+    this.container.appendChild(this.renderer.domElement);
+
     this.scene = scene || new THREE.Scene();
     this.textureLoader = new THREE.TextureLoader();
   }
 
-  public initialize() {
+  public setSize(width: number, height: number) {
+    this.renderer.setSize(width, height);
+  }
+
+  public render(camera: THREE.Camera) {
+    this.renderer.render(this.scene, camera);
+  }
+
+  public setup() {
     this.setBackground(null, this.loadTexture(backgroundTexturePath));
     this.setFloor(null, this.loadTexture(floorTexturePath));
     this.addGridHelper();
@@ -93,6 +119,9 @@ export class Scene {
   }
 
   public destory() {
+    if (this.container && this.renderer.domElement) {
+      this.container.removeChild(this.renderer.domElement);
+    }
     this.scene.clear();
   }
 
@@ -102,5 +131,13 @@ export class Scene {
 
   public getFloor() {
     return this.floor;
+  }
+
+  public getWidth() {
+    return this.renderer.domElement.width;
+  }
+
+  public getHeight() {
+    return this.renderer.domElement.height;
   }
 }

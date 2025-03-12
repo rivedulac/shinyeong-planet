@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import * as THREE from "three";
 import { Camera } from "./Camera";
 import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "./CameraPositionDisplay";
@@ -9,9 +8,6 @@ const Game: React.FC = () => {
   const [cameraPosition, setCameraPosition] = useState({ x: 0, y: 0, z: 0 });
 
   useEffect(() => {
-    const container = document.getElementById("game-container");
-    if (!container) return;
-
     // Set up scene
     const scene = new Scene();
     const camera = new Camera();
@@ -24,12 +20,7 @@ const Game: React.FC = () => {
     // Initial camera position
     setCameraPosition(camera.getPosition());
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild(renderer.domElement);
-
-    scene.initialize();
+    scene.setup();
 
     // Animation loop
     let animationId: number;
@@ -42,7 +33,7 @@ const Game: React.FC = () => {
       setCameraPosition(camera.getPosition());
 
       animationId = requestAnimationFrame(animate);
-      renderer.render(scene.getScene(), camera.getPerspectiveCamera());
+      scene.render(camera.getPerspectiveCamera());
     };
 
     animationId = requestAnimationFrame(animate);
@@ -50,7 +41,7 @@ const Game: React.FC = () => {
     // Handle window resize
     const handleResize = () => {
       camera.handleResize(window.innerWidth, window.innerHeight);
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      scene.setSize(window.innerWidth, window.innerHeight);
     };
 
     window.addEventListener("resize", handleResize);
@@ -62,10 +53,6 @@ const Game: React.FC = () => {
 
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationId);
-
-      if (container && renderer.domElement) {
-        container.removeChild(renderer.domElement);
-      }
 
       // Dispose resources
       scene.destory();
