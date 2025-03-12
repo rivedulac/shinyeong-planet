@@ -42,7 +42,7 @@ export class Scene {
   }
 
   public setup() {
-    this.setBackground(null, this.loadTexture(backgroundTexturePath));
+    this.setBackground(undefined, this.loadTexture(backgroundTexturePath));
     this.setPlanet(undefined, this.loadTexture(planetTexturePath));
     this.addGridHelper();
     this.addLights();
@@ -68,10 +68,7 @@ export class Scene {
     );
   }
 
-  public setBackground(
-    color: THREE.Color | null,
-    texture: THREE.Texture | null
-  ) {
+  public setBackground(color?: THREE.Color, texture?: THREE.Texture) {
     if (color) {
       this.scene.background = color;
     } else if (texture) {

@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500">
+  <!-- Background -->
+  <rect width="600" height="500" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="300" y="30" font-family="monospace" font-size="18" font-weight="bold" text-anchor="middle">Movement on Planet Surface</text>
+  <text x="300" y="50" font-family="monospace" font-size="14" text-anchor="middle">Animation of moveOnPlanet function</text>
+  
+  <!-- Planet -->
+  <circle cx="300" cy="250" r="150" fill="#d1e7dd" stroke="#0d6efd" stroke-width="2"/>
+  
+  <!-- Planet center -->
+  <circle cx="300" cy="250" r="4" fill="#0d6efd"/>
+  <text x="290" y="270" font-family="monospace" font-size="12" fill="#0d6efd">Center</text>
+  
+  <!-- Grid lines for reference -->
+  <g stroke="#adb5bd" stroke-width="0.5" stroke-dasharray="2,2">
+    <line x1="150" y1="250" x2="450" y2="250"/>
+    <line x1="300" y1="100" x2="300" y2="400"/>
+    <!-- Circles -->
+    <circle cx="300" cy="250" r="50" fill="none"/>
+    <circle cx="300" cy="250" r="100" fill="none"/>
+  </g>
+  
+  <!-- Movement path -->
+  <path d="M 300 100 A 150 150 0 0 1 450 250 A 150 150 0 0 1 300 400 A 150 150 0 0 1 150 250 A 150 150 0 0 1 300 100" 
+        fill="none" stroke="#20c997" stroke-width="2" stroke-dasharray="5,3"/>
+  
+  <!-- Animation of character moving around planet -->
+  <g id="character">
+    <!-- Character (represented as a dot) -->
+    <circle r="8" fill="#dc3545">
+      <animateMotion
+        path="M 300 100 A 150 150 0 0 1 450 250 A 150 150 0 0 1 300 400 A 150 150 0 0 1 150 250 A 150 150 0 0 1 300 100"
+        dur="10s"
+        repeatCount="indefinite"
+        rotate="auto"
+      />
+    </circle>
+    
+    <!-- Up vector from center to character -->
+    <line x1="0" y1="0" x2="0" y2="-150" stroke="#6610f2" stroke-width="2" stroke-dasharray="4,2">
+      <animateTransform
+        attributeName="transform"
+        type="rotate"
+        from="0"
+        to="360"
+        dur="10s"
+        repeatCount="indefinite"
+      />
+    </line>
+    
+    <!-- Direction vector -->
+    <g>
+      <line x1="0" y1="-150" x2="30" y2="-150" stroke="#fd7e14" stroke-width="2">
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0"
+          to="360"
+          dur="10s"
+          repeatCount="indefinite"
+        />
+      </line>
+      <polygon points="30,-150 22,-147 22,-153" fill="#fd7e14">
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0"
+          to="360"
+          dur="10s"
+          repeatCount="indefinite"
+        />
+      </polygon>
+    </g>
+  </g>
+  
+  <!-- Explanation -->
+  <g transform="translate(65, 250)">
+    <rect width="170" height="160" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+    <text x="10" y="30" font-family="monospace" font-size="14" font-weight="bold">Key Concepts:</text>
+    
+    <text x="10" y="55" font-family="monospace" font-size="12">1. Player stays at</text>
+    <text x="10" y="70" font-family="monospace" font-size="12">   constant distance</text>
+    <text x="10" y="85" font-family="monospace" font-size="12">   from center</text>
+    
+    <text x="10" y="110" font-family="monospace" font-size="12">2. Movement follows</text>
+    <text x="10" y="125" font-family="monospace" font-size="12">   planet curvature</text>
+    
+    <text x="10" y="150" font-family="monospace" font-size="12">3. Complete circuit</text>
+    <text x="10" y="165" font-family="monospace" font-size="12">   returns to start</text>
+  </g>
+  
+  <!-- Legend -->
+  <g transform="translate(460, 130)">
+    <rect width="120" height="105" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+    <text x="10" y="25" font-family="monospace" font-size="14" font-weight="bold">Legend</text>
+    
+    <circle cx="20" cy="45" r="4" fill="#0d6efd"/>
+    <text x="35" y="49" font-family="monospace" font-size="12">Planet Center</text>
+    
+    <circle cx="20" cy="70" r="8" fill="#dc3545"/>
+    <text x="35" y="74" font-family="monospace" font-size="12">Player</text>
+    
+    <line x1="10" y1="95" x2="30" y2="95" stroke="#20c997" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="35" y="99" font-family="monospace" font-size="12">Path</text>
+  </g>
+</svg>

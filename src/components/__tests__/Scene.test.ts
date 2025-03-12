@@ -68,26 +68,26 @@ describe("Scene", () => {
 
   it("should set background to color if color is provided", () => {
     const color = new THREE.Color(0x000000);
-    scene.setBackground(color, null);
+    scene.setBackground(color, undefined);
     expect(scene.getScene().background).toBe(color);
   });
 
   it("should set background to texture if texture is provided", () => {
     const texture = scene.loadTexture("src/assets/background-texture.svg");
-    scene.setBackground(null, texture);
+    scene.setBackground(undefined, texture);
     expect(scene.getScene().background).toBe(texture);
   });
 
   it("should set planet to color if color is provided", () => {
     const color = new THREE.Color(0x000000);
-    scene.setPlanet(color, null);
+    scene.setPlanet(color);
     // @ts-ignore: Material is a single object
     expect(scene.getPlanet()?.material.color).toStrictEqual(color);
   });
 
   it("should set planet to texture if texture is provided", () => {
     const texture = scene.loadTexture("src/assets/planet-texture.svg");
-    scene.setPlanet(null, texture);
+    scene.setPlanet(undefined, texture);
     // @ts-ignore: Material is a single object
     expect(scene.getPlanet()?.material.map).toBe(texture);
   });

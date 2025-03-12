@@ -16,24 +16,26 @@ const Game: React.FC = () => {
     const camera = new Camera();
 
     // Initialize player controller with the camera
-    const playerController = new PlayerController(
-      camera.getPerspectiveCamera()
-    );
+    const playerController = new PlayerController(camera);
 
     // Initial camera position
-    setCameraPosition(camera.getPerspective());
+    setCameraPosition(camera.getPerspectivePosition());
 
     scene.setup();
 
     // Animation loop
     let animationId: number;
+    let lastTime = 0;
 
-    const animate = () => {
+    const animate = (time: number) => {
+      const deltaTime = lastTime === 0 ? 0 : (time - lastTime) / 1000;
+      lastTime = time;
+
       // Update player controller with deltaTime
-      playerController.update();
+      playerController.update(deltaTime);
 
       // Update camera position state on each frame
-      setCameraPosition(camera.getPerspective());
+      setCameraPosition(camera.getPerspectivePosition());
 
       animationId = requestAnimationFrame(animate);
       scene.render(camera.getPerspectiveCamera());

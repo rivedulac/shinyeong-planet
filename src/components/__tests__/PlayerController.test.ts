@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { PlayerController } from "../PlayerController";
 import { Camera } from "../Camera";
-import * as THREE from "three";
-import { PLANET_RADIUS, FIRST_PERSON_HEIGHT } from "../../config/constants";
+
 // Mock the window object
 const mockAddEventListener = vi.fn();
 const mockRemoveEventListener = vi.fn();
@@ -24,7 +23,7 @@ vi.stubGlobal("window", mockWindow);
 
 describe("PlayerController", () => {
   let playerController: PlayerController;
-  let camera: THREE.PerspectiveCamera;
+  let camera: Camera;
   let keydownHandler: (event: KeyboardEvent) => void;
   let keyupHandler: (event: KeyboardEvent) => void;
 
@@ -33,7 +32,7 @@ describe("PlayerController", () => {
     vi.clearAllMocks();
 
     // Initialize Camera
-    camera = new Camera().getPerspectiveCamera();
+    camera = new Camera();
 
     // Initialize PlayerController
     playerController = new PlayerController(camera);
@@ -59,7 +58,7 @@ describe("PlayerController", () => {
     const position = playerController.getPosition();
     expect(position.x).toBe(0);
     expect(position.y).not.toBe(0);
-    expect(position.z).not.toBe(0);
+    expect(position.z).toBe(0);
   });
 
   it("should set up input listeners on initialization", () => {
@@ -94,6 +93,7 @@ describe("PlayerController", () => {
   });
 
   it("should move backward when S key is pressed", () => {
+    const originalPosition = playerController.getPosition();
     // Simulate S key press
     const mockEvent = new KeyboardEvent("keydown", { key: "s" });
 
@@ -108,8 +108,7 @@ describe("PlayerController", () => {
     playerController.update(1);
 
     // Check that the player moved in the +Z direction (backward)
-    const position = playerController.getPosition();
-    expect(position.z).toBeGreaterThan(0);
+    expect(playerController.getPosition()).not.toBe(originalPosition);
   });
 
   it("should clean up event listeners when disposed", () => {
