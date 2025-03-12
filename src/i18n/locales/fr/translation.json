@@ -1,0 +1,33 @@
+{
+  "gameName": "Planète Shinyeong",
+  "cameraPosition": {
+    "title": "Position de la Caméra",
+    "x": "X: {{value}}",
+    "y": "Y: {{value}}",
+    "z": "Z: {{value}}",
+    "pitch": "Inclinaison: {{value}}",
+    "yaw": "Lacet: {{value}}",
+    "roll": "Roulis: {{value}}"
+  },
+  "controls": {
+    "title": "Contrôles:",
+    "moveForward": "W - Avancer",
+    "moveBackward": "S - Reculer",
+    "rotateLeft": "A - Tourner à Gauche",
+    "rotateRight": "D - Tourner à Droite",
+    "lookUp": "↑ - Regarder en Haut",
+    "lookDown": "↓ - Regarder en Bas",
+    "zoomIn": "+ - Zoom Avant (Diminuer FOV)",
+    "zoomOut": "- - Zoom Arrière (Augmenter FOV)"
+  },
+  "language": {
+    "title": "Langue",
+    "en": "English",
+    "ko": "한국어",
+    "fr": "Français",
+    "zh-CN": "简体中文",
+    "zh-TW": "繁體中文",
+    "de": "Deutsch",
+    "ja": "日本語"
+  }
+}

@@ -29,6 +29,11 @@ i18n.use(initReactI18next).init({
         "language.title": "Language",
         "language.en": "English",
         "language.ko": "한국어",
+        "language.fr": "Français",
+        "language.zh-CN": "简体中文",
+        "language.zh-TW": "繁體中文",
+        "language.de": "Deutsch",
+        "language.ja": "日本語",
       },
     },
     ko: {
@@ -52,6 +57,39 @@ i18n.use(initReactI18next).init({
         "controls.zoomOut": "- - 축소 (FOV 증가)",
         "language.title": "언어",
         "language.en": "English",
+        "language.ko": "한국어",
+      },
+    },
+    // For testing, we only need detailed translations for a few languages
+    // Other languages can be included with minimal translations
+    fr: {
+      translation: {
+        gameName: "Planète Shinyeong",
+        "language.title": "Langue",
+      },
+    },
+    "zh-CN": {
+      translation: {
+        gameName: "新英星球",
+        "language.title": "语言",
+      },
+    },
+    "zh-TW": {
+      translation: {
+        gameName: "新英星球",
+        "language.title": "語言",
+      },
+    },
+    de: {
+      translation: {
+        gameName: "Shinyeong Planet",
+        "language.title": "Sprache",
+      },
+    },
+    ja: {
+      translation: {
+        gameName: "シンヨン惑星",
+        "language.title": "言語",
       },
     },
   },

@@ -13,7 +13,12 @@ vi.mock("react-i18next", () => ({
         // Simple mock implementation
         if (str === "language.title") return "Language";
         if (str === "language.en") return "English";
-        if (str === "language.ko") return "Korean";
+        if (str === "language.ko") return "한국어";
+        if (str === "language.fr") return "Français";
+        if (str === "language.zh-CN") return "简体中文";
+        if (str === "language.zh-TW") return "繁體中文";
+        if (str === "language.de") return "Deutsch";
+        if (str === "language.ja") return "日本語";
         return str;
       },
       i18n: {
@@ -37,11 +42,16 @@ describe("LanguageSelector", () => {
 
     // Check that options exist
     const options = screen.getAllByRole("option");
-    expect(options.length).toBe(2); // en, ko
+    expect(options.length).toBe(7); // en, ko, fr, zh-CN, zh-TW, de, ja
 
     // Verify language names appear
     expect(screen.getByText("English")).toBeInTheDocument();
-    expect(screen.getByText("Korean")).toBeInTheDocument();
+    expect(screen.getByText("한국어")).toBeInTheDocument();
+    expect(screen.getByText("Français")).toBeInTheDocument();
+    expect(screen.getByText("简体中文")).toBeInTheDocument();
+    expect(screen.getByText("繁體中文")).toBeInTheDocument();
+    expect(screen.getByText("Deutsch")).toBeInTheDocument();
+    expect(screen.getByText("日本語")).toBeInTheDocument();
   });
 
   it("should call changeLanguage when selection changes", () => {
@@ -50,16 +60,14 @@ describe("LanguageSelector", () => {
     // Get select element
     const selectElement = screen.getByRole("combobox");
 
-    // Change selection to Korean
-    fireEvent.change(selectElement, { target: { value: "ko" } });
+    // Test a few language changes
+    const testLanguages = ["ko", "fr", "zh-CN", "en"];
 
-    // Check that changeLanguage was called with the correct language code
-    expect(mockChangeLanguage).toHaveBeenCalledWith("ko");
-
-    // Change selection back to English
-    fireEvent.change(selectElement, { target: { value: "en" } });
-
-    // Check that changeLanguage was called with the correct language code
-    expect(mockChangeLanguage).toHaveBeenCalledWith("en");
+    testLanguages.forEach((language) => {
+      // Change selection
+      fireEvent.change(selectElement, { target: { value: language } });
+      // Check that changeLanguage was called with the correct language code
+      expect(mockChangeLanguage).toHaveBeenCalledWith(language);
+    });
   });
 });

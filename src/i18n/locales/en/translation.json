@@ -23,6 +23,11 @@
   "language": {
     "title": "Language",
     "en": "English",
-    "ko": "한국어"
+    "ko": "한국어",
+    "fr": "Français",
+    "zh-CN": "简体中文",
+    "zh-TW": "繁體中文",
+    "de": "Deutsch",
+    "ja": "日本語"
   }
 }

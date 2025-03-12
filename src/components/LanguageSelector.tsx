@@ -40,6 +40,11 @@ const LanguageSelector: React.FC = () => {
       >
         <option value="en">{t("language.en")}</option>
         <option value="ko">{t("language.ko")}</option>
+        <option value="fr">{t("language.fr")}</option>
+        <option value="zh-CN">{t("language.zh-CN")}</option>
+        <option value="zh-TW">{t("language.zh-TW")}</option>
+        <option value="de">{t("language.de")}</option>
+        <option value="ja">{t("language.ja")}</option>
       </select>
     </div>
   );
