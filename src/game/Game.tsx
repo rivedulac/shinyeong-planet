@@ -1,4 +1,3 @@
-// src/game/Game.tsx (modified)
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Camera } from "../core/Camera";
@@ -11,6 +10,7 @@ import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { NpcManager } from "./npcs/NpcManager";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -62,6 +62,10 @@ const Game: React.FC = () => {
     // Initialize player controller with the camera
     const playerController = new PlayerController(camera);
 
+    // Create NPC manager and initialize NPCs
+    const npcManager = new NpcManager(scene.getScene());
+    npcManager.initializeDefaultNpcs();
+
     // Initial camera position
     setCameraPosition(camera.getPerspectivePosition());
 
@@ -77,6 +81,9 @@ const Game: React.FC = () => {
 
       // Update player controller with deltaTime
       playerController.update(deltaTime);
+
+      // Update NPCs
+      npcManager.update(deltaTime);
 
       // Update camera position state on each frame
       setCameraPosition(camera.getPerspectivePosition());
@@ -100,13 +107,16 @@ const Game: React.FC = () => {
       // Clean up player controller
       playerController.dispose();
 
+      // Clean up NPCs
+      npcManager.clear();
+
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationId);
 
       // Dispose resources
       scene.destory();
     };
-  }, [gameStarted]); // Only re-run effect when gameStarted changes
+  }, [gameStarted]);
 
   // Show name input if game hasn't started yet
   if (!gameStarted) {
