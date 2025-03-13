@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NpcManager } from "../NpcManager";
 import { Billboard } from "../Billboard";
 import * as THREE from "three";
+import { Flag } from "../Flag";
 
 describe("NpcManager", () => {
   let mockScene: THREE.Scene;
@@ -21,13 +22,16 @@ describe("NpcManager", () => {
 
   it("should add NPCs to the scene", () => {
     const billboard = new Billboard("test-billboard");
+    const flag = new Flag("test-flag");
     npcManager.addNpc(billboard);
+    npcManager.addNpc(flag);
 
     // Check that the billboard was added to the scene
     expect(mockScene.add).toHaveBeenCalledWith(billboard.getMesh());
-
+    expect(mockScene.add).toHaveBeenCalledWith(flag.getMesh());
     // Check that we can retrieve the billboard
     expect(npcManager.getNpc("test-billboard")).toBe(billboard);
+    expect(npcManager.getNpc("test-flag")).toBe(flag);
   });
 
   it("should initialize default NPCs", () => {
@@ -56,13 +60,17 @@ describe("NpcManager", () => {
   it("should update all NPCs", () => {
     // Create a spy billboard with a mock update method
     const billboard = new Billboard("test-billboard-update");
-    const updateSpy = vi.spyOn(billboard, "update");
+    const billboardUpdateSpy = vi.spyOn(billboard, "update");
+    const flag = new Flag("test-flag-update");
+    const flagUpdateSpy = vi.spyOn(flag, "update");
 
     npcManager.addNpc(billboard);
+    npcManager.addNpc(flag);
     npcManager.update(0.1);
 
-    // Check that update was called on the billboard
-    expect(updateSpy).toHaveBeenCalledWith(0.1);
+    // Check that update was called on the NPCs
+    expect(billboardUpdateSpy).toHaveBeenCalledWith(0.1);
+    expect(flagUpdateSpy).toHaveBeenCalledWith(0.1);
   });
 
   it("should clear all NPCs", () => {

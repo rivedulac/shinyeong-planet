@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { INpc } from "./INpc";
 import { Billboard } from "./Billboard";
+import { Flag } from "./Flag";
 
 export class NpcManager {
   private npcs: Map<string, INpc> = new Map();
@@ -25,6 +26,14 @@ export class NpcManager {
     billboard.setPositionOnPlanet(0, 0);
 
     this.addNpc(billboard);
+
+    // Create and add a flag NPC
+    const flag = new Flag("experience-usa", "🇺🇸", "2020 Internship");
+
+    // Position the flag at latitude 0 (equator), longitude 0 (prime meridian)
+    flag.setPositionOnPlanet(0.2, 0.5);
+
+    this.addNpc(flag);
   }
 
   /**
