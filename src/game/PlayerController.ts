@@ -51,15 +51,19 @@ export class PlayerController implements IPlayerController {
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.key.toLowerCase()) {
         case "w":
+        case "ㅈ":
           this.keys.w = true;
           break;
         case "s":
+        case "ㄴ":
           this.keys.s = true;
           break;
         case "a":
+        case "ㅁ":
           this.keys.a = true;
           break;
         case "d":
+        case "ㅇ":
           this.keys.d = true;
           break;
         case "arrowup":
@@ -82,15 +86,19 @@ export class PlayerController implements IPlayerController {
     const handleKeyUp = (event: KeyboardEvent) => {
       switch (event.key.toLowerCase()) {
         case "w":
+        case "ㅈ":
           this.keys.w = false;
           break;
         case "s":
+        case "ㄴ":
           this.keys.s = false;
           break;
         case "a":
+        case "ㅁ":
           this.keys.a = false;
           break;
         case "d":
+        case "ㅇ":
           this.keys.d = false;
           break;
         case "arrowup":
