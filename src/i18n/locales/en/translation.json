@@ -37,5 +37,17 @@
     "zh-TW": "繁體中文",
     "de": "Deutsch",
     "ja": "日本語"
+  },
+  "playerName": {
+    "title": "Welcome to Shinyeong Planet",
+    "enterName": "Please enter your name:",
+    "placeholder": "Your name here",
+    "start": "Start Journey",
+    "error": "Name cannot be empty",
+    "display": "Explorer: {{name}}",
+    "edit": "Change Name",
+    "editTitle": "Change Your Explorer Name",
+    "save": "Save",
+    "cancel": "Cancel"
   }
 }

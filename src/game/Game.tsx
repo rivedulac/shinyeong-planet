@@ -1,3 +1,4 @@
+// src/game/Game.tsx (modified)
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Camera } from "../core/Camera";
@@ -6,6 +7,8 @@ import CameraPositionDisplay from "../ui/CameraPositionDisplay";
 import LanguageSelector from "../ui/LanguageSelector";
 import PlayerNameInput from "../ui/PlayerNameInput";
 import PlayerNameDisplay from "../ui/PlayerNameDisplay";
+import NameEditButton from "../ui/NameEditButton";
+import NameEditModal from "../ui/NameEditModal";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 
@@ -27,10 +30,25 @@ const Game: React.FC = () => {
 
   // Game has started if player has entered a name
   const [gameStarted, setGameStarted] = useState<boolean>(!!playerName);
+  // State for name editing modal
+  const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
   const handleNameSubmit = (name: string) => {
     setPlayerName(name);
     setGameStarted(true);
+  };
+
+  const handleEditName = () => {
+    setIsEditingName(true);
+  };
+
+  const handleSaveName = (name: string) => {
+    setPlayerName(name);
+    setIsEditingName(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingName(false);
   };
 
   useEffect(() => {
@@ -102,6 +120,14 @@ const Game: React.FC = () => {
       <CameraPositionDisplay perspective={cameraPosition} />
       <LanguageSelector />
       {playerName && <PlayerNameDisplay name={playerName} />}
+      {playerName && <NameEditButton onClick={handleEditName} />}
+      {isEditingName && (
+        <NameEditModal
+          currentName={playerName || ""}
+          onSave={handleSaveName}
+          onCancel={handleCancelEdit}
+        />
+      )}
       <div
         style={{
           position: "absolute",

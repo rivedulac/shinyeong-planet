@@ -40,6 +40,10 @@ i18n.use(initReactI18next).init({
         "language.zh-TW": "繁體中文",
         "language.de": "Deutsch",
         "language.ja": "日本語",
+        "playerName.edit": "Change Name",
+        "playerName.editTitle": "Change Your Explorer Name",
+        "playerName.save": "Save",
+        "playerName.cancel": "Cancel",
       },
     },
     ko: {
@@ -70,6 +74,10 @@ i18n.use(initReactI18next).init({
         "language.title": "언어",
         "language.en": "English",
         "language.ko": "한국어",
+        "playerName.edit": "이름 변경",
+        "playerName.editTitle": "탐험가 이름 변경",
+        "playerName.save": "저장",
+        "playerName.cancel": "취소",
       },
     },
     // For testing, we only need detailed translations for a few languages

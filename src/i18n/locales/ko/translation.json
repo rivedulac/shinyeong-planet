@@ -29,5 +29,17 @@
     "zh-TW": "繁體中文",
     "de": "Deutsch",
     "ja": "日本語"
+  },
+  "playerName": {
+    "title": "신영 행성에 오신 것을 환영합니다",
+    "enterName": "이름을 입력해주세요:",
+    "placeholder": "이름 입력",
+    "start": "탐험 시작",
+    "error": "이름은 비어있을 수 없습니다",
+    "display": "탐험가: {{name}}",
+    "edit": "이름 변경",
+    "editTitle": "탐험가 이름 변경",
+    "save": "저장",
+    "cancel": "취소"
   }
 }
