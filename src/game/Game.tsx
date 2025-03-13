@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera } from "./Camera";
+import { Camera } from "../core/Camera";
 import { PlayerController } from "./PlayerController";
-import CameraPositionDisplay from "./CameraPositionDisplay";
-import LanguageSelector from "./LanguageSelector";
-import { Scene } from "./Scene";
+import CameraPositionDisplay from "../ui/CameraPositionDisplay";
+import LanguageSelector from "../ui/LanguageSelector";
+import { Scene } from "../core/Scene";
 
 const Game: React.FC = () => {
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { Scene } from "../Scene";
+import { Scene } from "../../core/Scene";
 import * as THREE from "three";
 
 // Mock Three.js

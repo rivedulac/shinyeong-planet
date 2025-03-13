@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render } from "@testing-library/react";
-import TitleUpdater from "../TitleUpdater";
+import TitleUpdater from "../../ui/TitleUpdater";
 
 // Mock translations
 const mockT = vi.fn((key) => {

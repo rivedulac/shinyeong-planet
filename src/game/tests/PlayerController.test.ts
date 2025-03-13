@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { PlayerController } from "../PlayerController";
-import { Camera } from "../Camera";
+import { Camera } from "../../core/Camera";
 
 // Mock the window object
 const mockAddEventListener = vi.fn();
@@ -25,7 +25,6 @@ describe("PlayerController", () => {
   let playerController: PlayerController;
   let camera: Camera;
   let keydownHandler: (event: KeyboardEvent) => void;
-  let keyupHandler: (event: KeyboardEvent) => void;
 
   beforeEach(() => {
     // Reset mocks before each test
@@ -41,12 +40,8 @@ describe("PlayerController", () => {
     const keydownCall = mockAddEventListener.mock.calls.find(
       (call) => call[0] === "keydown"
     );
-    const keyupCall = mockAddEventListener.mock.calls.find(
-      (call) => call[0] === "keyup"
-    );
 
     if (keydownCall) keydownHandler = keydownCall[1];
-    if (keyupCall) keyupHandler = keyupCall[1];
   });
 
   afterEach(() => {

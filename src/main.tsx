@@ -1,10 +1,10 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import Game from "./components/Game";
+import Game from "./game/Game";
 
 // Import i18n configuration
 import "./i18n/i18n";
-import I18nProvider from "./components/i18nProvider";
+import I18nProvider from "./i18n/i18nProvider";
 
 // Render the game scene
 const root = createRoot(document.getElementById("root")!);

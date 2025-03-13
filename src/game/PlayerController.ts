@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Camera } from "./Camera";
+import { Camera } from "../core/Camera";
 
 export interface IPlayerController {
   update(deltaTime?: number): void;

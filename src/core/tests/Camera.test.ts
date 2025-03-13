@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { Camera } from "../Camera";
+import { Camera } from "../../core/Camera";
 import * as THREE from "three";
 import {
   PLANET_RADIUS,

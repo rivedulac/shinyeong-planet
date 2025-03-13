@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import LanguageSelector from "../LanguageSelector";
+import LanguageSelector from "../../ui/LanguageSelector";
 
 // Mock changeLanguage function
 const mockChangeLanguage = vi.fn();
