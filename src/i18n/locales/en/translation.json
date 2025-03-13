@@ -5,7 +5,8 @@
     "enterName": "Please enter your name:",
     "placeholder": "Your name here",
     "start": "Start Journey",
-    "error": "Name cannot be empty"
+    "error": "Name cannot be empty",
+    "display": "Explorer: {{name}}"
   },
   "cameraPosition": {
     "title": "Camera Position",
