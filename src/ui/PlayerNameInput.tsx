@@ -50,29 +50,42 @@ const PlayerNameInput: React.FC<PlayerNameInputProps> = ({ onNameSubmit }) => {
           backgroundColor: "rgba(20, 20, 40, 0.8)",
           padding: "30px",
           borderRadius: "10px",
-          maxWidth: "500px",
-          width: "80%",
+          maxWidth: "450px",
+          width: "90%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <h1
           style={{
             color: "white",
-            marginBottom: "20px",
+            marginBottom: "30px",
             fontFamily: "sans-serif",
             textAlign: "center",
+            fontSize: "32px",
+            fontWeight: "normal",
           }}
         >
           {t("playerName.title")}
         </h1>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <label
             htmlFor="playerName"
             style={{
-              display: "block",
               color: "white",
-              marginBottom: "10px",
+              marginBottom: "15px",
               fontFamily: "sans-serif",
+              fontSize: "18px",
             }}
           >
             {t("playerName.enterName")}
@@ -85,13 +98,15 @@ const PlayerNameInput: React.FC<PlayerNameInputProps> = ({ onNameSubmit }) => {
             onChange={handleChange}
             placeholder={t("playerName.placeholder")}
             style={{
-              width: "100%",
-              padding: "10px",
+              width: "80%",
+              maxWidth: "350px",
+              padding: "12px",
               fontSize: "16px",
               backgroundColor: "rgba(255, 255, 255, 0.9)",
               border: isError ? "2px solid #ff3333" : "2px solid transparent",
               borderRadius: "5px",
               marginBottom: "10px",
+              textAlign: "center",
             }}
             autoFocus
           />
@@ -112,16 +127,17 @@ const PlayerNameInput: React.FC<PlayerNameInputProps> = ({ onNameSubmit }) => {
           <button
             type="submit"
             style={{
-              width: "100%",
-              padding: "12px",
+              width: "80%",
+              maxWidth: "350px",
+              padding: "14px",
               backgroundColor: "rgba(64, 128, 255, 0.9)",
               color: "white",
               border: "none",
               borderRadius: "5px",
-              fontSize: "16px",
+              fontSize: "18px",
               cursor: "pointer",
               fontFamily: "sans-serif",
-              marginTop: "10px",
+              marginTop: "20px",
             }}
           >
             {t("playerName.start")}

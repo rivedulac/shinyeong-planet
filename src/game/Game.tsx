@@ -4,7 +4,13 @@ import { Camera } from "../core/Camera";
 import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "../ui/CameraPositionDisplay";
 import LanguageSelector from "../ui/LanguageSelector";
+import PlayerNameInput from "../ui/PlayerNameInput";
+import PlayerNameDisplay from "../ui/PlayerNameDisplay";
 import { Scene } from "../core/Scene";
+import useLocalStorage from "../hooks/useLocalStorage";
+
+// Use a consistent key for the player name in localStorage
+const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
 
 const Game: React.FC = () => {
   const { t } = useTranslation();
@@ -13,7 +19,24 @@ const Game: React.FC = () => {
     rotation: { pitch: 0, yaw: 0, roll: 0 },
   });
 
+  // Use the localStorage hook for player name persistence
+  const [playerName, setPlayerName] = useLocalStorage<string>(
+    PLAYER_NAME_KEY,
+    ""
+  );
+
+  // Game has started if player has entered a name
+  const [gameStarted, setGameStarted] = useState<boolean>(!!playerName);
+
+  const handleNameSubmit = (name: string) => {
+    setPlayerName(name);
+    setGameStarted(true);
+  };
+
   useEffect(() => {
+    // Only initialize the game after player has entered their name
+    if (!gameStarted) return;
+
     // Set up scene
     const scene = new Scene();
     const camera = new Camera();
@@ -65,13 +88,20 @@ const Game: React.FC = () => {
       // Dispose resources
       scene.destory();
     };
-  }, []);
+  }, [gameStarted]); // Only re-run effect when gameStarted changes
 
+  // Show name input if game hasn't started yet
+  if (!gameStarted) {
+    return <PlayerNameInput onNameSubmit={handleNameSubmit} />;
+  }
+
+  // Otherwise show the game with player name displayed
   return (
     <>
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
       <CameraPositionDisplay perspective={cameraPosition} />
       <LanguageSelector />
+      {playerName && <PlayerNameDisplay name={playerName} />}
       <div
         style={{
           position: "absolute",
