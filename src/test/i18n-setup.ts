@@ -10,6 +10,11 @@ i18n.use(initReactI18next).init({
     en: {
       translation: {
         gameName: "Shinyeong Planet",
+        "playerName.title": "Welcome to Shinyeong Planet",
+        "playerName.enterName": "Please enter your name:",
+        "playerName.placeholder": "Your name here",
+        "playerName.start": "Start Journey",
+        "playerName.error": "Name cannot be empty",
         "cameraPosition.title": "Camera Position",
         "cameraPosition.x": "X: {{value}}",
         "cameraPosition.y": "Y: {{value}}",
@@ -39,6 +44,11 @@ i18n.use(initReactI18next).init({
     ko: {
       translation: {
         gameName: "신영 행성",
+        "playerName.title": "신영 행성에 오신 것을 환영합니다",
+        "playerName.enterName": "이름을 입력해주세요:",
+        "playerName.placeholder": "이름 입력",
+        "playerName.start": "탐험 시작",
+        "playerName.error": "이름은 비어있을 수 없습니다",
         "cameraPosition.title": "카메라 위치",
         "cameraPosition.x": "X: {{value}}",
         "cameraPosition.y": "Y: {{value}}",

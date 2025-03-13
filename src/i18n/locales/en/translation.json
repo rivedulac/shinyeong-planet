@@ -1,5 +1,12 @@
 {
   "gameName": "Shinyeong Planet",
+  "playerName": {
+    "title": "Welcome to Shinyeong Planet",
+    "enterName": "Please enter your name:",
+    "placeholder": "Your name here",
+    "start": "Start Journey",
+    "error": "Name cannot be empty"
+  },
   "cameraPosition": {
     "title": "Camera Position",
     "x": "X: {{value}}",
