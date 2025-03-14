@@ -3,23 +3,17 @@ import { Camera } from "../core/Camera";
 import { CollisionUtils } from "./npcs/CollisionUtils";
 import { NpcManager } from "./npcs/NpcManager";
 
-export interface IPlayerController {
-  update(deltaTime?: number): void;
-  getPosition(): THREE.Vector3;
-  checkCollisions(): void;
-  setNpcManager(npcManager: NpcManager): void;
-}
-
-export class PlayerController implements IPlayerController {
+export class PlayerController {
   private camera: Camera;
   private perspectiveCamera: THREE.PerspectiveCamera;
   private handleKeyDown: (event: KeyboardEvent) => void = () => {};
   private handleKeyUp: (event: KeyboardEvent) => void = () => {};
   private movementSpeed = 10;
+  private strafeSpeed = 8; // Slightly slower than forward/backward movement
   private rotationSpeed = 1;
-  private pitchSpeed = 0.5; // Slower pitch rotation for more natural movement
-  private fovAdjustSpeed = 20; // Degrees per second for FOV adjustment
-  private npcManager: NpcManager | null = null; // Reference to the NPC manager for finding nearby NPCs
+  private pitchSpeed = 0.5;
+  private fovAdjustSpeed = 20;
+  private npcManager: NpcManager | null = null;
 
   // Input state
   private keys: {
@@ -27,10 +21,12 @@ export class PlayerController implements IPlayerController {
     s: boolean;
     a: boolean;
     d: boolean;
+    arrowleft: boolean;
+    arrowright: boolean;
     arrowup: boolean;
     arrowdown: boolean;
-    plus: boolean; // For increasing FOV
-    minus: boolean; // For decreasing FOV
+    plus: boolean;
+    minus: boolean;
   };
 
   constructor(camera: Camera) {
@@ -42,6 +38,8 @@ export class PlayerController implements IPlayerController {
       s: false,
       a: false,
       d: false,
+      arrowleft: false,
+      arrowright: false,
       arrowup: false,
       arrowdown: false,
       plus: false,
@@ -52,9 +50,6 @@ export class PlayerController implements IPlayerController {
     this.setupInputListeners();
   }
 
-  /**
-   * Set the NPC manager for efficient collision detection
-   */
   public setNpcManager(npcManager: NpcManager): void {
     this.npcManager = npcManager;
   }
@@ -77,6 +72,12 @@ export class PlayerController implements IPlayerController {
         case "d":
         case "ㅇ":
           this.keys.d = true;
+          break;
+        case "arrowleft":
+          this.keys.arrowleft = true;
+          break;
+        case "arrowright":
+          this.keys.arrowright = true;
           break;
         case "arrowup":
           this.keys.arrowup = true;
@@ -113,6 +114,12 @@ export class PlayerController implements IPlayerController {
         case "ㅇ":
           this.keys.d = false;
           break;
+        case "arrowleft":
+          this.keys.arrowleft = false;
+          break;
+        case "arrowright":
+          this.keys.arrowright = false;
+          break;
         case "arrowup":
           this.keys.arrowup = false;
           break;
@@ -120,11 +127,11 @@ export class PlayerController implements IPlayerController {
           this.keys.arrowdown = false;
           break;
         case "+":
-        case "=": // Same key on most keyboards
+        case "=":
           this.keys.plus = false;
           break;
         case "-":
-        case "_": // Same key on most keyboards
+        case "_":
           this.keys.minus = false;
           break;
       }
@@ -141,6 +148,7 @@ export class PlayerController implements IPlayerController {
 
   public update(deltaTime: number = 1): void {
     let movementDistance = 0;
+    let strafeDistance = 0;
 
     // Apply movement based on keys pressed
     if (this.keys.w) {
@@ -153,18 +161,29 @@ export class PlayerController implements IPlayerController {
       movementDistance = -this.movementSpeed * deltaTime;
     }
 
-    // Apply rotation (yaw) - rotation around the up vector
+    // Apply strafe movement
     if (this.keys.a) {
+      // Strafe left
+      strafeDistance = -this.strafeSpeed * deltaTime;
+    }
+
+    if (this.keys.d) {
+      // Strafe right
+      strafeDistance = this.strafeSpeed * deltaTime;
+    }
+
+    // Apply left/right rotation (yaw)
+    if (this.keys.arrowleft) {
       // Rotate left
       this.camera.rotateYaw(this.rotationSpeed * deltaTime);
     }
 
-    if (this.keys.d) {
+    if (this.keys.arrowright) {
       // Rotate right
       this.camera.rotateYaw(-this.rotationSpeed * deltaTime);
     }
 
-    // Apply pitch rotation - looking up and down
+    // Apply up/down rotation (pitch) - looking up and down
     if (this.keys.arrowup) {
       // Look up (positive angle to look up)
       this.camera.rotatePitch(this.pitchSpeed * deltaTime);
@@ -186,15 +205,22 @@ export class PlayerController implements IPlayerController {
       this.camera.adjustFOV(this.fovAdjustSpeed * deltaTime);
     }
 
-    // If there's movement to apply, use the Camera's moveOnPlanet method
-    // Check for collisions with nearby NPCs after movement
+    // Apply movements
+    const originalPosition = this.perspectiveCamera.position.clone();
 
+    // First move forward/backward
     if (movementDistance !== 0) {
-      const originalPosition = this.perspectiveCamera.position.clone();
       this.camera.moveOnPlanet(movementDistance);
-      if (this.checkCollisions()) {
-        this.perspectiveCamera.position.copy(originalPosition);
-      }
+    }
+
+    // Then strafe
+    if (strafeDistance !== 0) {
+      this.camera.strafeOnPlanet(strafeDistance);
+    }
+
+    // Check for collisions after movement
+    if (this.checkCollisions()) {
+      this.perspectiveCamera.position.copy(originalPosition);
     }
   }
 
@@ -203,17 +229,13 @@ export class PlayerController implements IPlayerController {
    * Now using the optimized nearby check for better performance
    */
   public checkCollisions(): boolean {
-    // If we don't have an NPC manager, we can't check for collisions
     if (!this.npcManager) return false;
 
-    // Get only nearby NPCs for collision checking
     const nearbyNpcs = this.npcManager.getNearbyNpcs(
       this.perspectiveCamera.position
     );
 
-    // Check collision with each nearby NPC
     for (const npc of nearbyNpcs) {
-      // Use the CollisionUtils to check if player is colliding with this NPC
       if (CollisionUtils.checkCollision(this.perspectiveCamera, npc)) {
         return true;
       }

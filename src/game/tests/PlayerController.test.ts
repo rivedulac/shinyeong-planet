@@ -138,7 +138,89 @@ describe("PlayerController", () => {
     });
   });
 
-  describe("Rotate player", () => {
+  describe("Strafe player", () => {
+    it("should strafe left when A key is pressed", () => {
+      const originalPosition = playerController.getPosition();
+
+      // Simulate A key press
+      const mockEvent = new KeyboardEvent("keydown", { key: "a" });
+
+      // Execute the keydown handler
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      // Update with a delta time of 1 second
+      playerController.update(1);
+
+      // Check that the player moved sideways
+      expect(playerController.getPosition()).not.toEqual(originalPosition);
+    });
+
+    it("should strafe right when D key is pressed", () => {
+      const originalPosition = playerController.getPosition();
+
+      // Simulate D key press
+      const mockEvent = new KeyboardEvent("keydown", { key: "d" });
+
+      // Execute the keydown handler
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      // Update with a delta time of 1 second
+      playerController.update(1);
+
+      // Check that the player moved sideways
+      expect(playerController.getPosition()).not.toEqual(originalPosition);
+    });
+  });
+
+  describe("Rotate (yaw) player", () => {
+    it("should rotate left when left arrow key is pressed", () => {
+      const rotateSpy = vi.spyOn(camera, "rotateYaw");
+
+      const mockEvent = new KeyboardEvent("keydown", { key: "ArrowLeft" });
+
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      playerController.update(1);
+
+      // Check that rotateYaw was called with a positive value (rotating left)
+      expect(rotateSpy).toHaveBeenCalledWith(expect.any(Number));
+      const callValue = rotateSpy.mock.calls[0][0];
+      expect(callValue).toBeGreaterThan(0);
+    });
+
+    it("should rotate right when right arrow key is pressed", () => {
+      const rotateSpy = vi.spyOn(camera, "rotateYaw");
+
+      const mockEvent = new KeyboardEvent("keydown", { key: "ArrowRight" });
+
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      playerController.update(1);
+
+      // Check that rotateYaw was called with a negative value (rotating right)
+      expect(rotateSpy).toHaveBeenCalledWith(expect.any(Number));
+      const callValue = rotateSpy.mock.calls[0][0];
+      expect(callValue).toBeLessThan(0);
+    });
+  });
+
+  describe("Rotate (pitch) player", () => {
     it("should look up when arrow up key is pressed", () => {
       const rotatePitchSpy = vi.spyOn(camera, "rotatePitch");
 
@@ -176,6 +258,53 @@ describe("PlayerController", () => {
       expect(rotatePitchSpy).toHaveBeenCalledWith(expect.any(Number));
       const callValue = rotatePitchSpy.mock.calls[0][0];
       expect(callValue).toBeLessThan(0);
+    });
+  });
+
+  describe("Simultaneous Movements", () => {
+    it("should support simultaneous forward movement and strafing", () => {
+      const originalPosition = playerController.getPosition();
+
+      // Simulate W and A key presses simultaneously
+      const wEvent = new KeyboardEvent("keydown", { key: "w" });
+      const aEvent = new KeyboardEvent("keydown", { key: "a" });
+
+      if (keydownHandler) {
+        keydownHandler(wEvent);
+        keydownHandler(aEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      playerController.update(1);
+
+      // Position should change
+      expect(playerController.getPosition()).not.toEqual(originalPosition);
+    });
+
+    it("should support simultaneous rotation and movement", () => {
+      const originalPosition = playerController.getPosition();
+
+      // Simulate W and ArrowLeft key presses simultaneously
+      const wEvent = new KeyboardEvent("keydown", { key: "w" });
+      const leftEvent = new KeyboardEvent("keydown", { key: "ArrowLeft" });
+
+      if (keydownHandler) {
+        keydownHandler(wEvent);
+        keydownHandler(leftEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      const rotateSpy = vi.spyOn(camera, "rotateYaw");
+
+      playerController.update(1);
+
+      // Position should change
+      expect(playerController.getPosition()).not.toEqual(originalPosition);
+
+      // Rotation should have occurred
+      expect(rotateSpy).toHaveBeenCalledWith(expect.any(Number));
     });
   });
 

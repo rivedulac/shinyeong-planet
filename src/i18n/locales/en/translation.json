@@ -1,13 +1,5 @@
 {
   "gameName": "Shinyeong Planet",
-  "playerName": {
-    "title": "Welcome to Shinyeong Planet",
-    "enterName": "Please enter your name:",
-    "placeholder": "Your name here",
-    "start": "Start Journey",
-    "error": "Name cannot be empty",
-    "display": "Explorer: {{name}}"
-  },
   "cameraPosition": {
     "title": "Camera Position",
     "x": "X: {{value}}",
@@ -21,8 +13,10 @@
     "title": "Controls:",
     "moveForward": "W - Move Forward",
     "moveBackward": "S - Move Backward",
-    "rotateLeft": "A - Rotate Left",
-    "rotateRight": "D - Rotate Right",
+    "strafeLeft": "A - Strafe Left",
+    "strafeRight": "D - Strafe Right",
+    "rotateLeft": "← - Rotate Left",
+    "rotateRight": "→ - Rotate Right",
     "lookUp": "↑ - Look Up",
     "lookDown": "↓ - Look Down",
     "zoomIn": "+ - Zoom In (Decrease FOV)",

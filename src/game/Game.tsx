@@ -229,6 +229,8 @@ const Game: React.FC = () => {
         {t("controls.title")}
         <div>{t("controls.moveForward")}</div>
         <div>{t("controls.moveBackward")}</div>
+        <div>{t("controls.strafeLeft")}</div>
+        <div>{t("controls.strafeRight")}</div>
         <div>{t("controls.rotateLeft")}</div>
         <div>{t("controls.rotateRight")}</div>
         <div>{t("controls.lookUp")}</div>
