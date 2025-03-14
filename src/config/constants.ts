@@ -46,3 +46,24 @@ export const DEFAULT_PERSON_CONVERSTAION: IConversation = {
   ],
   icon: "👤",
 };
+
+export const VIRTUAL_CONTROLS_MARGIN = "20px";
+export const VIRTUAL_CONTROLS_GROUP_WIDTH = "160px";
+export const VIRTUAL_CONTROLS_GROUP_HEIGHT = "160px";
+export const VIRTUAL_CONTROLS_BUTTON_SIZE = {
+  small: { width: "40px", height: "40px", fontSize: "18px" },
+  medium: { width: "60px", height: "60px", fontSize: "24px" },
+  large: { width: "80px", height: "80px", fontSize: "30px" },
+};
+export const VIRTUAL_CONTROLS_GROUP_POSITION = {
+  center: { top: "50px", left: "70px" },
+  up: { top: "0", left: "70px" },
+  down: { top: "100px", left: "70px" },
+  left: { top: "50px", left: "20px" },
+  right: { top: "50px", left: "120px" },
+};
+export const VIRTUAL_CONTROL_BUTTON_COLOR = {
+  pressed: "rgba(233, 69, 96, 0.8)",
+  default: "rgba(40, 40, 60, 0.6)",
+  center: "rgba(255, 255, 255, 1.0)",
+};

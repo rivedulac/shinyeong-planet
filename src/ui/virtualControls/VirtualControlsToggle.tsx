@@ -1,3 +1,4 @@
+import { VIRTUAL_CONTROLS_MARGIN } from "@/config/constants";
 import React from "react";
 
 interface VirtualControlsToggleProps {
@@ -18,9 +19,10 @@ const VirtualControlsToggle: React.FC<VirtualControlsToggleProps> = ({
       }}
       style={{
         position: "absolute",
-        top: "20px",
-        right: "20px",
+        top: VIRTUAL_CONTROLS_MARGIN,
+        right: VIRTUAL_CONTROLS_MARGIN,
         padding: "8px 12px",
+        width: "230px",
         backgroundColor: isEnabled
           ? "rgba(83, 52, 131, 0.8)"
           : "rgba(40, 40, 60, 0.8)",

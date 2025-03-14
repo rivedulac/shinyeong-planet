@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-
+import {
+  VIRTUAL_CONTROL_BUTTON_COLOR,
+  VIRTUAL_CONTROLS_BUTTON_SIZE,
+} from "@/config/constants";
 export interface VirtualControlButtonProps {
   label: string;
   onTouchStart: () => void;
@@ -23,19 +26,12 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
   position,
   size = "medium",
   shape = "circle",
-  color = "rgba(40, 40, 60, 0.6)",
-  pressedColor = "rgba(233, 69, 96, 0.8)",
+  color = VIRTUAL_CONTROL_BUTTON_COLOR.default,
+  pressedColor = VIRTUAL_CONTROL_BUTTON_COLOR.pressed,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
 
-  // Determine size dimensions
-  const sizeMap = {
-    small: { width: "40px", height: "40px", fontSize: "18px" },
-    medium: { width: "60px", height: "60px", fontSize: "24px" },
-    large: { width: "80px", height: "80px", fontSize: "30px" },
-  };
-
-  const dimensions = sizeMap[size];
+  const dimensions = VIRTUAL_CONTROLS_BUTTON_SIZE[size];
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault(); // Prevent default behavior
