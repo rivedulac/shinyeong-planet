@@ -185,7 +185,7 @@ describe("useMobileDetect", () => {
     });
 
     // Capture the resize handler
-    let resizeHandler: () => void;
+    let resizeHandler = () => {};
     window.addEventListener = vi.fn((event, handler) => {
       if (event === "resize") {
         resizeHandler = handler;
