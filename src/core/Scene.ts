@@ -42,10 +42,13 @@ export class Scene {
   }
 
   public setup() {
-    this.setBackground(undefined, this.loadTexture(backgroundTexturePath));
+    this.setBackground(new THREE.Color(0x00001a));
     this.setPlanet(undefined, this.loadTexture(planetTexturePath));
     this.addGridHelper();
     this.addLights();
+
+    const starfield = this.createStarfield();
+    this.scene.add(starfield);
   }
 
   public loadTexture(path: string) {
@@ -179,6 +182,62 @@ export class Scene {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(5, 10, 7.5);
     this.scene.add(directionalLight);
+  }
+
+  public createStarfield(): THREE.Points {
+    const starsGeometry = new THREE.BufferGeometry();
+    const starCount = 5000; // Adjust number of stars as needed
+
+    const positions = new Float32Array(starCount * 3);
+    const colors = new Float32Array(starCount * 3);
+
+    const radius = 500; // Large radius to encompass the entire scene
+
+    for (let i = 0; i < starCount; i++) {
+      // Random position within a sphere
+      const phi = Math.random() * Math.PI * 2;
+      const theta = Math.acos(1 - 2 * Math.random());
+      const r = radius * Math.cbrt(Math.random());
+
+      const x = r * Math.sin(theta) * Math.cos(phi);
+      const y = r * Math.sin(theta) * Math.sin(phi);
+      const z = r * Math.cos(theta);
+
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+
+      // Star colors: mostly white with some variation
+      const color = new THREE.Color();
+      color.setHSL(
+        Math.random(), // Random hue
+        0.5, // Moderate saturation
+        0.7 + Math.random() * 0.3 // Varied lightness
+      );
+
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
+    }
+
+    starsGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+    starsGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+    const starsMaterial = new THREE.PointsMaterial({
+      size: 0.5, // Size of stars
+      vertexColors: true, // Use the color attribute
+      blending: THREE.AdditiveBlending, // Make stars glow
+      transparent: true,
+      depthWrite: false,
+    });
+
+    const starfield = new THREE.Points(starsGeometry, starsMaterial);
+    starfield.name = "starfield"; // For easy identification
+
+    return starfield;
   }
 
   public destory() {

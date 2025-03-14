@@ -56,8 +56,8 @@ describe("Scene", () => {
     scene.setup();
 
     // Check that add was called appropriate number of times
-    // Planet, grid helper, ambient light, directional light
-    expect(addSpy).toHaveBeenCalledTimes(4);
+    // Planet, grid helper, ambient light, directional light, starfield
+    expect(addSpy).toHaveBeenCalledTimes(5);
   });
 
   it("should load texture", () => {
