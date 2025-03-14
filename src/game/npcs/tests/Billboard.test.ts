@@ -2,7 +2,11 @@ import { describe, it, expect } from "vitest";
 import { Billboard } from "../Billboard";
 import { NpcType } from "../INpc";
 import * as THREE from "three";
-import { PLANET_RADIUS, PLANET_CENTER } from "../../../config/constants";
+import {
+  PLANET_RADIUS,
+  PLANET_CENTER,
+  DEFAULT_BILLBOARD_CONVERSTAION,
+} from "../../../config/constants";
 
 describe("Billboard NPC", () => {
   it("should create a billboard with correct properties", () => {
@@ -13,6 +17,7 @@ describe("Billboard NPC", () => {
     // Check ID and type
     expect(billboard.getId()).toBe(id);
     expect(billboard.getType()).toBe(NpcType.Billboard);
+    expect(billboard.getConversation()).toBe(DEFAULT_BILLBOARD_CONVERSTAION);
 
     // Check mesh creation
     const mesh = billboard.getMesh();

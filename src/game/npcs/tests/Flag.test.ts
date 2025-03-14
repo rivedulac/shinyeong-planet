@@ -2,7 +2,11 @@ import { describe, it, expect } from "vitest";
 import { Flag } from "../Flag";
 import { NpcType } from "../INpc";
 import * as THREE from "three";
-import { PLANET_RADIUS, PLANET_CENTER } from "../../../config/constants";
+import {
+  PLANET_RADIUS,
+  PLANET_CENTER,
+  DEFAULT_FLAG_CONVERSTAION,
+} from "../../../config/constants";
 
 describe("Flag NPC", () => {
   it("should create a flag with correct properties", () => {
@@ -15,6 +19,7 @@ describe("Flag NPC", () => {
     // Check ID and type
     expect(flag.getId()).toBe(id);
     expect(flag.getType()).toBe(NpcType.Flag);
+    expect(flag.getConversation()).toBe(DEFAULT_FLAG_CONVERSTAION);
 
     // Check mesh creation
     const mesh = flag.getMesh();

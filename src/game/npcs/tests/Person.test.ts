@@ -2,7 +2,11 @@ import { describe, it, expect } from "vitest";
 import { Person } from "../Person";
 import { NpcType } from "../INpc";
 import * as THREE from "three";
-import { PLANET_RADIUS, PLANET_CENTER } from "../../../config/constants";
+import {
+  PLANET_RADIUS,
+  PLANET_CENTER,
+  DEFAULT_PERSON_CONVERSTAION,
+} from "../../../config/constants";
 
 describe("Person NPC", () => {
   it("should create a person with correct properties", () => {
@@ -14,6 +18,7 @@ describe("Person NPC", () => {
     // Check ID and type
     expect(person.getId()).toBe(id);
     expect(person.getType()).toBe(NpcType.Person);
+    expect(person.getConversation()).toBe(DEFAULT_PERSON_CONVERSTAION);
 
     // Check mesh creation
     const mesh = person.getMesh();

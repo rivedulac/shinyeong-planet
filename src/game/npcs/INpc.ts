@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { IConversation } from "./IConversation";
 
 /**
  * Interface for all NPC types in the game
@@ -36,13 +37,31 @@ export interface INpc {
    * Get the collision radius of this NPC
    */
   getCollisionRadius(): number;
+
+  /**
+   * Get conversation data for this NPC
+   * If not implemented, default conversation data will be used based on NPC type
+   */
+  getConversation?(): IConversation;
+
+  /**
+   * Set conversation data for this NPC
+   * @param conversation The conversation data to set
+   */
+  setConversation?(conversation: IConversation): void;
+
+  /**
+   * Get custom info about this NPC to display in the conversation
+   * This is specific to each NPC type
+   */
+  getInfo?(): Record<string, any>;
 }
 
 /**
  * Types of NPCs in the game
  */
 export enum NpcType {
-  Billboard = "billboard",
-  Flag = "flag",
-  Person = "person",
+  Billboard = "Billboard",
+  Flag = "Flag",
+  Person = "Person",
 }

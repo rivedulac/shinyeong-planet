@@ -4,7 +4,9 @@ import {
   PLANET_CENTER,
   PLANET_RADIUS,
   FLAG_RADIUS,
+  DEFAULT_FLAG_CONVERSTAION,
 } from "../../config/constants";
+import { IConversation } from "./IConversation";
 
 /**
  * Flag NPC - represents a country flag with location, year, and description
@@ -14,7 +16,7 @@ export class Flag implements INpc {
   private mesh: THREE.Group;
   private country: string;
   private description: string;
-
+  private conversation: IConversation;
   private collisionRadius: number;
 
   /**
@@ -24,17 +26,20 @@ export class Flag implements INpc {
    * @param location The city/state name
    * @param year The year of experience
    * @param description Short description text
+   * @param conversation The conversation data to set
    */
   constructor(
     id: string,
     country: string = "🇺🇸",
-    description: string = "Internship"
+    description: string = "Internship",
+    conversation: IConversation = DEFAULT_FLAG_CONVERSTAION
   ) {
     this.id = id;
     this.country = country;
     this.description = description;
     this.collisionRadius = FLAG_RADIUS;
     this.mesh = this.createFlagMesh();
+    this.conversation = conversation;
   }
 
   public getId(): string {
@@ -47,6 +52,14 @@ export class Flag implements INpc {
 
   public getMesh(): THREE.Object3D {
     return this.mesh;
+  }
+
+  public getConversation(): IConversation {
+    return this.conversation;
+  }
+
+  public setConversation(conversation: IConversation): void {
+    this.conversation = conversation;
   }
 
   /** Position the flag on the planet surface */

@@ -4,7 +4,9 @@ import {
   PLANET_CENTER,
   PLANET_RADIUS,
   PERSON_RADIUS,
+  DEFAULT_PERSON_CONVERSTAION,
 } from "../../config/constants";
+import { IConversation } from "./IConversation";
 
 /**
  * Person NPC - represents a human character on the planet
@@ -14,17 +16,23 @@ export class Person implements INpc {
   private mesh: THREE.Group;
   private name: string;
   private collisionRadius: number;
-
+  private conversation: IConversation;
   /**
    * Create a new Person NPC
    * @param id Unique identifier for this NPC
    * @param name Name of the person
+   * @param conversation The conversation data to set
    */
-  constructor(id: string, name: string) {
+  constructor(
+    id: string,
+    name: string,
+    conversation: IConversation = DEFAULT_PERSON_CONVERSTAION
+  ) {
     this.id = id;
     this.name = name;
     this.collisionRadius = PERSON_RADIUS;
     this.mesh = this.createPersonMesh();
+    this.conversation = conversation;
   }
 
   public getId(): string {
@@ -37,6 +45,14 @@ export class Person implements INpc {
 
   public getMesh(): THREE.Object3D {
     return this.mesh;
+  }
+
+  public getConversation(): IConversation {
+    return this.conversation;
+  }
+
+  public setConversation(conversation: IConversation): void {
+    this.conversation = conversation;
   }
 
   /** Position the person on the planet surface */

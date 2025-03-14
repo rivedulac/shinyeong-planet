@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import { INpc, NpcType } from "./INpc";
+import { IConversation } from "./IConversation";
 import {
   BILLBOARD_RADIUS,
+  DEFAULT_BILLBOARD_CONVERSTAION,
   PLANET_CENTER,
   PLANET_RADIUS,
 } from "../../config/constants";
@@ -13,7 +15,7 @@ export class Billboard implements INpc {
   private id: string;
   private mesh: THREE.Group;
   private title: string;
-
+  private conversation: IConversation;
   private collisionRadius: number;
 
   /**
@@ -21,11 +23,16 @@ export class Billboard implements INpc {
    * @param id Unique identifier for this NPC
    * @param title Text to display on the billboard
    */
-  constructor(id: string, title: string = "Resume") {
+  constructor(
+    id: string,
+    title: string = "Resume",
+    conversation: IConversation = DEFAULT_BILLBOARD_CONVERSTAION
+  ) {
     this.id = id;
     this.title = title;
     this.collisionRadius = BILLBOARD_RADIUS;
     this.mesh = this.createBillboardMesh();
+    this.conversation = conversation;
   }
 
   public getId(): string {
@@ -38,6 +45,23 @@ export class Billboard implements INpc {
 
   public getMesh(): THREE.Object3D {
     return this.mesh;
+  }
+
+  public getConversation(): IConversation {
+    return this.conversation;
+  }
+
+  public setConversation(conversation: IConversation): void {
+    this.conversation = conversation;
+  }
+
+  /**
+   * Get billboard information
+   */
+  public getInfo(): { title: string } {
+    return {
+      title: this.title,
+    };
   }
 
   /** Put the billboard to stand on the planet */
