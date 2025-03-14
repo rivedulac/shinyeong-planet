@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { INpc } from "./INpc";
 import { Billboard } from "./Billboard";
 import { Flag } from "./Flag";
+import { Person } from "./Person";
 import { NEARBY_DISTANCE } from "@/config/constants";
 
 export class NpcManager {
@@ -31,10 +32,18 @@ export class NpcManager {
     // Create and add a flag NPC
     const flag = new Flag("experience-usa", "🇺🇸", "2020 Internship");
 
-    // Position the flag at latitude 0 (equator), longitude 0 (prime meridian)
+    // Position the flag at latitude 0.2, longitude 0.5
     flag.setPositionOnPlanet(0.2, 0.5);
 
     this.addNpc(flag);
+
+    // Create and add a person NPC
+    const person = new Person("guide-person", "Jane");
+
+    // Position the person at a different place on the planet
+    person.setPositionOnPlanet(0.3, -0.5);
+
+    this.addNpc(person);
   }
 
   /**
