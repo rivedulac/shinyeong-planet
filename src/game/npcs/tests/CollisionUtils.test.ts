@@ -147,4 +147,19 @@ describe("CollisionUtils", () => {
       expect(CollisionUtils.checkCollision(player, npc)).toBe(false);
     });
   });
+
+  describe("checkInteraction", () => {
+    it("should return true when NPCs are interacting", () => {
+      npc.getMesh().position.set(3, 0, 0);
+      expect(
+        CollisionUtils.checkInteraction(player.position, npc.getMesh().position)
+      ).toBe(true);
+    });
+
+    it("should return false when NPCs are not interacting", () => {
+      expect(
+        CollisionUtils.checkInteraction(player.position, npc.getMesh().position)
+      ).toBe(false);
+    });
+  });
 });

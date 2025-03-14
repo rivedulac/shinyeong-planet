@@ -12,7 +12,8 @@ export const PLAYER_RADIUS = 3;
 export const FLAG_RADIUS = 2;
 export const BILLBOARD_RADIUS = 3;
 export const PERSON_RADIUS = 2;
-export const NEARBY_DISTANCE = 15;
+export const NEARBY_DISTANCE = 10;
+export const INTERACTION_DISTANCE = 10;
 
 export const DEFAULT_BILLBOARD_CONVERSTAION: IConversation = {
   title: "resume",

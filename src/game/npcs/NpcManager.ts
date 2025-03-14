@@ -4,10 +4,14 @@ import { Billboard } from "./Billboard";
 import { Flag } from "./Flag";
 import { Person } from "./Person";
 import { NEARBY_DISTANCE } from "@/config/constants";
+import { CollisionUtils } from "./CollisionUtils";
 
 export class NpcManager {
   private npcs: Map<string, INpc> = new Map();
   private scene: THREE.Scene;
+  private interactingNpc: INpc | null = null;
+  private onStartConversation: ((npc: INpc) => void) | null = null;
+  private onEndConversation: (() => void) | null = null;
 
   /**
    * Create a new NPC Manager
@@ -90,6 +94,10 @@ export class NpcManager {
     return Array.from(this.npcs.values());
   }
 
+  public getInteractingNpc(): INpc | null {
+    return this.interactingNpc;
+  }
+
   /**
    * Find NPCs that are within a certain distance of a position
    * This helps optimize collision detection by only checking nearby NPCs
@@ -124,6 +132,74 @@ export class NpcManager {
     }
 
     return nearbyNpcs;
+  }
+
+  /**
+   * Set callback for when player starts conversation with an NPC
+   * @param callback The callback function to call when starting a conversation
+   */
+  public setOnStartConversation(callback: (npc: INpc) => void): void {
+    this.onStartConversation = callback;
+  }
+
+  /**
+   * Set callback for when player ends conversation with an NPC
+   * @param callback The callback function to call when ending a conversation
+   */
+  public setOnEndConversation(callback: () => void): void {
+    this.onEndConversation = callback;
+  }
+
+  /**
+   * Check if player is interacting with any NPCs
+   * Start or end conversations based on proximity
+   * @param playerPosition The position of the player
+   */
+  public checkInteractions(position: THREE.Vector3): void {
+    // Get nearby NPCs
+    const nearbyNpcs = this.getNearbyNpcs(position);
+
+    // Find the closest NPC that player can interact with
+    let closestNpc: INpc | null = null;
+    let closestDistance = Infinity;
+
+    for (const npc of nearbyNpcs) {
+      // Check if player is close enough to interact
+      if (CollisionUtils.checkInteraction(position, npc.getMesh().position)) {
+        // Calculate distance
+        const distance = position.distanceTo(npc.getMesh().position);
+
+        // Keep track of the closest NPC
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestNpc = npc;
+        }
+      }
+    }
+
+    // If we found an NPC to interact with and it's different from the current one
+    if (closestNpc && closestNpc !== this.interactingNpc) {
+      // End current conversation if there is one
+      if (this.interactingNpc && this.onEndConversation) {
+        this.onEndConversation();
+      }
+
+      // Start new conversation
+      this.interactingNpc = closestNpc;
+
+      if (this.onStartConversation) {
+        this.onStartConversation(closestNpc);
+      }
+    }
+    // If we're not close to any NPC but we were interacting with one before
+    else if (!closestNpc && this.interactingNpc) {
+      // End current conversation
+      if (this.onEndConversation) {
+        this.onEndConversation();
+      }
+
+      this.interactingNpc = null;
+    }
   }
 
   /**

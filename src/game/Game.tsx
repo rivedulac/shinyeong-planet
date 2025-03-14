@@ -8,9 +8,13 @@ import PlayerNameInput from "../ui/PlayerNameInput";
 import PlayerNameDisplay from "../ui/PlayerNameDisplay";
 import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
+import ConversationModal from "../ui/ConversationModal";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { NpcManager } from "./npcs/NpcManager";
+import { IConversation } from "./npcs/IConversation";
+import { getConversationForNpc } from "./npcs/IConversation";
+import { INpc } from "./npcs/INpc";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -33,6 +37,11 @@ const Game: React.FC = () => {
   // State for name editing modal
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
+  // State for conversation
+  const [currentConversation, setCurrentConversation] =
+    useState<IConversation | null>(null);
+  const [isConversationOpen, setIsConversationOpen] = useState<boolean>(false);
+
   const handleNameSubmit = (name: string) => {
     setPlayerName(name);
     setGameStarted(true);
@@ -51,6 +60,20 @@ const Game: React.FC = () => {
     setIsEditingName(false);
   };
 
+  // Function to start a conversation with an NPC
+  const startConversation = (conversation: IConversation) => {
+    setCurrentConversation(conversation);
+    setIsConversationOpen(true);
+  };
+
+  // Function to end the current conversation
+  const endConversation = () => {
+    setIsConversationOpen(false);
+    // Keep the conversation data for a moment before clearing it
+    // This prevents UI flicker during the closing animation if we had one
+    setTimeout(() => setCurrentConversation(null), 300);
+  };
+
   useEffect(() => {
     // Only initialize the game after player has entered their name
     if (!gameStarted) return;
@@ -65,6 +88,19 @@ const Game: React.FC = () => {
     // Create NPC manager and initialize NPCs
     const npcManager = new NpcManager(scene.getScene());
     npcManager.initializeDefaultNpcs();
+
+    // Set up conversation callbacks
+    npcManager.setOnStartConversation((npc: INpc) => {
+      // Get conversation data for this NPC
+      const conversation = getConversationForNpc(npc);
+      if (conversation) {
+        startConversation(conversation);
+      }
+    });
+
+    npcManager.setOnEndConversation(() => {
+      endConversation();
+    });
 
     // Pass the NPC manager to the player controller for optimized collision detection
     playerController.setNpcManager(npcManager);
@@ -88,6 +124,11 @@ const Game: React.FC = () => {
 
       // Update NPCs
       npcManager.update(deltaTime);
+
+      // Check for NPC interactions
+      npcManager.checkInteractions(
+        camera.getPerspectiveCamera().position.clone()
+      );
 
       // Update camera position state on each frame
       setCameraPosition(camera.getPerspectivePosition());
@@ -140,6 +181,15 @@ const Game: React.FC = () => {
           currentName={playerName || ""}
           onSave={handleSaveName}
           onCancel={handleCancelEdit}
+        />
+      )}
+
+      {/* Conversation Modal */}
+      {currentConversation && (
+        <ConversationModal
+          conversation={currentConversation}
+          isOpen={isConversationOpen}
+          onClose={endConversation}
         />
       )}
       <div

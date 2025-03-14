@@ -3,6 +3,8 @@ import { NpcManager } from "../NpcManager";
 import { Billboard } from "../Billboard";
 import * as THREE from "three";
 import { Flag } from "../Flag";
+import { Person } from "../Person";
+import { INTERACTION_DISTANCE } from "@/config/constants";
 
 describe("NpcManager", () => {
   let mockScene: THREE.Scene;
@@ -74,5 +76,37 @@ describe("NpcManager", () => {
 
     // Check that we have no NPCs left
     expect(npcManager.getAllNpcs().length).toBe(0);
+  });
+
+  it("should get nearby NPCs", () => {
+    const billboard = new Billboard("test-billboard");
+    const flag = new Flag("test-flag");
+    const person = new Person("test-person", "Jane Doe");
+    person.getMesh().position.set(INTERACTION_DISTANCE * 2, 0, 0);
+    npcManager.addNpc(billboard);
+    npcManager.addNpc(flag);
+    npcManager.addNpc(person);
+
+    const nearbyNpcs = npcManager.getNearbyNpcs(new THREE.Vector3(0, 0, 0));
+    expect(nearbyNpcs.length).toBe(2);
+    expect(nearbyNpcs).toContain(billboard);
+    expect(nearbyNpcs).toContain(flag);
+    expect(nearbyNpcs).not.toContain(person);
+  });
+
+  it("should check interactions with nearby NPCs", () => {
+    const billboard = new Billboard("test-billboard");
+    billboard.getMesh().position.set(INTERACTION_DISTANCE * 2, 0, 0);
+    const person = new Person("test-person", "Jane Doe");
+    person.getMesh().position.set(INTERACTION_DISTANCE, 0, 0);
+    npcManager.addNpc(billboard);
+    npcManager.addNpc(person);
+
+    npcManager.checkInteractions(new THREE.Vector3(0, 0, 0));
+    expect(npcManager.getInteractingNpc()).toBe(person);
+
+    billboard.getMesh().position.set(INTERACTION_DISTANCE * 0.5, 0, 0);
+    npcManager.checkInteractions(new THREE.Vector3(0, 0, 0));
+    expect(npcManager.getInteractingNpc()).toBe(billboard);
   });
 });

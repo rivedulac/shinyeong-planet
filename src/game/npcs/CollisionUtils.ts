@@ -1,6 +1,6 @@
 // CollisionUtils.ts - Utility functions for collision detection
 
-import { PLAYER_RADIUS } from "@/config/constants";
+import { PLAYER_RADIUS, INTERACTION_DISTANCE } from "@/config/constants";
 import { INpc } from "./INpc";
 import * as THREE from "three";
 
@@ -40,5 +40,19 @@ export class CollisionUtils {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Check if two NPCs are colliding
+   * @returns null if no collision, or collision data if colliding
+   */
+  static checkInteraction(
+    position1: THREE.Vector3,
+    position2: THREE.Vector3
+  ): boolean {
+    // Calculate displacement vector
+    const direction = this.calculateDirection(position1, position2);
+    const distance = direction.length();
+    return distance <= INTERACTION_DISTANCE;
   }
 }
