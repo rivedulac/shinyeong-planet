@@ -19,14 +19,15 @@ const VirtualControlsToggle: React.FC<VirtualControlsToggleProps> = ({
       }}
       style={{
         position: "absolute",
-        top: VIRTUAL_CONTROLS_MARGIN,
-        right: VIRTUAL_CONTROLS_MARGIN,
+        bottom: VIRTUAL_CONTROLS_MARGIN,
+        left: "43%",
         padding: "8px 12px",
-        width: "230px",
+        width: "270px",
         backgroundColor: isEnabled
           ? "rgba(83, 52, 131, 0.8)"
           : "rgba(40, 40, 60, 0.8)",
         color: "white",
+        justifyContent: "center",
         border: "1px solid rgba(233, 69, 96, 0.8)",
         borderRadius: "6px",
         fontFamily: "monospace",

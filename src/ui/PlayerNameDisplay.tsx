@@ -12,7 +12,7 @@ const PlayerNameDisplay: React.FC<PlayerNameDisplayProps> = ({ name }) => {
     <div
       style={{
         position: "absolute",
-        bottom: "20px",
+        top: "20px",
         left: "50%",
         transform: "translateX(-50%)",
         padding: "8px 15px",

@@ -24,8 +24,8 @@ const VirtualRotationControls: React.FC<VirtualRotationControlsProps> = ({
     <div
       style={{
         position: "absolute",
-        top: "240px", // Position below the move controls, which are at top: 80px
-        right: VIRTUAL_CONTROLS_MARGIN,
+        left: "60%",
+        bottom: VIRTUAL_CONTROLS_MARGIN,
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
         height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
         zIndex: 1000,

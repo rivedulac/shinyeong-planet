@@ -186,56 +186,73 @@ export class Scene {
 
   public createStarfield(): THREE.Points {
     const starsGeometry = new THREE.BufferGeometry();
-    const starCount = 5000; // Adjust number of stars as needed
+    const starCount = 5000;
 
     const positions = new Float32Array(starCount * 3);
     const colors = new Float32Array(starCount * 3);
 
-    const radius = 500; // Large radius to encompass the entire scene
+    const outerRadius = 500; // Outer boundary of star field
+    const innerRadius = PLANET_RADIUS * 2; // Minimum distance from planet
 
-    for (let i = 0; i < starCount; i++) {
+    let validStarsAdded = 0;
+    let attempts = 0;
+    const maxAttempts = starCount * 10; // Prevent infinite loop
+
+    while (validStarsAdded < starCount && attempts < maxAttempts) {
       // Random position within a sphere
       const phi = Math.random() * Math.PI * 2;
       const theta = Math.acos(1 - 2 * Math.random());
-      const r = radius * Math.cbrt(Math.random());
+      const r = outerRadius * Math.cbrt(Math.random());
 
       const x = r * Math.sin(theta) * Math.cos(phi);
       const y = r * Math.sin(theta) * Math.sin(phi);
       const z = r * Math.cos(theta);
 
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
+      // Check distance from planet center
+      const distanceFromCenter = Math.sqrt(x * x + y * y + z * z);
 
-      // Star colors: mostly white with some variation
-      const color = new THREE.Color();
-      color.setHSL(
-        Math.random(), // Random hue
-        0.5, // Moderate saturation
-        0.7 + Math.random() * 0.3 // Varied lightness
-      );
+      if (distanceFromCenter > innerRadius) {
+        positions[validStarsAdded * 3] = x;
+        positions[validStarsAdded * 3 + 1] = y;
+        positions[validStarsAdded * 3 + 2] = z;
 
-      colors[i * 3] = color.r;
-      colors[i * 3 + 1] = color.g;
-      colors[i * 3 + 2] = color.b;
+        // Star colors
+        const color = new THREE.Color();
+        color.setHSL(Math.random(), 0.5, 0.7 + Math.random() * 0.3);
+
+        colors[validStarsAdded * 3] = color.r;
+        colors[validStarsAdded * 3 + 1] = color.g;
+        colors[validStarsAdded * 3 + 2] = color.b;
+
+        validStarsAdded++;
+      }
+
+      attempts++;
     }
+
+    // Trim the arrays if we couldn't generate enough stars
+    const trimmedPositions = positions.slice(0, validStarsAdded * 3);
+    const trimmedColors = colors.slice(0, validStarsAdded * 3);
 
     starsGeometry.setAttribute(
       "position",
-      new THREE.BufferAttribute(positions, 3)
+      new THREE.BufferAttribute(trimmedPositions, 3)
     );
-    starsGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    starsGeometry.setAttribute(
+      "color",
+      new THREE.BufferAttribute(trimmedColors, 3)
+    );
 
     const starsMaterial = new THREE.PointsMaterial({
-      size: 0.5, // Size of stars
-      vertexColors: true, // Use the color attribute
-      blending: THREE.AdditiveBlending, // Make stars glow
+      size: 0.5,
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
       transparent: true,
       depthWrite: false,
     });
 
     const starfield = new THREE.Points(starsGeometry, starsMaterial);
-    starfield.name = "starfield"; // For easy identification
+    starfield.name = "starfield";
 
     return starfield;
   }

@@ -21,8 +21,8 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
     <div
       style={{
         position: "absolute",
-        top: "80px",
-        right: VIRTUAL_CONTROLS_MARGIN,
+        left: "30%",
+        bottom: VIRTUAL_CONTROLS_MARGIN,
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
         height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
         zIndex: 1000,

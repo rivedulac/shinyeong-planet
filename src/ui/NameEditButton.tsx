@@ -14,7 +14,7 @@ const NameEditButton: React.FC<NameEditButtonProps> = ({ onClick }) => {
       onClick={onClick}
       style={{
         position: "absolute",
-        bottom: "60px",
+        top: "60px",
         left: "50%",
         transform: "translateX(-50%)",
         padding: "5px 10px",

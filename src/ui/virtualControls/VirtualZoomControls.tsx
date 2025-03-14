@@ -21,8 +21,8 @@ const VirtualZoomControls: React.FC<VirtualZoomControlsProps> = ({
     <div
       style={{
         position: "absolute",
-        top: "360px",
-        right: VIRTUAL_CONTROLS_MARGIN,
+        bottom: VIRTUAL_CONTROLS_MARGIN,
+        left: "46%",
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
         height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
         zIndex: 1000,
