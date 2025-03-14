@@ -129,6 +129,54 @@ export class Camera {
   }
 
   /**
+   * Moves the camera sideways (strafing) on the planet surface
+   * @param distance Distance to strafe (positive for right, negative for left)
+   */
+  public strafeOnPlanet(distance: number): void {
+    // Skip if distance is effectively zero
+    if (Math.abs(distance) < EPSILON) return;
+
+    // Calculate the up vector and right vector
+    const upVector = this.calculateUpVector(this.camera.position);
+    const rightVector = this.calculateRightVector(this.camera.quaternion);
+
+    // Calculate the rotation axis (cross product of up and right)
+    const rotationAxis = new THREE.Vector3().crossVectors(
+      upVector,
+      rightVector
+    );
+
+    // Ensure rotation axis is valid
+    if (rotationAxis.lengthSq() < EPSILON) {
+      // Fallback to a default rotation axis if needed
+      rotationAxis.set(1, 0, 0);
+    }
+    rotationAxis.normalize();
+
+    // Calculate the angle of rotation based on distance and planet curvature
+    const angle = distance / (PLANET_RADIUS + FIRST_PERSON_HEIGHT);
+
+    // Create rotation quaternion
+    const rotationQuaternion = new THREE.Quaternion();
+    rotationQuaternion.setFromAxisAngle(rotationAxis, angle);
+
+    // Apply the rotation to the camera position
+    this.applyRotation(rotationQuaternion);
+
+    // Recalculate the up vector based on the new position
+    const newUpVector = this.calculateUpVector(this.camera.position);
+
+    // Update both the internal up vector and the camera's up vector
+    this.up.copy(newUpVector);
+    this.camera.up.copy(newUpVector);
+
+    // Reapply pitch if we had any
+    if (Math.abs(this.currentPitch) > EPSILON) {
+      this.applyStoredPitch();
+    }
+  }
+
+  /**
    * Rotates the camera around its up vector (yaw)
    * @param angle The angle to rotate in radians
    */
@@ -276,6 +324,38 @@ export class Camera {
     const upVector = new THREE.Vector3();
     upVector.subVectors(position, PLANET_CENTER).normalize();
     return upVector;
+  }
+
+  /**
+   * Calculate the right vector based on the current camera orientation
+   * This vector will be used for strafing movement
+   */
+  public calculateRightVector(quaternion: THREE.Quaternion): THREE.Vector3 {
+    // Create a right vector pointing perpendicular to the forward and up vectors
+    const right = new THREE.Vector3(1, 0, 0);
+    right.applyQuaternion(quaternion);
+
+    // Get the up vector for the current position
+    const upVector = this.calculateUpVector(this.camera.position);
+
+    // Project the right vector onto the tangent plane of the planet
+    const rightComponent = right.clone();
+    const upComponent = upVector.clone().multiplyScalar(right.dot(upVector));
+    rightComponent.sub(upComponent);
+
+    // If the projected right vector is too small (near poles), use a different approach
+    if (rightComponent.lengthSq() < EPSILON) {
+      // At poles, use a fallback right vector
+      const fallbackRight = new THREE.Vector3(0, 0, 1);
+      const fallbackRightComponent = fallbackRight.clone();
+      const fallbackUpComponent = upVector
+        .clone()
+        .multiplyScalar(fallbackRight.dot(upVector));
+      fallbackRightComponent.sub(fallbackUpComponent);
+      rightComponent.copy(fallbackRightComponent);
+    }
+
+    return rightComponent.normalize();
   }
 
   /** Projects a direction vector onto the tangent plane of the planet */

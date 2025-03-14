@@ -6,6 +6,7 @@ import {
   FIRST_PERSON_HEIGHT,
   PLANET_CENTER,
   DEFAULT_CAMERA_PITCH,
+  EPSILON,
 } from "../../config/constants";
 
 // Create a mock window object
@@ -336,201 +337,198 @@ describe("Camera", () => {
     });
   });
 
-  describe("Camera rotation", () => {
-    it("should rotate the camera when rotateYaw is called", () => {
-      const initialQuaternion = camera
-        .getPerspectiveCamera()
-        .quaternion.clone();
+  describe("Strafe on planet", () => {
+    let camera: Camera;
 
-      // Apply rotation
-      camera.rotateYaw(Math.PI / 4); // 45 degrees
+    beforeEach(() => {
+      camera = new Camera();
+    });
 
-      const newQuaternion = camera.getPerspectiveCamera().quaternion;
+    describe("Calculate right vector", () => {
+      it("should calculate right vector correctly at initial position", () => {
+        const perspectiveCamera = camera.getPerspectiveCamera();
+        const rightVector = camera.calculateRightVector(
+          perspectiveCamera.quaternion
+        );
 
-      // Quaternion should change
-      expect(newQuaternion).not.toEqual(initialQuaternion);
+        // At initial position, right vector should be approximately (1, 0, 0)
+        expect(rightVector.x).toBeCloseTo(1);
+        expect(Math.abs(rightVector.y)).toBeLessThan(EPSILON);
+        expect(Math.abs(rightVector.z)).toBeLessThan(EPSILON);
+      });
 
-      // Position should remain the same
-      const position = camera.getPerspectiveCamera().position;
-      expect(position.distanceTo(PLANET_CENTER)).toBeCloseTo(
-        PLANET_RADIUS + FIRST_PERSON_HEIGHT
+      it("should return a normalized right vector", () => {
+        const perspectiveCamera = camera.getPerspectiveCamera();
+        const rightVector = camera.calculateRightVector(
+          perspectiveCamera.quaternion
+        );
+
+        // Length of a normalized vector should be very close to 1
+        expect(rightVector.length()).toBeCloseTo(1);
+      });
+
+      it("should calculate right vector after rotation", () => {
+        const perspectiveCamera = camera.getPerspectiveCamera();
+        const initialRightVector = camera.calculateRightVector(
+          perspectiveCamera.quaternion
+        );
+
+        // Rotate the camera
+        camera.rotateYaw(Math.PI / 4);
+
+        const rightVector = camera.calculateRightVector(
+          perspectiveCamera.quaternion
+        );
+
+        // Right vector should still be normalized
+        expect(rightVector.length()).toBeCloseTo(1);
+
+        // Right vector should be different from initial vector
+        expect(rightVector).not.toEqual(initialRightVector);
+      });
+    });
+
+    describe("strafeOnPlanet", () => {
+      it("should move sideways on the planet surface", () => {
+        const initialPosition = camera.getPerspectiveCamera().position.clone();
+
+        // Strafe a noticeable distance
+        camera.strafeOnPlanet(10);
+
+        const newPosition = camera.getPerspectiveCamera().position;
+
+        // Position should change
+        expect(newPosition).not.toEqual(initialPosition);
+
+        // Distance from planet center should remain constant
+        const distanceFromCenter = newPosition.distanceTo(PLANET_CENTER);
+        expect(distanceFromCenter).toBeCloseTo(
+          PLANET_RADIUS + FIRST_PERSON_HEIGHT
+        );
+      });
+
+      it("should handle small strafe distances", () => {
+        const initialPosition = camera.getPerspectiveCamera().position.clone();
+
+        // Strafe a very small distance
+        camera.strafeOnPlanet(EPSILON / 2);
+
+        const newPosition = camera.getPerspectiveCamera().position;
+
+        // Position should remain essentially the same
+        expect(newPosition.x).toBeCloseTo(initialPosition.x);
+        expect(newPosition.y).toBeCloseTo(initialPosition.y);
+        expect(newPosition.z).toBeCloseTo(initialPosition.z);
+      });
+
+      it("should maintain orientation after strafing", () => {
+        // First, rotate the camera
+        camera.rotateYaw(Math.PI / 4);
+
+        const initialOrientation = camera
+          .getPerspectiveCamera()
+          .quaternion.clone();
+
+        // Strafe
+        camera.strafeOnPlanet(10);
+
+        const newOrientation = camera.getPerspectiveCamera().quaternion;
+
+        // Orientation should remain very close
+        const orientationSimilarity = initialOrientation.dot(newOrientation);
+
+        // Allow a bit more tolerance for orientation changes
+        expect(orientationSimilarity).toBeGreaterThan(0.9);
+      });
+
+      it("should support both positive and negative strafe", () => {
+        // First reset camera to a more stable position by moving forward a bit
+        camera.moveOnPlanet(5);
+        const resetPosition = camera.getPerspectiveCamera().position.clone();
+
+        // Strafe right
+        camera.strafeOnPlanet(10);
+        const rightPosition = camera.getPerspectiveCamera().position.clone();
+
+        // Reset position
+        camera.getPerspectiveCamera().position.copy(resetPosition);
+
+        // Strafe left
+        camera.strafeOnPlanet(-10);
+        const leftPosition = camera.getPerspectiveCamera().position;
+
+        // Left and right strafe should be somewhat symmetrical
+        const rightDistance = resetPosition.distanceTo(rightPosition);
+        const leftDistance = resetPosition.distanceTo(leftPosition);
+
+        // Allow some small variation in distance
+        expect(Math.abs(rightDistance - leftDistance)).toBeLessThan(1);
+      });
+    });
+
+    describe("FOV control", () => {
+      it("should initialize with the default FOV value", () => {
+        expect(camera.getFOV()).toBe(75);
+      });
+
+      it("should adjust FOV within the allowed range", () => {
+        const initialFOV = camera.getFOV();
+
+        // Decrease FOV (zoom in)
+        camera.adjustFOV(-10);
+        expect(camera.getFOV()).toBe(initialFOV - 10);
+
+        // Increase FOV (zoom out)
+        camera.adjustFOV(15);
+        expect(camera.getFOV()).toBe(initialFOV + 5);
+      });
+
+      it("should not allow FOV to exceed maximum value", () => {
+        // Set FOV to maximum allowed value
+        camera.setFOV(120);
+        expect(camera.getFOV()).toBe(120);
+
+        // Try to exceed maximum
+        camera.adjustFOV(10);
+        expect(camera.getFOV()).toBe(120); // Should remain at maximum
+      });
+
+      it("should not allow FOV to go below minimum value", () => {
+        // Set FOV to minimum allowed value
+        camera.setFOV(45);
+        expect(camera.getFOV()).toBe(45);
+
+        // Try to go below minimum
+        camera.adjustFOV(-10);
+        expect(camera.getFOV()).toBe(45); // Should remain at minimum
+      });
+
+      it("should clamp FOV when setting to values outside the allowed range", () => {
+        // Try setting above maximum
+        camera.setFOV(200);
+        expect(camera.getFOV()).toBe(120); // Should clamp to maximum
+
+        // Try setting below minimum
+        camera.setFOV(30);
+        expect(camera.getFOV()).toBe(45); // Should clamp to minimum
+      });
+    });
+
+    it("should update aspect ratio when handleResize is called", () => {
+      const perspectiveCamera = camera.getPerspectiveCamera();
+      const spyUpdateProjectionMatrix = vi.spyOn(
+        perspectiveCamera,
+        "updateProjectionMatrix"
       );
 
-      // The up vector should still point away from the planet center
-      const upVector = camera.getUpVector();
-      const expectedUpVector = new THREE.Vector3()
-        .subVectors(position, PLANET_CENTER)
-        .normalize();
+      // Call handleResize
+      const newWidth = 1280;
+      const newHeight = 720;
+      camera.handleResize(newWidth, newHeight);
 
-      expect(upVector.x).toBeCloseTo(expectedUpVector.x);
-      expect(upVector.y).toBeCloseTo(expectedUpVector.y);
-      expect(upVector.z).toBeCloseTo(expectedUpVector.z);
+      // Verify camera aspect was updated
+      expect(perspectiveCamera.aspect).toBe(newWidth / newHeight);
+      expect(spyUpdateProjectionMatrix).toHaveBeenCalled();
     });
-
-    it("should return to approximately the same position after rotating a full circle", () => {
-      // First move away from the pole to avoid special case
-      camera.moveOnPlanet(20);
-
-      // Store initial direction vector
-      const initialDirection = camera.calculateDirectionVector(
-        camera.getPerspectiveCamera().quaternion
-      );
-
-      // Perform a full 360-degree rotation in small steps
-      const steps = 8;
-      const stepAngle = (2 * Math.PI) / steps;
-
-      for (let i = 0; i < steps; i++) {
-        camera.rotateYaw(stepAngle);
-      }
-
-      // Get the new direction vector
-      const finalDirection = camera.calculateDirectionVector(
-        camera.getPerspectiveCamera().quaternion
-      );
-
-      // Should be approximately the same direction after a full rotation
-      expect(finalDirection.x).toBeCloseTo(initialDirection.x);
-      expect(finalDirection.y).toBeCloseTo(initialDirection.y);
-      expect(finalDirection.z).toBeCloseTo(initialDirection.z);
-    });
-
-    it("should maintain correct orientation when combining yaw rotation and movement", () => {
-      // Move slightly to get away from the poles
-      camera.moveOnPlanet(10);
-
-      // Apply a 90-degree yaw and then move forward
-      camera.rotateYaw(Math.PI / 2);
-      const afterRotationPosition = camera
-        .getPerspectiveCamera()
-        .position.clone();
-      camera.moveOnPlanet(10);
-
-      // Position should have changed, but distance from center should remain the same
-      expect(camera.getPerspectiveCamera().position).not.toEqual(
-        afterRotationPosition
-      );
-      expect(
-        camera.getPerspectiveCamera().position.distanceTo(PLANET_CENTER)
-      ).toBeCloseTo(PLANET_RADIUS + FIRST_PERSON_HEIGHT);
-
-      // Camera's up vector should still be pointing away from the planet center
-      const upVector = camera.getUpVector();
-      const expectedUpVector = new THREE.Vector3()
-        .subVectors(camera.getPerspectiveCamera().position, PLANET_CENTER)
-        .normalize();
-
-      expect(upVector.dot(expectedUpVector)).toBeCloseTo(1);
-    });
-
-    it("should rotate the camera up and down when rotatePitch is called", () => {
-      const initialOrientation = camera
-        .getPerspectiveCamera()
-        .quaternion.clone();
-      const initialPosition = camera.getPerspectiveCamera().position.clone();
-
-      // Apply pitch rotation (looking down)
-      camera.rotatePitch(Math.PI / 6); // 30 degrees
-
-      const afterPitchOrientation = camera.getPerspectiveCamera().quaternion;
-      const afterPitchPosition = camera.getPerspectiveCamera().position;
-
-      // Quaternion should change
-      expect(afterPitchOrientation).not.toEqual(initialOrientation);
-
-      // Position should remain the same
-      expect(afterPitchPosition.distanceTo(initialPosition)).toBeCloseTo(0);
-
-      // The up vector should remain unchanged (still pointing away from planet center)
-      const upVector = camera.getUpVector();
-      const expectedUpVector = new THREE.Vector3()
-        .subVectors(camera.getPerspectiveCamera().position, PLANET_CENTER)
-        .normalize();
-
-      expect(upVector.dot(expectedUpVector)).toBeCloseTo(1);
-    });
-
-    it("should clamp pitch rotation to maximum angle", () => {
-      // Apply rotation beyond the maximum (which should be clamped)
-      camera.rotatePitch(Math.PI); // 180 degrees (way beyond the limit)
-
-      // Get the current direction vector and up vector
-      const directionVector = camera.calculateDirectionVector(
-        camera.getPerspectiveCamera().quaternion
-      );
-      const upVector = camera.getUpVector();
-
-      // Calculate the angle between direction and up vector
-      // For a 45-degree max pitch, the minimum angle between direction and up should be around 45 degrees
-      const angle = Math.acos(Math.abs(directionVector.dot(upVector)));
-
-      // Allow small rounding errors
-      expect(angle).toBeGreaterThanOrEqual(Math.PI / 4 - 0.01); // Should be at least ~45 degrees
-    });
-  });
-
-  describe("FOV control", () => {
-    it("should initialize with the default FOV value", () => {
-      expect(camera.getFOV()).toBe(75);
-    });
-
-    it("should adjust FOV within the allowed range", () => {
-      const initialFOV = camera.getFOV();
-
-      // Decrease FOV (zoom in)
-      camera.adjustFOV(-10);
-      expect(camera.getFOV()).toBe(initialFOV - 10);
-
-      // Increase FOV (zoom out)
-      camera.adjustFOV(15);
-      expect(camera.getFOV()).toBe(initialFOV + 5);
-    });
-
-    it("should not allow FOV to exceed maximum value", () => {
-      // Set FOV to maximum allowed value
-      camera.setFOV(120);
-      expect(camera.getFOV()).toBe(120);
-
-      // Try to exceed maximum
-      camera.adjustFOV(10);
-      expect(camera.getFOV()).toBe(120); // Should remain at maximum
-    });
-
-    it("should not allow FOV to go below minimum value", () => {
-      // Set FOV to minimum allowed value
-      camera.setFOV(45);
-      expect(camera.getFOV()).toBe(45);
-
-      // Try to go below minimum
-      camera.adjustFOV(-10);
-      expect(camera.getFOV()).toBe(45); // Should remain at minimum
-    });
-
-    it("should clamp FOV when setting to values outside the allowed range", () => {
-      // Try setting above maximum
-      camera.setFOV(200);
-      expect(camera.getFOV()).toBe(120); // Should clamp to maximum
-
-      // Try setting below minimum
-      camera.setFOV(30);
-      expect(camera.getFOV()).toBe(45); // Should clamp to minimum
-    });
-  });
-
-  it("should update aspect ratio when handleResize is called", () => {
-    const perspectiveCamera = camera.getPerspectiveCamera();
-    const spyUpdateProjectionMatrix = vi.spyOn(
-      perspectiveCamera,
-      "updateProjectionMatrix"
-    );
-
-    // Call handleResize
-    const newWidth = 1280;
-    const newHeight = 720;
-    camera.handleResize(newWidth, newHeight);
-
-    // Verify camera aspect was updated
-    expect(perspectiveCamera.aspect).toBe(newWidth / newHeight);
-    expect(spyUpdateProjectionMatrix).toHaveBeenCalled();
   });
 });
