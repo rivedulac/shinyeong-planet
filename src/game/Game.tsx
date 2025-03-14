@@ -13,6 +13,7 @@ import {
   VirtualControlsToggle,
   VirtualMoveControls,
   VirtualRotationControls,
+  VirtualZoomControls,
 } from "../ui/virtualControls";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
@@ -62,21 +63,12 @@ const Game: React.FC = () => {
     useState<PlayerController | null>(null);
 
   // Handlers for virtual controls
-  const handleVirtualMoveStart = (key: string) => {
+  const handleVirtualControlStart = (key: string) => {
     playerController?.triggerKeyDown(key);
   };
 
-  const handleVirtualMoveEnd = (key: string) => {
+  const handleVirtualControlEnd = (key: string) => {
     playerController?.triggerKeyUp(key);
-  };
-
-  // Handlers for virtual rotation controls
-  const handleVirtualRotateStart = (key: string) => {
-    playerController?.triggerKeyDown(key.toLowerCase());
-  };
-
-  const handleVirtualRotateEnd = (key: string) => {
-    playerController?.triggerKeyUp(key.toLowerCase());
   };
 
   const handleNameSubmit = (name: string) => {
@@ -245,12 +237,16 @@ const Game: React.FC = () => {
       {virtualControlsEnabled && (
         <>
           <VirtualMoveControls
-            onMoveStart={handleVirtualMoveStart}
-            onMoveEnd={handleVirtualMoveEnd}
+            onMoveStart={handleVirtualControlStart}
+            onMoveEnd={handleVirtualControlEnd}
           />
           <VirtualRotationControls
-            onRotateStart={handleVirtualRotateStart}
-            onRotateEnd={handleVirtualRotateEnd}
+            onRotateStart={handleVirtualControlStart}
+            onRotateEnd={handleVirtualControlEnd}
+          />
+          <VirtualZoomControls
+            onZoomStart={handleVirtualControlStart}
+            onZoomEnd={handleVirtualControlEnd}
           />
         </>
       )}
