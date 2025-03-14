@@ -12,6 +12,7 @@ import ConversationModal from "../ui/ConversationModal";
 import {
   VirtualControlsToggle,
   VirtualMoveControls,
+  VirtualRotationControls,
 } from "../ui/virtualControls";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
@@ -67,6 +68,15 @@ const Game: React.FC = () => {
 
   const handleVirtualMoveEnd = (key: string) => {
     playerController?.triggerKeyUp(key);
+  };
+
+  // Handlers for virtual rotation controls
+  const handleVirtualRotateStart = (key: string) => {
+    playerController?.triggerKeyDown(key.toLowerCase());
+  };
+
+  const handleVirtualRotateEnd = (key: string) => {
+    playerController?.triggerKeyUp(key.toLowerCase());
   };
 
   const handleNameSubmit = (name: string) => {
@@ -231,12 +241,18 @@ const Game: React.FC = () => {
         />
       )}
 
-      {/* Show virtual move controls if enabled */}
+      {/* Show virtual controls if enabled */}
       {virtualControlsEnabled && (
-        <VirtualMoveControls
-          onMoveStart={handleVirtualMoveStart}
-          onMoveEnd={handleVirtualMoveEnd}
-        />
+        <>
+          <VirtualMoveControls
+            onMoveStart={handleVirtualMoveStart}
+            onMoveEnd={handleVirtualMoveEnd}
+          />
+          <VirtualRotationControls
+            onRotateStart={handleVirtualRotateStart}
+            onRotateEnd={handleVirtualRotateEnd}
+          />
+        </>
       )}
 
       <div
