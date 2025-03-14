@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { PLANET_CENTER, PLANET_RADIUS } from "../config/constants";
-const backgroundTexturePath = "src/assets/background-texture.svg";
 const planetTexturePath = "src/assets/planet-texture.svg";
 
 export class Scene {

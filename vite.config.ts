@@ -4,6 +4,7 @@ import { defineConfig as defineVitestConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react()],
+  base: "./",
   resolve: {
     alias: {
       "@": "/src",
