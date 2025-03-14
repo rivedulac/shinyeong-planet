@@ -12,7 +12,7 @@ const LanguageSelector: React.FC = () => {
     <div
       style={{
         position: "absolute",
-        top: "20px",
+        bottom: "20px",
         right: "20px",
         padding: "10px",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
