@@ -29,6 +29,15 @@ export class PlayerController {
     minus: boolean;
   };
 
+  // Virtual input methods for external components to trigger
+  public triggerKeyDown(key: string): void {
+    this.updateKeyState(key.toLowerCase(), true);
+  }
+
+  public triggerKeyUp(key: string): void {
+    this.updateKeyState(key.toLowerCase(), false);
+  }
+
   constructor(camera: Camera) {
     this.camera = camera;
     this.perspectiveCamera = camera.getPerspectiveCamera();
@@ -54,87 +63,55 @@ export class PlayerController {
     this.npcManager = npcManager;
   }
 
+  // Helper method to update key state (used by both keyboard and virtual inputs)
+  private updateKeyState(key: string, isPressed: boolean): void {
+    switch (key) {
+      case "w":
+      case "ㅈ":
+        this.keys.w = isPressed;
+        break;
+      case "s":
+      case "ㄴ":
+        this.keys.s = isPressed;
+        break;
+      case "a":
+      case "ㅁ":
+        this.keys.a = isPressed;
+        break;
+      case "d":
+      case "ㅇ":
+        this.keys.d = isPressed;
+        break;
+      case "arrowleft":
+        this.keys.arrowleft = isPressed;
+        break;
+      case "arrowright":
+        this.keys.arrowright = isPressed;
+        break;
+      case "arrowup":
+        this.keys.arrowup = isPressed;
+        break;
+      case "arrowdown":
+        this.keys.arrowdown = isPressed;
+        break;
+      case "+":
+      case "=": // Same key on most keyboards
+        this.keys.plus = isPressed;
+        break;
+      case "-":
+      case "_": // Same key on most keyboards
+        this.keys.minus = isPressed;
+        break;
+    }
+  }
+
   private setupInputListeners(): void {
     const handleKeyDown = (event: KeyboardEvent) => {
-      switch (event.key.toLowerCase()) {
-        case "w":
-        case "ㅈ":
-          this.keys.w = true;
-          break;
-        case "s":
-        case "ㄴ":
-          this.keys.s = true;
-          break;
-        case "a":
-        case "ㅁ":
-          this.keys.a = true;
-          break;
-        case "d":
-        case "ㅇ":
-          this.keys.d = true;
-          break;
-        case "arrowleft":
-          this.keys.arrowleft = true;
-          break;
-        case "arrowright":
-          this.keys.arrowright = true;
-          break;
-        case "arrowup":
-          this.keys.arrowup = true;
-          break;
-        case "arrowdown":
-          this.keys.arrowdown = true;
-          break;
-        case "+":
-        case "=": // Same key on most keyboards
-          this.keys.plus = true;
-          break;
-        case "-":
-        case "_": // Same key on most keyboards
-          this.keys.minus = true;
-          break;
-      }
+      this.updateKeyState(event.key.toLowerCase(), true);
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      switch (event.key.toLowerCase()) {
-        case "w":
-        case "ㅈ":
-          this.keys.w = false;
-          break;
-        case "s":
-        case "ㄴ":
-          this.keys.s = false;
-          break;
-        case "a":
-        case "ㅁ":
-          this.keys.a = false;
-          break;
-        case "d":
-        case "ㅇ":
-          this.keys.d = false;
-          break;
-        case "arrowleft":
-          this.keys.arrowleft = false;
-          break;
-        case "arrowright":
-          this.keys.arrowright = false;
-          break;
-        case "arrowup":
-          this.keys.arrowup = false;
-          break;
-        case "arrowdown":
-          this.keys.arrowdown = false;
-          break;
-        case "+":
-        case "=":
-          this.keys.plus = false;
-          break;
-        case "-":
-        case "_":
-          this.keys.minus = false;
-          break;
-      }
+      this.updateKeyState(event.key.toLowerCase(), false);
     };
 
     // Add event listeners

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import VirtualControlButton from "./VirtualControlButton";
 
 interface VirtualMoveControlsProps {
@@ -15,9 +15,8 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
     <div
       style={{
         position: "absolute",
-        bottom: "100px",
-        left: "50%",
-        transform: "translateX(-50%)",
+        top: "80px",
+        right: "20px",
         width: "200px",
         height: "200px",
         zIndex: 1000,
@@ -30,30 +29,34 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
         position={{ top: "0", left: "70px" }}
         onTouchStart={() => onMoveStart("w")}
         onTouchEnd={() => onMoveEnd("w")}
+        size="small"
       />
 
       {/* Left (A) Button */}
       <VirtualControlButton
         label="A"
-        position={{ top: "70px", left: "0" }}
+        position={{ top: "50px", left: "20px" }}
         onTouchStart={() => onMoveStart("a")}
         onTouchEnd={() => onMoveEnd("a")}
+        size="small"
       />
 
       {/* Down (S) Button */}
       <VirtualControlButton
         label="S"
-        position={{ top: "140px", left: "70px" }}
+        position={{ top: "100px", left: "70px" }}
         onTouchStart={() => onMoveStart("s")}
         onTouchEnd={() => onMoveEnd("s")}
+        size="small"
       />
 
       {/* Right (D) Button */}
       <VirtualControlButton
         label="D"
-        position={{ top: "70px", left: "140px" }}
+        position={{ top: "50px", left: "120px" }}
         onTouchStart={() => onMoveStart("d")}
         onTouchEnd={() => onMoveEnd("d")}
+        size="small"
       />
     </div>
   );

@@ -9,7 +9,10 @@ import PlayerNameDisplay from "../ui/PlayerNameDisplay";
 import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
 import ConversationModal from "../ui/ConversationModal";
-import VirtualControlsToggle from "../ui/virtualControls/VirtualControlsToggle";
+import {
+  VirtualControlsToggle,
+  VirtualMoveControls,
+} from "../ui/virtualControls";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { useMobileDetect } from "../hooks/useMobileDetect";
@@ -52,6 +55,19 @@ const Game: React.FC = () => {
   const [currentConversation, setCurrentConversation] =
     useState<IConversation | null>(null);
   const [isConversationOpen, setIsConversationOpen] = useState<boolean>(false);
+
+  // Create a state to store the player controller instance
+  const [playerController, setPlayerController] =
+    useState<PlayerController | null>(null);
+
+  // Handlers for virtual controls
+  const handleVirtualMoveStart = (key: string) => {
+    playerController?.triggerKeyDown(key);
+  };
+
+  const handleVirtualMoveEnd = (key: string) => {
+    playerController?.triggerKeyUp(key);
+  };
 
   const handleNameSubmit = (name: string) => {
     setPlayerName(name);
@@ -99,7 +115,8 @@ const Game: React.FC = () => {
     const camera = new Camera();
 
     // Initialize player controller with the camera
-    const playerController = new PlayerController(camera);
+    const newPlayerController = new PlayerController(camera);
+    setPlayerController(newPlayerController);
 
     // Create NPC manager and initialize NPCs
     const npcManager = new NpcManager(scene.getScene());
@@ -119,7 +136,7 @@ const Game: React.FC = () => {
     });
 
     // Pass the NPC manager to the player controller for optimized collision detection
-    playerController.setNpcManager(npcManager);
+    newPlayerController.setNpcManager(npcManager);
 
     // Initial camera position
     setCameraPosition(camera.getPerspectivePosition());
@@ -136,7 +153,7 @@ const Game: React.FC = () => {
 
       // Update player controller with deltaTime
       // This will now also check for collisions with nearby NPCs only
-      playerController.update(deltaTime);
+      newPlayerController.update(deltaTime);
 
       // Update NPCs
       npcManager.update(deltaTime);
@@ -166,7 +183,8 @@ const Game: React.FC = () => {
     // Cleanup function
     return () => {
       // Clean up player controller
-      playerController.dispose();
+      newPlayerController.dispose();
+      setPlayerController(null);
 
       // Clean up NPCs
       npcManager.clear();
@@ -212,6 +230,15 @@ const Game: React.FC = () => {
           onClose={endConversation}
         />
       )}
+
+      {/* Show virtual move controls if enabled */}
+      {virtualControlsEnabled && (
+        <VirtualMoveControls
+          onMoveStart={handleVirtualMoveStart}
+          onMoveEnd={handleVirtualMoveEnd}
+        />
+      )}
+
       <div
         style={{
           position: "absolute",

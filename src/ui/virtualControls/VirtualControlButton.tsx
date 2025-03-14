@@ -63,6 +63,7 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
   };
 
   const handleMouseLeave = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (isPressed) {
       setIsPressed(false);
       onTouchEnd();
