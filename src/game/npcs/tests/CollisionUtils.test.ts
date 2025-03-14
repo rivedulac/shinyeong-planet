@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { CollisionUtils } from "../CollisionUtils";
 import { INpc, NpcType } from "../INpc";
 import * as THREE from "three";
+import { INTERACTION_DISTANCE } from "@/config/constants";
 
 // Create a mock NPC implementation for testing
 class MockNpc implements INpc {
@@ -157,6 +158,7 @@ describe("CollisionUtils", () => {
     });
 
     it("should return false when NPCs are not interacting", () => {
+      npc.getMesh().position.set(INTERACTION_DISTANCE * 2, 0, 0);
       expect(
         CollisionUtils.checkInteraction(player.position, npc.getMesh().position)
       ).toBe(false);
