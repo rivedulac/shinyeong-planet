@@ -147,41 +147,4 @@ describe("CollisionUtils", () => {
       expect(CollisionUtils.checkCollision(player, npc)).toBe(false);
     });
   });
-
-  describe("resolveNpcCollision", () => {
-    it("should move NPCs apart when colliding", () => {
-      // Set up a collision scenario
-      npc.getMesh().position.set(4, 0, 0);
-
-      // Backup original positions
-      const playerInitialPos = player.position.clone();
-      const npcInitialPos = npc.getMesh().position.clone();
-
-      // Resolve collision
-      CollisionUtils.resolveNpcCollision(player, npc);
-
-      // Check that only the player moved
-      expect(player.position).not.toEqual(playerInitialPos);
-      expect(npc.getMesh().position).toEqual(npcInitialPos);
-    });
-
-    it("should handle 3D collision resolution", () => {
-      // Set up a collision in 3D space
-      player.position.set(1, 1, 1);
-      npc.getMesh().position.set(3, 3, 3);
-
-      // Backup original positions
-      const playerInitialPos = player.position.clone();
-      const npcInitialPos = npc.getMesh().position.clone();
-
-      // Direction from npc2 to npc1: (-2, -2, -2)
-
-      // Resolve collision
-      CollisionUtils.resolveNpcCollision(player, npc);
-
-      // Check that the NPCs have moved in the direction of their displacement vector
-      expect(player.position).not.toEqual(playerInitialPos);
-      expect(npc.getMesh().position).toEqual(npcInitialPos);
-    });
-  });
 });

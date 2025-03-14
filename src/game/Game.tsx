@@ -66,6 +66,9 @@ const Game: React.FC = () => {
     const npcManager = new NpcManager(scene.getScene());
     npcManager.initializeDefaultNpcs();
 
+    // Pass the NPC manager to the player controller for optimized collision detection
+    playerController.setNpcManager(npcManager);
+
     // Initial camera position
     setCameraPosition(camera.getPerspectivePosition());
 
@@ -80,6 +83,7 @@ const Game: React.FC = () => {
       lastTime = time;
 
       // Update player controller with deltaTime
+      // This will now also check for collisions with nearby NPCs only
       playerController.update(deltaTime);
 
       // Update NPCs

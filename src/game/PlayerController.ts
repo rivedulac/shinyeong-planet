@@ -1,9 +1,13 @@
 import * as THREE from "three";
 import { Camera } from "../core/Camera";
+import { CollisionUtils } from "./npcs/CollisionUtils";
+import { NpcManager } from "./npcs/NpcManager";
 
 export interface IPlayerController {
   update(deltaTime?: number): void;
   getPosition(): THREE.Vector3;
+  checkCollisions(): void;
+  setNpcManager(npcManager: NpcManager): void;
 }
 
 export class PlayerController implements IPlayerController {
@@ -15,6 +19,7 @@ export class PlayerController implements IPlayerController {
   private rotationSpeed = 1;
   private pitchSpeed = 0.5; // Slower pitch rotation for more natural movement
   private fovAdjustSpeed = 20; // Degrees per second for FOV adjustment
+  private npcManager: NpcManager | null = null; // Reference to the NPC manager for finding nearby NPCs
 
   // Input state
   private keys: {
@@ -45,6 +50,13 @@ export class PlayerController implements IPlayerController {
 
     // Set up event listeners for keyboard input
     this.setupInputListeners();
+  }
+
+  /**
+   * Set the NPC manager for efficient collision detection
+   */
+  public setNpcManager(npcManager: NpcManager): void {
+    this.npcManager = npcManager;
   }
 
   private setupInputListeners(): void {
@@ -175,9 +187,38 @@ export class PlayerController implements IPlayerController {
     }
 
     // If there's movement to apply, use the Camera's moveOnPlanet method
+    // Check for collisions with nearby NPCs after movement
+
     if (movementDistance !== 0) {
+      const originalPosition = this.perspectiveCamera.position.clone();
       this.camera.moveOnPlanet(movementDistance);
+      if (this.checkCollisions()) {
+        this.perspectiveCamera.position.copy(originalPosition);
+      }
     }
+  }
+
+  /**
+   * Check for collisions with nearby NPCs and resolve them
+   * Now using the optimized nearby check for better performance
+   */
+  public checkCollisions(): boolean {
+    // If we don't have an NPC manager, we can't check for collisions
+    if (!this.npcManager) return false;
+
+    // Get only nearby NPCs for collision checking
+    const nearbyNpcs = this.npcManager.getNearbyNpcs(
+      this.perspectiveCamera.position
+    );
+
+    // Check collision with each nearby NPC
+    for (const npc of nearbyNpcs) {
+      // Use the CollisionUtils to check if player is colliding with this NPC
+      if (CollisionUtils.checkCollision(this.perspectiveCamera, npc)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public getPosition(): THREE.Vector3 {

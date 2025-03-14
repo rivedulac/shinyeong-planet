@@ -41,23 +41,4 @@ export class CollisionUtils {
     }
     return true;
   }
-
-  /**
-   * Resolve collision by moving the player away from the NPC
-   */
-  static resolveNpcCollision(player: THREE.Object3D, npc: INpc): void {
-    const direction = this.calculateDirection(
-      player.position,
-      npc.getMesh().position
-    );
-    const dx = direction.x;
-    const dy = direction.y;
-    const dz = direction.z;
-
-    // Move npc1 away from npc2
-    player.position.x += dx;
-    player.position.y += dy;
-    player.position.z += dz;
-    player.updateMatrix();
-  }
 }

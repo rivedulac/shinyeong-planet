@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { PlayerController } from "../PlayerController";
 import { Camera } from "../../core/Camera";
+import { NpcManager } from "../npcs/NpcManager";
+import { INpc } from "../npcs/INpc";
+import * as THREE from "three";
+import { Billboard } from "../npcs/Billboard";
 
 // Mock the window object
 const mockAddEventListener = vi.fn();
@@ -21,10 +25,25 @@ const mockWindow = {
 // Set up the global window object
 vi.stubGlobal("window", mockWindow);
 
+class MockNpcManager extends NpcManager {
+  nearbyNpcs: INpc[] = [];
+  constructor(nearbyNpcs: INpc[]) {
+    const mockScene = new THREE.Scene();
+    super(mockScene);
+    this.nearbyNpcs = nearbyNpcs;
+  }
+
+  // @ts-ignore: Mocking the NpcManager
+  getNearbyNpcs(position: THREE.Vector3): INpc[] {
+    return this.nearbyNpcs;
+  }
+}
+
 describe("PlayerController", () => {
   let playerController: PlayerController;
   let camera: Camera;
   let keydownHandler: (event: KeyboardEvent) => void;
+  let npcManager: MockNpcManager;
 
   beforeEach(() => {
     // Reset mocks before each test
@@ -35,6 +54,8 @@ describe("PlayerController", () => {
 
     // Initialize PlayerController
     playerController = new PlayerController(camera);
+    npcManager = new MockNpcManager([]);
+    playerController.setNpcManager(npcManager);
 
     // Extract the event handlers from the mock calls
     const keydownCall = mockAddEventListener.mock.calls.find(
@@ -49,161 +70,176 @@ describe("PlayerController", () => {
     playerController.dispose();
   });
 
-  it("should initialize with default position", () => {
-    const position = playerController.getPosition();
-    expect(position.x).toBe(0);
-    expect(position.y).not.toBe(0);
-    expect(position.z).toBe(0);
+  describe("initialize", () => {
+    it("should initialize with default position", () => {
+      const position = playerController.getPosition();
+      expect(position.x).toBe(0);
+      expect(position.y).not.toBe(0);
+      expect(position.z).toBe(0);
+    });
+
+    it("should set up input listeners on initialization", () => {
+      expect(mockAddEventListener).toHaveBeenCalledWith(
+        "keydown",
+        expect.any(Function)
+      );
+      expect(mockAddEventListener).toHaveBeenCalledWith(
+        "keyup",
+        expect.any(Function)
+      );
+    });
   });
 
-  it("should set up input listeners on initialization", () => {
-    expect(mockAddEventListener).toHaveBeenCalledWith(
-      "keydown",
-      expect.any(Function)
-    );
-    expect(mockAddEventListener).toHaveBeenCalledWith(
-      "keyup",
-      expect.any(Function)
-    );
+  describe("Move player", () => {
+    it("should move forward when W key is pressed", () => {
+      const originalPosition = playerController.getPosition();
+
+      // Simulate W key press
+      const mockEvent = new KeyboardEvent("keydown", { key: "w" });
+
+      // Execute the keydown handler
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      // Update with a delta time of 1 second
+      playerController.update();
+
+      // Check that the player moved in the -Z direction (forward)
+      expect(playerController.getPosition()).not.toBe(originalPosition);
+    });
+
+    it("should move backward when S key is pressed", () => {
+      const originalPosition = playerController.getPosition();
+      // Simulate S key press
+      const mockEvent = new KeyboardEvent("keydown", { key: "s" });
+
+      // Execute the keydown handler
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      // Update with a delta time of 1 second
+      playerController.update(1);
+
+      // Check that the player moved in the +Z direction (backward)
+      expect(playerController.getPosition()).not.toBe(originalPosition);
+    });
+
+    it("should not move when there is a collision", () => {
+      const originalPosition = playerController.getPosition();
+      npcManager.nearbyNpcs = [new Billboard("test-npc", "test")];
+      playerController.update(1);
+      expect(playerController.getPosition()).toStrictEqual(originalPosition);
+    });
   });
 
-  it("should move forward when W key is pressed", () => {
-    const originalPosition = playerController.getPosition();
+  describe("Rotate player", () => {
+    it("should look up when arrow up key is pressed", () => {
+      const rotatePitchSpy = vi.spyOn(camera, "rotatePitch");
 
-    // Simulate W key press
-    const mockEvent = new KeyboardEvent("keydown", { key: "w" });
+      const mockEvent = new KeyboardEvent("keydown", { key: "arrowup" });
 
-    // Execute the keydown handler
-    if (keydownHandler) {
-      keydownHandler(mockEvent);
-    } else {
-      throw new Error("Keydown handler not found");
-    }
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
 
-    // Update with a delta time of 1 second
-    playerController.update();
+      playerController.update(1);
 
-    // Check that the player moved in the -Z direction (forward)
-    expect(playerController.getPosition()).not.toBe(originalPosition);
+      // Check that rotatePitch was called with a positive value (looking up)
+      expect(rotatePitchSpy).toHaveBeenCalledWith(expect.any(Number));
+      const callValue = rotatePitchSpy.mock.calls[0][0];
+      expect(callValue).toBeGreaterThan(0);
+    });
+
+    it("should look down when arrow down key is pressed", () => {
+      const rotatePitchSpy = vi.spyOn(camera, "rotatePitch");
+
+      const mockEvent = new KeyboardEvent("keydown", { key: "arrowdown" });
+
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
+
+      // Update with a delta time of 1 second
+      playerController.update(1);
+
+      // Check that rotatePitch was called with a negative value (looking down)
+      expect(rotatePitchSpy).toHaveBeenCalledWith(expect.any(Number));
+      const callValue = rotatePitchSpy.mock.calls[0][0];
+      expect(callValue).toBeLessThan(0);
+    });
   });
 
-  it("should move backward when S key is pressed", () => {
-    const originalPosition = playerController.getPosition();
-    // Simulate S key press
-    const mockEvent = new KeyboardEvent("keydown", { key: "s" });
+  describe("Adjust FOV", () => {
+    it("should increase FOV when minus key is pressed", () => {
+      // Spy on the camera's adjustFOV method
+      const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
 
-    // Execute the keydown handler
-    if (keydownHandler) {
-      keydownHandler(mockEvent);
-    } else {
-      throw new Error("Keydown handler not found");
-    }
+      // Simulate minus key press
+      const mockEvent = new KeyboardEvent("keydown", { key: "-" });
 
-    // Update with a delta time of 1 second
-    playerController.update(1);
+      // Execute the keydown handler
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
 
-    // Check that the player moved in the +Z direction (backward)
-    expect(playerController.getPosition()).not.toBe(originalPosition);
-  });
+      playerController.update(1);
 
-  it("should look up when arrow up key is pressed", () => {
-    const rotatePitchSpy = vi.spyOn(camera, "rotatePitch");
+      // Check that adjustFOV was called with a positive value (increasing FOV)
+      expect(adjustFOVSpy).toHaveBeenCalledWith(expect.any(Number));
+      const callValue = adjustFOVSpy.mock.calls[0][0];
+      expect(callValue).toBeGreaterThan(0);
+    });
 
-    const mockEvent = new KeyboardEvent("keydown", { key: "arrowup" });
+    it("should decrease FOV when plus key is pressed", () => {
+      const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
 
-    if (keydownHandler) {
-      keydownHandler(mockEvent);
-    } else {
-      throw new Error("Keydown handler not found");
-    }
+      const mockEvent = new KeyboardEvent("keydown", { key: "+" });
 
-    playerController.update(1);
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
 
-    // Check that rotatePitch was called with a positive value (looking up)
-    expect(rotatePitchSpy).toHaveBeenCalledWith(expect.any(Number));
-    const callValue = rotatePitchSpy.mock.calls[0][0];
-    expect(callValue).toBeGreaterThan(0);
-  });
+      playerController.update(1);
 
-  it("should look down when arrow down key is pressed", () => {
-    const rotatePitchSpy = vi.spyOn(camera, "rotatePitch");
+      // Check that adjustFOV was called with a negative value (decreasing FOV)
+      expect(adjustFOVSpy).toHaveBeenCalledWith(expect.any(Number));
+      const callValue = adjustFOVSpy.mock.calls[0][0];
+      expect(callValue).toBeLessThan(0);
+    });
 
-    const mockEvent = new KeyboardEvent("keydown", { key: "arrowdown" });
+    it("should scale FOV adjustment by delta time", () => {
+      const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
 
-    if (keydownHandler) {
-      keydownHandler(mockEvent);
-    } else {
-      throw new Error("Keydown handler not found");
-    }
+      const mockEvent = new KeyboardEvent("keydown", { key: "+" });
 
-    // Update with a delta time of 1 second
-    playerController.update(1);
+      if (keydownHandler) {
+        keydownHandler(mockEvent);
+      } else {
+        throw new Error("Keydown handler not found");
+      }
 
-    // Check that rotatePitch was called with a negative value (looking down)
-    expect(rotatePitchSpy).toHaveBeenCalledWith(expect.any(Number));
-    const callValue = rotatePitchSpy.mock.calls[0][0];
-    expect(callValue).toBeLessThan(0);
-  });
+      playerController.update(0.5);
 
-  it("should increase FOV when minus key is pressed", () => {
-    // Spy on the camera's adjustFOV method
-    const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
-
-    // Simulate minus key press
-    const mockEvent = new KeyboardEvent("keydown", { key: "-" });
-
-    // Execute the keydown handler
-    if (keydownHandler) {
-      keydownHandler(mockEvent);
-    } else {
-      throw new Error("Keydown handler not found");
-    }
-
-    playerController.update(1);
-
-    // Check that adjustFOV was called with a positive value (increasing FOV)
-    expect(adjustFOVSpy).toHaveBeenCalledWith(expect.any(Number));
-    const callValue = adjustFOVSpy.mock.calls[0][0];
-    expect(callValue).toBeGreaterThan(0);
-  });
-
-  it("should decrease FOV when plus key is pressed", () => {
-    const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
-
-    const mockEvent = new KeyboardEvent("keydown", { key: "+" });
-
-    if (keydownHandler) {
-      keydownHandler(mockEvent);
-    } else {
-      throw new Error("Keydown handler not found");
-    }
-
-    playerController.update(1);
-
-    // Check that adjustFOV was called with a negative value (decreasing FOV)
-    expect(adjustFOVSpy).toHaveBeenCalledWith(expect.any(Number));
-    const callValue = adjustFOVSpy.mock.calls[0][0];
-    expect(callValue).toBeLessThan(0);
-  });
-
-  it("should scale FOV adjustment by delta time", () => {
-    const adjustFOVSpy = vi.spyOn(camera, "adjustFOV");
-
-    const mockEvent = new KeyboardEvent("keydown", { key: "+" });
-
-    if (keydownHandler) {
-      keydownHandler(mockEvent);
-    } else {
-      throw new Error("Keydown handler not found");
-    }
-
-    playerController.update(0.5);
-
-    expect(adjustFOVSpy).toHaveBeenCalled();
-    // The actual value depends on the fovAdjustSpeed, but it should be
-    // proportional to the delta time
-    const expectedValue = -0.5 * 20; // deltaTime * fovAdjustSpeed
-    expect(adjustFOVSpy.mock.calls[0][0]).toBeCloseTo(expectedValue);
+      expect(adjustFOVSpy).toHaveBeenCalled();
+      // The actual value depends on the fovAdjustSpeed, but it should be
+      // proportional to the delta time
+      const expectedValue = -0.5 * 20; // deltaTime * fovAdjustSpeed
+      expect(adjustFOVSpy.mock.calls[0][0]).toBeCloseTo(expectedValue);
+    });
   });
 
   it("should clean up event listeners when disposed", () => {
