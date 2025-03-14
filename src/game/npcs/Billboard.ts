@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { INpc, NpcType } from "./INpc";
-import { PLANET_CENTER, PLANET_RADIUS } from "../../config/constants";
+import {
+  BILLBOARD_RADIUS,
+  PLANET_CENTER,
+  PLANET_RADIUS,
+} from "../../config/constants";
 
 /**
  * Billboard NPC - represents a resume billboard on the planet
@@ -10,6 +14,8 @@ export class Billboard implements INpc {
   private mesh: THREE.Group;
   private title: string;
 
+  private collisionRadius: number;
+
   /**
    * Create a new Billboard NPC
    * @param id Unique identifier for this NPC
@@ -18,6 +24,7 @@ export class Billboard implements INpc {
   constructor(id: string, title: string = "Resume") {
     this.id = id;
     this.title = title;
+    this.collisionRadius = BILLBOARD_RADIUS;
     this.mesh = this.createBillboardMesh();
   }
 
@@ -31,11 +38,6 @@ export class Billboard implements INpc {
 
   public getMesh(): THREE.Object3D {
     return this.mesh;
-  }
-
-  // @ts-ignore: TBD
-  public update(deltaTime: number): void {
-    // Currently no update logic for static billboard
   }
 
   /** Put the billboard to stand on the planet */
@@ -209,5 +211,9 @@ export class Billboard implements INpc {
     group.add(titleBack);
 
     return group;
+  }
+
+  public getCollisionRadius(): number {
+    return this.collisionRadius;
   }
 }

@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { INpc, NpcType } from "./INpc";
-import { PLANET_CENTER, PLANET_RADIUS } from "../../config/constants";
+import {
+  PLANET_CENTER,
+  PLANET_RADIUS,
+  FLAG_RADIUS,
+} from "../../config/constants";
 
 /**
  * Flag NPC - represents a country flag with location, year, and description
@@ -10,6 +14,8 @@ export class Flag implements INpc {
   private mesh: THREE.Group;
   private country: string;
   private description: string;
+
+  private collisionRadius: number;
 
   /**
    * Create a new Flag NPC
@@ -27,6 +33,7 @@ export class Flag implements INpc {
     this.id = id;
     this.country = country;
     this.description = description;
+    this.collisionRadius = FLAG_RADIUS;
     this.mesh = this.createFlagMesh();
   }
 
@@ -40,11 +47,6 @@ export class Flag implements INpc {
 
   public getMesh(): THREE.Object3D {
     return this.mesh;
-  }
-
-  // @ts-ignore: TBD for animation
-  public update(deltaTime: number): void {
-    // Will be used for future animations if needed
   }
 
   /** Position the flag on the planet surface */
@@ -225,5 +227,9 @@ export class Flag implements INpc {
       country: this.country,
       description: this.description,
     };
+  }
+
+  public getCollisionRadius(): number {
+    return this.collisionRadius;
   }
 }

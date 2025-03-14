@@ -61,11 +61,4 @@ describe("Billboard NPC", () => {
     expect(mesh.position.y).toBeCloseTo(expectedPos.y);
     expect(mesh.position.z).toBeCloseTo(expectedPos.z);
   });
-
-  it("should update without errors", () => {
-    const billboard = new Billboard("test-update");
-
-    // This should not throw any errors
-    expect(() => billboard.update(0.1)).not.toThrow();
-  });
 });

@@ -13,7 +13,7 @@ export interface INpc {
    * Update the NPC's state based on game time
    * @param deltaTime Time elapsed since the last update in seconds
    */
-  update(deltaTime: number): void;
+  update?(deltaTime: number): void;
 
   /**
    * Set the position of the NPC on the planet surface
@@ -31,6 +31,11 @@ export interface INpc {
    * Get the unique ID of this NPC
    */
   getId(): string;
+
+  /**
+   * Get the collision radius of this NPC
+   */
+  getCollisionRadius(): number;
 }
 
 /**

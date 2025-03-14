@@ -57,22 +57,6 @@ describe("NpcManager", () => {
     expect(npcManager.getNpc(billboard.getId())).toBeUndefined();
   });
 
-  it("should update all NPCs", () => {
-    // Create a spy billboard with a mock update method
-    const billboard = new Billboard("test-billboard-update");
-    const billboardUpdateSpy = vi.spyOn(billboard, "update");
-    const flag = new Flag("test-flag-update");
-    const flagUpdateSpy = vi.spyOn(flag, "update");
-
-    npcManager.addNpc(billboard);
-    npcManager.addNpc(flag);
-    npcManager.update(0.1);
-
-    // Check that update was called on the NPCs
-    expect(billboardUpdateSpy).toHaveBeenCalledWith(0.1);
-    expect(flagUpdateSpy).toHaveBeenCalledWith(0.1);
-  });
-
   it("should clear all NPCs", () => {
     // Add multiple billboards
     const billboard1 = new Billboard("test-billboard-1");

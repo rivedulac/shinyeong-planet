@@ -87,7 +87,7 @@ export class NpcManager {
   public update(deltaTime: number): void {
     // Update each NPC
     this.npcs.forEach((npc) => {
-      npc.update(deltaTime);
+      npc.update?.(deltaTime);
     });
   }
 
