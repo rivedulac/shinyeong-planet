@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { PLANET_CENTER } from "../config/constants";
+import { PLANET_CENTER, PLANET_RADIUS } from "../config/constants";
 const backgroundTexturePath = "src/assets/background-texture.svg";
 const planetTexturePath = "src/assets/planet-texture.svg";
 
@@ -83,8 +83,7 @@ export class Scene {
     }
 
     // Create a sphere for the planet instead of a plane
-    const planetRadius = 50;
-    const planetGeometry = new THREE.SphereGeometry(planetRadius, 32, 32);
+    const planetGeometry = new THREE.SphereGeometry(PLANET_RADIUS, 32, 32);
 
     let planetMaterial: THREE.Material;
     if (color) {
@@ -111,8 +110,6 @@ export class Scene {
     // Instead of a grid helper, let's add latitude/longitude lines for the planet
     if (!this.planet) return; // Make sure planet exists
 
-    const planetRadius = 50; // Match the radius used in setPlanet
-
     // Create a group to hold all the grid lines
     const gridGroup = new THREE.Group();
     this.scene.add(gridGroup);
@@ -122,7 +119,7 @@ export class Scene {
     for (let i = 0; i < longitudeCount; i++) {
       const angle = (i / longitudeCount) * Math.PI * 2;
       const geometry = new THREE.TorusGeometry(
-        planetRadius,
+        PLANET_RADIUS,
         0.1,
         16,
         100,
@@ -147,8 +144,8 @@ export class Scene {
     // Create latitude lines (horizontal circles)
     const latitudeCount = 12; // 12 horizontal lines
     for (let i = 1; i < latitudeCount; i++) {
-      const radius = Math.sin((i / latitudeCount) * Math.PI) * planetRadius;
-      const height = Math.cos((i / latitudeCount) * Math.PI) * planetRadius;
+      const radius = Math.sin((i / latitudeCount) * Math.PI) * PLANET_RADIUS;
+      const height = Math.cos((i / latitudeCount) * Math.PI) * PLANET_RADIUS;
 
       const geometry = new THREE.TorusGeometry(
         radius,

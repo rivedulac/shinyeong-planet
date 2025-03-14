@@ -5,6 +5,7 @@ import {
   PLANET_RADIUS,
   FIRST_PERSON_HEIGHT,
   PLANET_CENTER,
+  DEFAULT_CAMERA_PITCH,
 } from "../../config/constants";
 
 // Create a mock window object
@@ -297,7 +298,7 @@ describe("Camera", () => {
       expect(cameraUp.y).toBeCloseTo(upVector.y);
       expect(cameraUp.z).toBeCloseTo(upVector.z);
 
-      // Validate that the camera is looking tangent to the surface
+      // Validate that the camera is looking down a bit to the surface
       // by checking that the look direction is reasonably perpendicular to the up vector
       const lookDir = new THREE.Vector3(0, 0, -1).applyQuaternion(
         newOrientation
@@ -305,7 +306,7 @@ describe("Camera", () => {
       const dotProduct = Math.abs(lookDir.dot(upVector));
 
       // Dot product should be close to zero if vectors are perpendicular
-      expect(dotProduct).toBeLessThan(0.1);
+      expect(dotProduct).toBeCloseTo(DEFAULT_CAMERA_PITCH, 1);
     });
 
     it("should return to approximately the same position after moving a full circle", () => {

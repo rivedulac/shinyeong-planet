@@ -113,31 +113,31 @@ describe("CollisionUtils", () => {
     });
 
     it("should return false when NPCs are not colliding", () => {
-      // 10 units apart, with radii 5 and 3, so they don't collide (10 > 5+3)
+      // 10 units apart, with radii 3 and 3, so they don't collide (10 > 3+3)
       expect(CollisionUtils.checkCollision(player, npc)).toBe(false);
     });
 
     it("should return true when NPCs are colliding", () => {
       // Move npc closer to npc1 so they collide
-      npc.getMesh().position.set(7, 0, 0); // Distance is now 7, which is < 5+3
+      npc.getMesh().position.set(3, 0, 0); // Distance is now 3, which is < 3+3
 
       expect(CollisionUtils.checkCollision(player, npc)).toBe(true);
     });
 
     it("should return true when NPCs are exactly touching", () => {
       // Position npc so they're exactly touching (distance = sum of radii)
-      npc.getMesh().position.set(8, 0, 0); // Distance is 8, which is = 5+3
+      npc.getMesh().position.set(6, 0, 0); // Distance is 6, which is = 3+3
 
       expect(CollisionUtils.checkCollision(player, npc)).toBe(false);
     });
 
     it("should handle 3D collisions correctly", () => {
       // Position NPC in 3D space
-      npc.getMesh().position.set(4, 4, 4);
+      npc.getMesh().position.set(1, 1, 1);
 
-      // distance = sqrt(4² + 4² + 4²) = sqrt(48) ≈ 6.93
+      // distance = sqrt(1² + 1² + 1²) = sqrt(3) ≈ 1.73
       // sum of radii = 5 + 3 = 8
-      // collision since 6.93 < 8
+      // collision since 1.73 < 8
       expect(CollisionUtils.checkCollision(player, npc)).toBe(true);
 
       // Move player slightly further so they don't collide

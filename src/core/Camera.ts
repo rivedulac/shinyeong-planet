@@ -8,6 +8,7 @@ import {
   FIRST_PERSON_HEIGHT,
   PLANET_CENTER,
   EPSILON,
+  DEFAULT_CAMERA_PITCH,
 } from "../config/constants";
 
 export enum CameraMode {
@@ -48,8 +49,9 @@ export class Camera {
     // Calculate the "up" direction based on position (initially pointing along Y)
     this.up = new THREE.Vector3(0, 1, 0);
 
-    // Point the camera tangent to the planet surface
-    this.camera.lookAt(0, PLANET_RADIUS + FIRST_PERSON_HEIGHT, -1);
+    // Add a slight downward tilt by default (around -20 degrees)
+    this.currentPitch = -DEFAULT_CAMERA_PITCH; // Approximately -20 degrees in radians
+    this.applyStoredPitch();
   }
 
   getPerspectiveCamera() {
