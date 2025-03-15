@@ -1,3 +1,9 @@
+import {
+  CORNER_MARGIN,
+  DISPLAY_BACKGROUND_COLOR,
+  FONT_COLOR,
+  TINY_FONT_SIZE,
+} from "@/config/constants";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -25,15 +31,14 @@ const CameraPositionDisplay: React.FC<CameraPositionDisplayProps> = ({
     <div
       style={{
         position: "absolute",
-        bottom: "20px",
-        left: "20px",
+        top: CORNER_MARGIN,
+        left: "20%",
         padding: "10px",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        color: "white",
+        backgroundColor: DISPLAY_BACKGROUND_COLOR,
+        color: FONT_COLOR,
         fontFamily: "monospace",
-        fontSize: "14px",
+        fontSize: TINY_FONT_SIZE,
         borderRadius: "4px",
-        zIndex: 1000,
         userSelect: "none",
       }}
     >

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Camera } from "../core/Camera";
 import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "../ui/CameraPositionDisplay";
@@ -22,13 +21,14 @@ import { NpcManager } from "./npcs/NpcManager";
 import { IConversation } from "./npcs/IConversation";
 import { getConversationForNpc } from "./npcs/IConversation";
 import { INpc } from "./npcs/INpc";
+import InfoToggle from "../ui/InfoToggle";
+import ControlsInfoDisplay from "../ui/ControlsInfoDisplay";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
 const VIRTUAL_CONTROLS_KEY = "shinyeongPlanet.virtualControlsEnabled";
 
 const Game: React.FC = () => {
-  const { t } = useTranslation();
   const isMobile = useMobileDetect();
   const [cameraPosition, setCameraPosition] = useState({
     position: { x: 0, y: 0, z: 0 },
@@ -61,6 +61,8 @@ const Game: React.FC = () => {
   // Create a state to store the player controller instance
   const [playerController, setPlayerController] =
     useState<PlayerController | null>(null);
+
+  const [showControlsInfo, setShowControlsInfo] = useState<boolean>(false);
 
   // Handlers for virtual controls
   const handleVirtualControlStart = (key: string) => {
@@ -106,6 +108,10 @@ const Game: React.FC = () => {
     // Keep the conversation data for a moment before clearing it
     // This prevents UI flicker during the closing animation if we had one
     setTimeout(() => setCurrentConversation(null), 300);
+  };
+
+  const toggleControlsInfo = () => {
+    setShowControlsInfo(!showControlsInfo);
   };
 
   useEffect(() => {
@@ -208,8 +214,6 @@ const Game: React.FC = () => {
   return (
     <>
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
-      <CameraPositionDisplay perspective={cameraPosition} />
-      <LanguageSelector />
       <VirtualControlsToggle
         isEnabled={virtualControlsEnabled ?? false}
         onToggle={toggleVirtualControls}
@@ -251,32 +255,13 @@ const Game: React.FC = () => {
         </>
       )}
 
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "20px",
-          padding: "10px",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          color: "white",
-          fontFamily: "monospace",
-          fontSize: "14px",
-          borderRadius: "4px",
-          zIndex: 1000,
-        }}
-      >
-        {t("controls.title")}
-        <div>{t("controls.moveForward")}</div>
-        <div>{t("controls.moveBackward")}</div>
-        <div>{t("controls.strafeLeft")}</div>
-        <div>{t("controls.strafeRight")}</div>
-        <div>{t("controls.rotateLeft")}</div>
-        <div>{t("controls.rotateRight")}</div>
-        <div>{t("controls.lookUp")}</div>
-        <div>{t("controls.lookDown")}</div>
-        <div>{t("controls.zoomIn")}</div>
-        <div>{t("controls.zoomOut")}</div>
-      </div>
+      <InfoToggle onToggle={toggleControlsInfo} active={showControlsInfo} />
+      {showControlsInfo && <ControlsInfoDisplay />}
+      {showControlsInfo && (
+        <CameraPositionDisplay perspective={cameraPosition} />
+      )}
+
+      <LanguageSelector />
     </>
   );
 };

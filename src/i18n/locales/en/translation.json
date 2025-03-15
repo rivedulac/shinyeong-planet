@@ -19,8 +19,8 @@
     "rotateRight": "→ - Rotate Right",
     "lookUp": "↑ - Look Up",
     "lookDown": "↓ - Look Down",
-    "zoomIn": "+ - Zoom In (Decrease FOV)",
-    "zoomOut": "- - Zoom Out (Increase FOV)"
+    "zoomIn": "+ - Zoom In",
+    "zoomOut": "- - Zoom Out"
   },
   "language": {
     "title": "Language",

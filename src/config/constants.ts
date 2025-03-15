@@ -67,3 +67,12 @@ export const VIRTUAL_CONTROL_BUTTON_COLOR = {
   default: "rgba(40, 40, 60, 0.6)",
   center: "rgba(255, 255, 255, 1.0)",
 };
+
+export const DISPLAY_BACKGROUND_COLOR = "rgba(0, 0, 0, 0.5)";
+
+export const CORNER_MARGIN = "2%";
+export const TINY_FONT_SIZE = "0.75rem";
+export const SMALL_FONT_SIZE = "1rem";
+export const MEDIUM_FONT_SIZE = "2rem";
+export const LARGE_FONT_SIZE = "3rem";
+export const FONT_COLOR = "white";
