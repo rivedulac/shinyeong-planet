@@ -1,4 +1,4 @@
-import { VIRTUAL_CONTROLS_MARGIN } from "@/config/constants";
+import { CORNER_MARGIN, MEDIUM_FONT_SIZE } from "@/config/constants";
 import React from "react";
 
 interface VirtualControlsToggleProps {
@@ -19,10 +19,9 @@ const VirtualControlsToggle: React.FC<VirtualControlsToggleProps> = ({
       }}
       style={{
         position: "absolute",
-        bottom: VIRTUAL_CONTROLS_MARGIN,
-        left: "43%",
-        padding: "8px 12px",
-        width: "270px",
+        bottom: CORNER_MARGIN,
+        left: "46.7%",
+        width: "3.5rem",
         backgroundColor: isEnabled
           ? "rgba(83, 52, 131, 0.8)"
           : "rgba(40, 40, 60, 0.8)",
@@ -31,28 +30,12 @@ const VirtualControlsToggle: React.FC<VirtualControlsToggleProps> = ({
         border: "1px solid rgba(233, 69, 96, 0.8)",
         borderRadius: "6px",
         fontFamily: "monospace",
-        fontSize: "14px",
-        cursor: "pointer",
-        zIndex: 1000,
+        fontSize: MEDIUM_FONT_SIZE,
         display: "flex",
-        alignItems: "center",
-        gap: "8px",
         touchAction: "manipulation", // Improves touch response
       }}
     >
-      <span
-        style={{
-          display: "inline-block",
-          width: "18px",
-          height: "18px",
-          backgroundColor: isEnabled
-            ? "rgba(233, 69, 96, 0.8)"
-            : "rgba(100, 100, 100, 0.8)",
-          borderRadius: "50%",
-          transition: "background-color 0.3s ease",
-        }}
-      />
-      {isEnabled ? "Virtual Controls: ON" : "Virtual Controls: OFF"}
+      ⌨️
     </button>
   );
 };

@@ -5,7 +5,7 @@ import {
   VIRTUAL_CONTROLS_GROUP_HEIGHT,
   VIRTUAL_CONTROLS_GROUP_POSITION,
   VIRTUAL_CONTROLS_GROUP_WIDTH,
-  VIRTUAL_CONTROLS_MARGIN,
+  CORNER_MARGIN,
 } from "@/config/constants";
 interface VirtualRotationControlsProps {
   onRotateStart: (key: string) => void;
@@ -24,11 +24,10 @@ const VirtualRotationControls: React.FC<VirtualRotationControlsProps> = ({
     <div
       style={{
         position: "absolute",
-        left: "60%",
-        bottom: VIRTUAL_CONTROLS_MARGIN,
+        right: CORNER_MARGIN,
+        bottom: CORNER_MARGIN,
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
         height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
-        zIndex: 1000,
       }}
     >
       <VirtualControlButton
@@ -36,7 +35,6 @@ const VirtualRotationControls: React.FC<VirtualRotationControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.center}
         onTouchStart={() => void 0}
         onTouchEnd={() => void 0}
-        size="small"
         color={VIRTUAL_CONTROL_BUTTON_COLOR.center}
       />
       {/* Up Arrow Button */}
@@ -45,8 +43,7 @@ const VirtualRotationControls: React.FC<VirtualRotationControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.up}
         onTouchStart={() => onRotateStart("ArrowUp")}
         onTouchEnd={() => onRotateEnd("ArrowUp")}
-        size="small"
-        color="rgba(60, 60, 80, 0.6)" // Slightly different color to distinguish from movement controls
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
       />
 
       {/* Left Arrow Button */}
@@ -55,8 +52,7 @@ const VirtualRotationControls: React.FC<VirtualRotationControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.left}
         onTouchStart={() => onRotateStart("ArrowLeft")}
         onTouchEnd={() => onRotateEnd("ArrowLeft")}
-        size="small"
-        color="rgba(60, 60, 80, 0.6)"
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
       />
 
       {/* Down Arrow Button */}
@@ -65,8 +61,7 @@ const VirtualRotationControls: React.FC<VirtualRotationControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.down}
         onTouchStart={() => onRotateStart("ArrowDown")}
         onTouchEnd={() => onRotateEnd("ArrowDown")}
-        size="small"
-        color="rgba(60, 60, 80, 0.6)"
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
       />
 
       {/* Right Arrow Button */}
@@ -75,8 +70,7 @@ const VirtualRotationControls: React.FC<VirtualRotationControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.right}
         onTouchStart={() => onRotateStart("ArrowRight")}
         onTouchEnd={() => onRotateEnd("ArrowRight")}
-        size="small"
-        color="rgba(60, 60, 80, 0.6)"
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
       />
     </div>
   );

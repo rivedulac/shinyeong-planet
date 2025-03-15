@@ -2,10 +2,11 @@ import React from "react";
 import VirtualControlButton from "./VirtualControlButton";
 import {
   VIRTUAL_CONTROL_BUTTON_COLOR,
-  VIRTUAL_CONTROLS_GROUP_HEIGHT,
-  VIRTUAL_CONTROLS_GROUP_POSITION,
   VIRTUAL_CONTROLS_GROUP_WIDTH,
-  VIRTUAL_CONTROLS_MARGIN,
+  CORNER_MARGIN,
+  VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER,
+  VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
+  VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
 } from "@/config/constants";
 
 interface VirtualZoomControlsProps {
@@ -21,39 +22,40 @@ const VirtualZoomControls: React.FC<VirtualZoomControlsProps> = ({
     <div
       style={{
         position: "absolute",
-        bottom: VIRTUAL_CONTROLS_MARGIN,
-        left: "46%",
+        top: CORNER_MARGIN,
+        left: CORNER_MARGIN,
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
-        height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
-        zIndex: 1000,
       }}
     >
       <VirtualControlButton
         label="🔍"
-        position={VIRTUAL_CONTROLS_GROUP_POSITION.center}
+        position={{
+          left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER,
+        }}
         onTouchStart={() => void 0}
         onTouchEnd={() => void 0}
-        size="small"
         color={VIRTUAL_CONTROL_BUTTON_COLOR.center}
       />
       {/* Zoom In Button */}
       <VirtualControlButton
         label="+"
-        position={VIRTUAL_CONTROLS_GROUP_POSITION.left}
+        position={{
+          left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
+        }}
         onTouchStart={() => onZoomStart("+")}
         onTouchEnd={() => onZoomEnd("+")}
-        size="small"
-        color="rgba(60, 60, 80, 0.6)"
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
       />
 
       {/* Zoom Out Button */}
       <VirtualControlButton
         label="-"
-        position={VIRTUAL_CONTROLS_GROUP_POSITION.right}
+        position={{
+          left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
+        }}
         onTouchStart={() => onZoomStart("-")}
         onTouchEnd={() => onZoomEnd("-")}
-        size="small"
-        color="rgba(60, 60, 80, 0.6)"
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
       />
     </div>
   );

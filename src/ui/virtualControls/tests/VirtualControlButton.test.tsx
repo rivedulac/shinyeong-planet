@@ -44,34 +44,6 @@ describe("VirtualControlButton", () => {
     expect(mockTouchEnd).toHaveBeenCalledTimes(1);
   });
 
-  it("should render with different sizes", () => {
-    const { rerender } = render(
-      <VirtualControlButton {...defaultProps} size="small" />
-    );
-
-    let button = screen.getByText("Test");
-    expect(button).toHaveStyle("width: 40px");
-    expect(button).toHaveStyle("height: 40px");
-
-    rerender(<VirtualControlButton {...defaultProps} size="large" />);
-    button = screen.getByText("Test");
-    expect(button).toHaveStyle("width: 80px");
-    expect(button).toHaveStyle("height: 80px");
-  });
-
-  it("should render with different shapes", () => {
-    const { rerender } = render(
-      <VirtualControlButton {...defaultProps} shape="circle" />
-    );
-
-    let button = screen.getByText("Test");
-    expect(button).toHaveStyle("border-radius: 50%");
-
-    rerender(<VirtualControlButton {...defaultProps} shape="square" />);
-    button = screen.getByText("Test");
-    expect(button).toHaveStyle("border-radius: 8px");
-  });
-
   it("should render with custom colors", () => {
     render(
       <VirtualControlButton

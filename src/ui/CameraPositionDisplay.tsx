@@ -31,8 +31,8 @@ const CameraPositionDisplay: React.FC<CameraPositionDisplayProps> = ({
     <div
       style={{
         position: "absolute",
-        top: CORNER_MARGIN,
-        left: "20%",
+        top: "25%",
+        left: CORNER_MARGIN,
         padding: "10px",
         backgroundColor: DISPLAY_BACKGROUND_COLOR,
         color: FONT_COLOR,

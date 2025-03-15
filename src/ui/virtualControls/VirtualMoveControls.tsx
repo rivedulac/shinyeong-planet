@@ -2,10 +2,10 @@ import React from "react";
 import VirtualControlButton from "./VirtualControlButton";
 import {
   VIRTUAL_CONTROL_BUTTON_COLOR,
-  VIRTUAL_CONTROLS_GROUP_HEIGHT,
   VIRTUAL_CONTROLS_GROUP_POSITION,
+  CORNER_MARGIN,
   VIRTUAL_CONTROLS_GROUP_WIDTH,
-  VIRTUAL_CONTROLS_MARGIN,
+  VIRTUAL_CONTROLS_GROUP_HEIGHT,
 } from "@/config/constants";
 interface VirtualMoveControlsProps {
   onMoveStart: (key: string) => void;
@@ -21,12 +21,10 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
     <div
       style={{
         position: "absolute",
-        left: "30%",
-        bottom: VIRTUAL_CONTROLS_MARGIN,
+        left: CORNER_MARGIN,
+        bottom: CORNER_MARGIN,
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
         height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
-        zIndex: 1000,
-        // No background, making it invisible except for the buttons
       }}
     >
       <VirtualControlButton
@@ -34,7 +32,6 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.center}
         onTouchStart={() => void 0}
         onTouchEnd={() => void 0}
-        size="small"
         color={VIRTUAL_CONTROL_BUTTON_COLOR.center}
       />
       {/* Up (W) Button */}
@@ -43,7 +40,6 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.up}
         onTouchStart={() => onMoveStart("w")}
         onTouchEnd={() => onMoveEnd("w")}
-        size="small"
       />
 
       {/* Left (A) Button */}
@@ -52,7 +48,6 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.left}
         onTouchStart={() => onMoveStart("a")}
         onTouchEnd={() => onMoveEnd("a")}
-        size="small"
       />
 
       {/* Down (S) Button */}
@@ -61,7 +56,6 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.down}
         onTouchStart={() => onMoveStart("s")}
         onTouchEnd={() => onMoveEnd("s")}
-        size="small"
       />
 
       {/* Right (D) Button */}
@@ -70,7 +64,6 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
         position={VIRTUAL_CONTROLS_GROUP_POSITION.right}
         onTouchStart={() => onMoveStart("d")}
         onTouchEnd={() => onMoveEnd("d")}
-        size="small"
       />
     </div>
   );

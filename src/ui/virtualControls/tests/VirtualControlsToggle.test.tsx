@@ -7,24 +7,8 @@ describe("VirtualControlsToggle", () => {
     render(<VirtualControlsToggle isEnabled={false} onToggle={() => {}} />);
 
     // The toggle should display the OFF text
-    const toggleButton = screen.getByText("Virtual Controls: OFF");
+    const toggleButton = screen.getByText("⌨️");
     expect(toggleButton).toBeInTheDocument();
-
-    // Check that the indicator has the disabled color
-    const indicator = toggleButton.querySelector("span");
-    expect(indicator).toHaveStyle("background-color: rgba(100, 100, 100, 0.8)");
-  });
-
-  it("should render with ON state", () => {
-    render(<VirtualControlsToggle isEnabled={true} onToggle={() => {}} />);
-
-    // The toggle should display the ON text
-    const toggleButton = screen.getByText("Virtual Controls: ON");
-    expect(toggleButton).toBeInTheDocument();
-
-    // Check that the indicator has the enabled color
-    const indicator = toggleButton.querySelector("span");
-    expect(indicator).toHaveStyle("background-color: rgba(233, 69, 96, 0.8)");
   });
 
   it("should call onToggle when clicked", () => {
@@ -32,7 +16,7 @@ describe("VirtualControlsToggle", () => {
     render(<VirtualControlsToggle isEnabled={true} onToggle={mockToggle} />);
 
     // Find and click the toggle button
-    const toggleButton = screen.getByText("Virtual Controls: ON");
+    const toggleButton = screen.getByText("⌨️");
     fireEvent.click(toggleButton);
 
     // Check that the onToggle function was called
@@ -44,7 +28,7 @@ describe("VirtualControlsToggle", () => {
     render(<VirtualControlsToggle isEnabled={true} onToggle={mockToggle} />);
 
     // Find and touch the toggle button
-    const toggleButton = screen.getByText("Virtual Controls: ON");
+    const toggleButton = screen.getByText("⌨️");
     fireEvent.touchEnd(toggleButton);
 
     // Check that the onToggle function was called
@@ -57,7 +41,7 @@ describe("VirtualControlsToggle", () => {
       <VirtualControlsToggle isEnabled={true} onToggle={() => {}} />
     );
 
-    let toggleButton = screen.getByText("Virtual Controls: ON");
+    let toggleButton = screen.getByText("⌨️");
     expect(toggleButton).toHaveStyle(
       "background-color: rgba(83, 52, 131, 0.8)"
     );
@@ -65,7 +49,7 @@ describe("VirtualControlsToggle", () => {
     // Re-render with enabled=false
     rerender(<VirtualControlsToggle isEnabled={false} onToggle={() => {}} />);
 
-    toggleButton = screen.getByText("Virtual Controls: OFF");
+    toggleButton = screen.getByText("⌨️");
     expect(toggleButton).toHaveStyle("background-color: rgba(40, 40, 60, 0.8)");
   });
 });

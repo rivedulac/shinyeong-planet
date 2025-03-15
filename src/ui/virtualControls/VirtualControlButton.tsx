@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import {
+  FONT_COLOR,
+  SMALL_FONT_SIZE,
   VIRTUAL_CONTROL_BUTTON_COLOR,
-  VIRTUAL_CONTROLS_BUTTON_SIZE,
 } from "@/config/constants";
 export interface VirtualControlButtonProps {
   label: string;
@@ -13,8 +14,6 @@ export interface VirtualControlButtonProps {
     left?: string;
     right?: string;
   };
-  size?: "small" | "medium" | "large";
-  shape?: "circle" | "square";
   color?: string;
   pressedColor?: string;
 }
@@ -24,14 +23,10 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
   onTouchStart,
   onTouchEnd,
   position,
-  size = "medium",
-  shape = "circle",
   color = VIRTUAL_CONTROL_BUTTON_COLOR.default,
   pressedColor = VIRTUAL_CONTROL_BUTTON_COLOR.pressed,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
-
-  const dimensions = VIRTUAL_CONTROLS_BUTTON_SIZE[size];
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault(); // Prevent default behavior
@@ -75,16 +70,16 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
       onMouseLeave={handleMouseLeave}
       style={{
         position: "absolute",
-        width: dimensions.width,
-        height: dimensions.height,
+        width: "2.5rem",
+        height: "2.5rem",
         backgroundColor: isPressed ? pressedColor : color,
-        color: "white",
+        color: FONT_COLOR,
         border: "2px solid rgba(255, 255, 255, 0.3)",
-        borderRadius: shape === "circle" ? "50%" : "8px",
+        borderRadius: "50%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: dimensions.fontSize,
+        fontSize: SMALL_FONT_SIZE,
         fontWeight: "bold",
         cursor: "pointer",
         userSelect: "none",

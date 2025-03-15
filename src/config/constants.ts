@@ -47,20 +47,35 @@ export const DEFAULT_PERSON_CONVERSTAION: IConversation = {
   icon: "👤",
 };
 
-export const VIRTUAL_CONTROLS_MARGIN = "20px";
-export const VIRTUAL_CONTROLS_GROUP_WIDTH = "160px";
-export const VIRTUAL_CONTROLS_GROUP_HEIGHT = "160px";
-export const VIRTUAL_CONTROLS_BUTTON_SIZE = {
-  small: { width: "40px", height: "40px", fontSize: "18px" },
-  medium: { width: "60px", height: "60px", fontSize: "24px" },
-  large: { width: "80px", height: "80px", fontSize: "30px" },
-};
+export const VIRTUAL_CONTROLS_GROUP_WIDTH = "10.0rem";
+export const VIRTUAL_CONTROLS_GROUP_HEIGHT = "10.0rem";
+export const VIRTUAL_CONTROLS_BUTTON_VERTICAL_TOP = "0";
+export const VIRTUAL_CONTROLS_BUTTON_VERTICAL_CENTER = "50px";
+export const VIRTUAL_CONTROLS_BUTTON_VERTICAL_BOTTOM = "100px";
+export const VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER = "70px";
+export const VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT = "20px";
+export const VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT = "120px";
 export const VIRTUAL_CONTROLS_GROUP_POSITION = {
-  center: { top: "50px", left: "70px" },
-  up: { top: "0", left: "70px" },
-  down: { top: "100px", left: "70px" },
-  left: { top: "50px", left: "20px" },
-  right: { top: "50px", left: "120px" },
+  center: {
+    top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_CENTER,
+    left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER,
+  },
+  up: {
+    top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_TOP,
+    left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER,
+  },
+  down: {
+    top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_BOTTOM,
+    left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER,
+  },
+  left: {
+    top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_CENTER,
+    left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
+  },
+  right: {
+    top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_CENTER,
+    left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
+  },
 };
 export const VIRTUAL_CONTROL_BUTTON_COLOR = {
   pressed: "rgba(233, 69, 96, 0.8)",
