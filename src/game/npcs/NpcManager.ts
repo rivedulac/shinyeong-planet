@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { INpc } from "./INpc";
+import { INpc } from "./interfaces/INpc";
 import { Billboard } from "./Billboard";
 import { Flag } from "./Flag";
 import { Person } from "./Person";

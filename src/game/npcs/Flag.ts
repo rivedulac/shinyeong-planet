@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { INpc, NpcType } from "./INpc";
+import { INpc, NpcType } from "./interfaces/INpc";
 import {
   PLANET_CENTER,
   PLANET_RADIUS,
   FLAG_RADIUS,
   DEFAULT_FLAG_CONVERSTAION,
 } from "../../config/constants";
-import { IConversation } from "./IConversation";
+import { IConversation } from "./interfaces/IConversation";
 
 /**
  * Flag NPC - represents a country flag with location, year, and description

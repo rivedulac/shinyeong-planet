@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Person } from "../Person";
-import { NpcType } from "../INpc";
+import { NpcType } from "../interfaces/INpc";
 import * as THREE from "three";
 import {
   PLANET_RADIUS,

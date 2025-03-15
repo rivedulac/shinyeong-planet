@@ -1,7 +1,5 @@
-// CollisionUtils.ts - Utility functions for collision detection
-
 import { PLAYER_RADIUS, INTERACTION_DISTANCE } from "@/config/constants";
-import { INpc } from "./INpc";
+import { INpc } from "./interfaces/INpc";
 import * as THREE from "three";
 
 export class CollisionUtils {

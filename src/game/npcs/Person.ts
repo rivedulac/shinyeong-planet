@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { INpc, NpcType } from "./INpc";
+import { INpc, NpcType } from "./interfaces/INpc";
 import {
   PLANET_CENTER,
   PLANET_RADIUS,
   PERSON_RADIUS,
   DEFAULT_PERSON_CONVERSTAION,
 } from "../../config/constants";
-import { IConversation } from "./IConversation";
+import { IConversation } from "./interfaces/IConversation";
 
 /**
  * Person NPC - represents a human character on the planet

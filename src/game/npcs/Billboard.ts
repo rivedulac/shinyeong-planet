@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { INpc, NpcType } from "./INpc";
-import { IConversation } from "./IConversation";
+import { INpc, NpcType } from "./interfaces/INpc";
+import { IConversation } from "./interfaces/IConversation";
 import {
   BILLBOARD_RADIUS,
   DEFAULT_BILLBOARD_CONVERSTAION,

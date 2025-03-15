@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IConversation } from "../game/npcs/IConversation";
+import { IConversation } from "../game/npcs/interfaces/IConversation";
 
 interface ConversationModalProps {
   conversation: IConversation;

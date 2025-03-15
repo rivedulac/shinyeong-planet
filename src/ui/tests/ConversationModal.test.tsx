@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ConversationModal from "../ConversationModal";
-import { IConversation } from "../../game/npcs/IConversation";
+import { IConversation } from "../../game/npcs/interfaces/IConversation";
 
 describe("ConversationModal", () => {
   const mockConversation: IConversation = {

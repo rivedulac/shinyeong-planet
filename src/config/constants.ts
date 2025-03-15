@@ -1,4 +1,4 @@
-import { IConversation } from "@/game/npcs/IConversation";
+import { IConversation } from "@/game/npcs/interfaces/IConversation";
 import * as THREE from "three";
 
 export const PLANET_RADIUS = 25;

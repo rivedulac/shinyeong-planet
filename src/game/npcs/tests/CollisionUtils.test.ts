@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { CollisionUtils } from "../CollisionUtils";
-import { INpc, NpcType } from "../INpc";
+import { INpc, NpcType } from "../interfaces/INpc";
 import * as THREE from "three";
 import { INTERACTION_DISTANCE } from "@/config/constants";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Camera } from "../core/Camera";
 import { PlayerController } from "./PlayerController";
-import CameraPositionDisplay from "../ui/CameraPositionDisplay";
+import CameraPositionDisplay from "../ui/informationDisplay/CameraPositionDisplay";
 import LanguageSelector from "../ui/LanguageSelector";
 import PlayerNameInput from "../ui/PlayerNameInput";
 import PlayerNameDisplay from "../ui/PlayerNameDisplay";
@@ -18,11 +18,11 @@ import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { useMobileDetect } from "../hooks/useMobileDetect";
 import { NpcManager } from "./npcs/NpcManager";
-import { IConversation } from "./npcs/IConversation";
-import { getConversationForNpc } from "./npcs/IConversation";
+import { IConversation } from "./npcs/interfaces/IConversation";
+import { getConversationForNpc } from "./npcs/interfaces/IConversation";
 import { INpc } from "./npcs/INpc";
-import InfoToggle from "../ui/InfoToggle";
-import ControlsInfoDisplay from "../ui/ControlsInfoDisplay";
+import InfoToggle from "../ui/informationDisplay/InfoToggle";
+import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";

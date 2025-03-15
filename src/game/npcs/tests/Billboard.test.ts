@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Billboard } from "../Billboard";
-import { NpcType } from "../INpc";
+import { NpcType } from "../interfaces/INpc";
 import * as THREE from "three";
 import {
   PLANET_RADIUS,
