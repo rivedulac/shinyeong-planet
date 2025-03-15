@@ -22,6 +22,7 @@ import { getConversationForNpc } from "./npcs/interfaces/IConversation";
 import { INpc } from "./npcs/interfaces/INpc";
 import InfoToggle from "../ui/informationDisplay/InfoToggle";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
+import { Minimap } from "../ui/map";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -235,6 +236,9 @@ const Game: React.FC = () => {
           onClose={endConversation}
         />
       )}
+
+      {/* Add Minimap component */}
+      <Minimap />
 
       {/* Show virtual controls if enabled */}
       {virtualControlsEnabled && (

@@ -1,3 +1,4 @@
+import { CORNER_MARGIN } from "@/config/constants";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -12,8 +13,8 @@ const LanguageSelector: React.FC = () => {
     <div
       style={{
         position: "absolute",
-        bottom: "20px",
-        right: "20px",
+        top: CORNER_MARGIN,
+        right: "10%",
         padding: "10px",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         color: "white",
