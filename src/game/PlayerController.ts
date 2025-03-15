@@ -224,6 +224,10 @@ export class PlayerController {
     return this.perspectiveCamera.position.clone();
   }
 
+  public getRotation(): THREE.Euler {
+    return this.perspectiveCamera.rotation.clone();
+  }
+
   // Cleanup method to remove event listeners
   public dispose(): void {
     if (this.handleKeyDown) {

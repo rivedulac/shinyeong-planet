@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
+import * as THREE from "three";
 
 interface MinimapProps {
-  // Will be expanded later with player position, NPCs, etc.
+  playerPosition?: THREE.Vector3;
+  playerRotation?: number;
+  npcs?: Array<{
+    type: string;
+    position: THREE.Vector3;
+    id: string;
+  }>;
 }
 
 /**
  * A minimap component that displays a top-down view of the game world
  */
-const Minimap: React.FC<MinimapProps> = () => {
+const Minimap: React.FC<MinimapProps> = ({
+  playerPosition,
+  playerRotation,
+  npcs,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
   return (
     <div
       style={{
@@ -41,7 +56,11 @@ const Minimap: React.FC<MinimapProps> = () => {
           strokeWidth="1"
         />
         {/* Player position marker (center) */}
-        <polygon points="100,94 96,106 104,106" fill="#ff3333" />
+        <polygon
+          points="100,94 96,106 104,106"
+          fill="#ff3333"
+          transform={`rotate(${playerRotation}, 100, 100)`}
+        />
         <text x="100" y="120" textAnchor="middle" fill="white" fontSize="12">
           Minimap
         </text>

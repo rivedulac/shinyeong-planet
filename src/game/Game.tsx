@@ -24,6 +24,7 @@ import InfoToggle from "../ui/informationDisplay/InfoToggle";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 import { Minimap } from "../ui/map";
 import { MinimapToggle } from "../ui/map";
+import * as THREE from "three";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -69,6 +70,14 @@ const Game: React.FC = () => {
     "shinyeongPlanet.minimapVisible",
     true
   );
+
+  const [npcState, setNpcState] = useState<
+    Array<{
+      type: string;
+      position: THREE.Vector3;
+      id: string;
+    }>
+  >([]);
 
   // Handlers for virtual controls
   const handleVirtualControlStart = (key: string) => {
@@ -139,6 +148,14 @@ const Game: React.FC = () => {
     // Create NPC manager and initialize NPCs
     const npcManager = new NpcManager(scene.getScene());
     npcManager.initializeDefaultNpcs();
+
+    const allNpcs = npcManager.getAllNpcs();
+    const npcsData = allNpcs.map((npc) => ({
+      type: npc.getType(),
+      position: npc.getMesh().position.clone(),
+      id: npc.getId(),
+    }));
+    setNpcState(npcsData);
 
     // Set up conversation callbacks
     npcManager.setOnStartConversation((npc: INpc) => {
@@ -220,6 +237,8 @@ const Game: React.FC = () => {
     return <PlayerNameInput onNameSubmit={handleNameSubmit} />;
   }
 
+  const playerPosition = cameraPosition.rotation.yaw * (180 / Math.PI);
+
   // Otherwise show the game with player name displayed
   return (
     <>
@@ -270,7 +289,13 @@ const Game: React.FC = () => {
       <LanguageSelector />
 
       <MinimapToggle isVisible={!!minimapVisible} onToggle={toggleMinimap} />
-      {minimapVisible && <Minimap />}
+      {minimapVisible && (
+        <Minimap
+          playerPosition={playerController?.getPosition()}
+          playerRotation={playerController?.getRotation().y}
+          npcs={npcState}
+        />
+      )}
     </>
   );
 };
