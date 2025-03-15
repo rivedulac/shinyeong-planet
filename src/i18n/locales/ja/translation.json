@@ -13,8 +13,10 @@
     "title": "操作方法:",
     "moveForward": "W - 前進",
     "moveBackward": "S - 後退",
-    "rotateLeft": "A - 左回転",
-    "rotateRight": "D - 右回転",
+    "strafeLeft": "A - 左へ移動",
+    "strafeRight": "D - 右へ移動",
+    "rotateLeft": "← - 左回転",
+    "rotateRight": "→ - 右回転",
     "lookUp": "↑ - 上を見る",
     "lookDown": "↓ - 下を見る",
     "zoomIn": "+ - ズームイン（FOV減少）",
@@ -29,5 +31,17 @@
     "zh-TW": "繁體中文",
     "de": "Deutsch",
     "ja": "日本語"
+  },
+  "playerName": {
+    "title": "シンヨン惑星へようこそ",
+    "enterName": "名前を入力してください:",
+    "placeholder": "名前を入力",
+    "start": "探検開始",
+    "error": "名前を入力してください",
+    "display": "探検家: {{name}}",
+    "edit": "名前を変更",
+    "editTitle": "探検家の名前を変更",
+    "save": "保存",
+    "cancel": "キャンセル"
   }
 }

@@ -13,8 +13,10 @@
     "title": "控制方式:",
     "moveForward": "W - 向前移動",
     "moveBackward": "S - 向後移動",
-    "rotateLeft": "A - 向左旋轉",
-    "rotateRight": "D - 向右旋轉",
+    "strafeLeft": "A - 向左平移",
+    "strafeRight": "D - 向右平移",
+    "rotateLeft": "← - 向左旋轉",
+    "rotateRight": "→ - 向右旋轉",
     "lookUp": "↑ - 向上看",
     "lookDown": "↓ - 向下看",
     "zoomIn": "+ - 放大 (減小視場角)",
@@ -29,5 +31,17 @@
     "zh-TW": "繁體中文",
     "de": "Deutsch",
     "ja": "日本語"
+  },
+  "playerName": {
+    "title": "歡迎來到信渶星球",
+    "enterName": "請輸入您的名字:",
+    "placeholder": "在此輸入名字",
+    "start": "開始探索",
+    "error": "名字不能為空",
+    "display": "探索者: {{name}}",
+    "edit": "修改名字",
+    "editTitle": "修改探索者名字",
+    "save": "儲存",
+    "cancel": "取消"
   }
 }

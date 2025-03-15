@@ -13,12 +13,14 @@
     "title": "Steuerung:",
     "moveForward": "W - Vorwärts bewegen",
     "moveBackward": "S - Rückwärts bewegen",
-    "rotateLeft": "A - Nach links drehen",
-    "rotateRight": "D - Nach rechts drehen",
+    "strafeLeft": "A - Nach links gleiten",
+    "strafeRight": "D - Nach rechts gleiten",
+    "rotateLeft": "← - Nach links drehen",
+    "rotateRight": "→ - Nach rechts drehen",
     "lookUp": "↑ - Nach oben schauen",
     "lookDown": "↓ - Nach unten schauen",
-    "zoomIn": "+ - Hineinzoomen (FOV verringern)",
-    "zoomOut": "- - Herauszoomen (FOV erhöhen)"
+    "zoomIn": "+ - Hineinzoomen (Sichtfeld verkleinern)",
+    "zoomOut": "- - Herauszoomen (Sichtfeld vergrößern)"
   },
   "language": {
     "title": "Sprache",
@@ -29,5 +31,17 @@
     "zh-TW": "繁體中文",
     "de": "Deutsch",
     "ja": "日本語"
+  },
+  "playerName": {
+    "title": "Willkommen auf dem Shinyeong Planet",
+    "enterName": "Bitte geben Sie Ihren Namen ein:",
+    "placeholder": "Ihr Name hier",
+    "start": "Reise beginnen",
+    "error": "Name darf nicht leer sein",
+    "display": "Entdecker: {{name}}",
+    "edit": "Namen ändern",
+    "editTitle": "Entdeckernamen ändern",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
   }
 }
