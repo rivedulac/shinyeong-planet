@@ -11,7 +11,6 @@ import ConversationModal from "../ui/ConversationModal";
 import {
   VirtualControlsToggle,
   VirtualMoveControls,
-  VirtualRotationControls,
   VirtualZoomControls,
 } from "../ui/virtualControls";
 import { Scene } from "../core/Scene";
@@ -20,7 +19,7 @@ import { useMobileDetect } from "../hooks/useMobileDetect";
 import { NpcManager } from "./npcs/NpcManager";
 import { IConversation } from "./npcs/interfaces/IConversation";
 import { getConversationForNpc } from "./npcs/interfaces/IConversation";
-import { INpc } from "./npcs/INpc";
+import { INpc } from "./npcs/interfaces/INpc";
 import InfoToggle from "../ui/informationDisplay/InfoToggle";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 
@@ -243,10 +242,6 @@ const Game: React.FC = () => {
           <VirtualMoveControls
             onMoveStart={handleVirtualControlStart}
             onMoveEnd={handleVirtualControlEnd}
-          />
-          <VirtualRotationControls
-            onRotateStart={handleVirtualControlStart}
-            onRotateEnd={handleVirtualControlEnd}
           />
           <VirtualZoomControls
             onZoomStart={handleVirtualControlStart}

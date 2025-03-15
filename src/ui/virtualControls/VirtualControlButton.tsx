@@ -5,7 +5,7 @@ import {
   VIRTUAL_CONTROL_BUTTON_COLOR,
 } from "@/config/constants";
 export interface VirtualControlButtonProps {
-  label: string;
+  label?: string;
   onTouchStart: () => void;
   onTouchEnd: () => void;
   position: {
@@ -16,6 +16,9 @@ export interface VirtualControlButtonProps {
   };
   color?: string;
   pressedColor?: string;
+  image?: string;
+  imageSize?: string;
+  dataTestId?: string;
 }
 
 const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
@@ -25,6 +28,9 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
   position,
   color = VIRTUAL_CONTROL_BUTTON_COLOR.default,
   pressedColor = VIRTUAL_CONTROL_BUTTON_COLOR.pressed,
+  image,
+  imageSize,
+  dataTestId,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
 
@@ -63,6 +69,7 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
 
   return (
     <button
+      data-testid={dataTestId}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
@@ -74,7 +81,7 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
         height: "2.5rem",
         backgroundColor: isPressed ? pressedColor : color,
         color: FONT_COLOR,
-        border: "2px solid rgba(255, 255, 255, 0.3)",
+        border: "2px solid rgba(255, 255, 255, 1.0)",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
@@ -92,7 +99,20 @@ const VirtualControlButton: React.FC<VirtualControlButtonProps> = ({
         transform: isPressed ? "translateY(2px)" : "translateY(0)",
       }}
     >
-      {label}
+      {image ? (
+        <img
+          src={image}
+          alt={label}
+          style={{
+            width: imageSize,
+            height: imageSize,
+            objectFit: "contain",
+            filter: "brightness(0) invert(1)",
+          }}
+        />
+      ) : (
+        label
+      )}
     </button>
   );
 };

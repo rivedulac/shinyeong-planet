@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { PlayerController } from "../PlayerController";
 import { Camera } from "../../core/Camera";
 import { NpcManager } from "../npcs/NpcManager";
-import { INpc } from "../npcs/INpc";
+import { INpc } from "../npcs/interfaces/INpc";
 import * as THREE from "three";
 import { Billboard } from "../npcs/Billboard";
 

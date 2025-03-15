@@ -3,14 +3,16 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import VirtualMoveControls from "../VirtualMoveControls";
 
 describe("VirtualMoveControls", () => {
-  it("should render four directional buttons", () => {
+  it("should render eight directional buttons", () => {
     render(<VirtualMoveControls onMoveStart={() => {}} onMoveEnd={() => {}} />);
-
-    // Check that all four buttons are rendered
     expect(screen.getByText("W")).toBeInTheDocument();
     expect(screen.getByText("A")).toBeInTheDocument();
     expect(screen.getByText("S")).toBeInTheDocument();
     expect(screen.getByText("D")).toBeInTheDocument();
+    expect(screen.getByTestId("up-arrow-button")).toBeInTheDocument();
+    expect(screen.getByTestId("down-arrow-button")).toBeInTheDocument();
+    expect(screen.getByTestId("left-arrow-button")).toBeInTheDocument();
+    expect(screen.getByTestId("right-arrow-button")).toBeInTheDocument();
   });
 
   it("should call onMoveStart when a button is pressed", () => {

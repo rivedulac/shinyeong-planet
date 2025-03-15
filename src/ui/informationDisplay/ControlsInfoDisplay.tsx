@@ -14,8 +14,8 @@ const ControlsInfoDisplay: React.FC = () => {
     <div
       style={{
         position: "absolute",
-        top: CORNER_MARGIN,
-        left: CORNER_MARGIN,
+        top: "7.5%",
+        right: CORNER_MARGIN,
         padding: "10px",
         backgroundColor: DISPLAY_BACKGROUND_COLOR,
         color: FONT_COLOR,
