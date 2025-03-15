@@ -1,5 +1,9 @@
 import * as THREE from "three";
-import { PLANET_CENTER, PLANET_RADIUS } from "../../../config/constants";
+import {
+  MINI_MAP_VISIBLE_DISTANCE_THRESHOLD,
+  PLANET_CENTER,
+  PLANET_RADIUS,
+} from "../../../config/constants";
 
 /**
  * Convert a 3D position on the planet surface to latitude and longitude
@@ -30,63 +34,207 @@ export const cartesianToLatLong = (
 };
 
 /**
+ * Convert latitude and longitude to a 3D position on the planet surface
+ * @param lat Latitude in degrees (-90 to 90)
+ * @param long Longitude in degrees (-180 to 180)
+ * @returns 3D vector position
+ */
+export const latLongToCartesian = (
+  lat: number,
+  long: number
+): THREE.Vector3 => {
+  // Convert to radians
+  const latRad = lat * (Math.PI / 180);
+  const longRad = long * (Math.PI / 180);
+
+  // Calculate 3D position
+  return new THREE.Vector3(
+    PLANET_CENTER.x + PLANET_RADIUS * Math.cos(latRad) * Math.cos(longRad),
+    PLANET_CENTER.y + PLANET_RADIUS * Math.sin(latRad),
+    PLANET_CENTER.z + PLANET_RADIUS * Math.cos(latRad) * Math.sin(longRad)
+  );
+};
+
+/**
+ * Calculate the heading (angle) based on relative position from planet center
+ * @param position Player's current position
+ * @returns Angle in radians
+ */
+export const calculateHeadingFromPosition = (
+  position: THREE.Vector3
+): number => {
+  // Calculate relative position from planet center
+  const relativePos = new THREE.Vector3().subVectors(position, PLANET_CENTER);
+
+  // Normalize the relative position
+  relativePos.normalize();
+
+  // Use Math.atan2 to get the angle in the XZ plane
+  // Adjust to match Three.js coordinate system
+  // (0 is positive Z, rotates counterclockwise)
+  let angle = Math.atan2(relativePos.x, relativePos.z);
+
+  // Normalize to 0-2π range
+  if (angle < 0) angle += 2 * Math.PI;
+
+  return angle;
+};
+
+/**
+ * Check if a point on the planet is visible from the player's position
+ * @param position Position to check
+ * @param playerPos Player's position
+ * @param threshold Optional visibility threshold (-1 to 1, default 0)
+ * @returns True if the point is on the visible hemisphere
+ */
+export const isPointVisible = (
+  position: THREE.Vector3,
+  playerPos: THREE.Vector3,
+  threshold: number = 0
+): boolean => {
+  // Get direction vectors from planet center
+  const playerDir = new THREE.Vector3()
+    .subVectors(playerPos, PLANET_CENTER)
+    .normalize();
+  const pointDir = new THREE.Vector3()
+    .subVectors(position, PLANET_CENTER)
+    .normalize();
+
+  // Calculate dot product of the two direction vectors
+  // If dot product > threshold, the point is considered visible
+  const dotProduct = playerDir.dot(pointDir);
+
+  // For standard hemisphere visibility, threshold should be 0
+  // Negative threshold values will show more than a hemisphere
+  // Positive threshold values will show less than a hemisphere
+  return dotProduct > threshold;
+};
+
+/**
  * Project a point from the spherical planet to the 2D minimap
  * Uses azimuthal equidistant projection centered on player
  * @param position 3D position to project
  * @param playerPos Player's 3D position (center of projection)
  * @param mapRadius Radius of the minimap in pixels
- * @returns Projected 2D coordinates {x, y} relative to center of minimap, or null if point is not projectable
+ * @returns Projected 2D coordinates {x, y} relative to center of minimap, or null if point is not projectable or visible
  */
 export const projectToMinimap = (
   position: THREE.Vector3,
   playerPos: THREE.Vector3,
   mapRadius: number
 ): { x: number; y: number } | null => {
-  // Convert positions to lat/long
-  const playerLatLong = cartesianToLatLong(playerPos);
-  const pointLatLong = cartesianToLatLong(position);
+  try {
+    // First check if the point is on the visible hemisphere with a more permissive threshold
+    // This allows us to see slightly more than a hemisphere for better visualization
+    if (
+      !isPointVisible(position, playerPos, MINI_MAP_VISIBLE_DISTANCE_THRESHOLD)
+    ) {
+      return null; // Point is not visible, don't project it
+    }
 
-  // Convert to radians
-  const playerLatRad = playerLatLong.lat * (Math.PI / 180);
-  const playerLongRad = playerLatLong.long * (Math.PI / 180);
-  const pointLatRad = pointLatLong.lat * (Math.PI / 180);
-  const pointLongRad = pointLatLong.long * (Math.PI / 180);
+    // Safety check - ensure neither position is at planet center (would cause NaN)
+    const posDistanceFromCenter = position.distanceTo(PLANET_CENTER);
+    const playerDistanceFromCenter = playerPos.distanceTo(PLANET_CENTER);
 
-  // Calculate great circle distance (central angle)
-  const cosC =
-    Math.sin(playerLatRad) * Math.sin(pointLatRad) +
-    Math.cos(playerLatRad) *
-      Math.cos(pointLatRad) *
-      Math.cos(pointLongRad - playerLongRad);
+    if (posDistanceFromCenter < 0.01 || playerDistanceFromCenter < 0.01) {
+      console.warn("Position too close to planet center, can't project");
+      return { x: 0, y: 0 }; // Default to center
+    }
 
-  // Clamp value to valid range for Math.acos
-  const c = Math.acos(Math.max(-1, Math.min(1, cosC)));
+    // Convert positions to lat/long
+    const playerLatLong = cartesianToLatLong(playerPos);
+    const pointLatLong = cartesianToLatLong(position);
 
-  // Calculate bearing
-  const y1 = Math.sin(pointLongRad - playerLongRad) * Math.cos(pointLatRad);
-  const x1 =
-    Math.cos(playerLatRad) * Math.sin(pointLatRad) -
-    Math.sin(playerLatRad) *
-      Math.cos(pointLatRad) *
-      Math.cos(pointLongRad - playerLongRad);
-  const bearing = Math.atan2(y1, x1);
+    // Convert to radians
+    const playerLatRad = playerLatLong.lat * (Math.PI / 180);
+    const playerLongRad = playerLatLong.long * (Math.PI / 180);
+    const pointLatRad = pointLatLong.lat * (Math.PI / 180);
+    const pointLongRad = pointLatLong.long * (Math.PI / 180);
 
-  // Map distance and bearing to x,y coordinates
-  // Scale by mapRadius, with a max distance of half the planet circumference (PI * PLANET_RADIUS)
-  const maxDistance = Math.PI * PLANET_RADIUS;
-  const k = c !== 0 ? (mapRadius * c) / maxDistance : 0;
+    // If positions are extremely close, just return center point
+    if (
+      Math.abs(playerLatRad - pointLatRad) < 0.001 &&
+      Math.abs(playerLongRad - pointLongRad) < 0.001
+    ) {
+      return { x: 0, y: 0 };
+    }
 
-  // Project coordinates - x is positive to the right, y is positive going up
-  const x = k * Math.sin(bearing);
-  const y = -k * Math.cos(bearing);
+    // Calculate great circle distance (central angle)
+    const cosC =
+      Math.sin(playerLatRad) * Math.sin(pointLatRad) +
+      Math.cos(playerLatRad) *
+        Math.cos(pointLatRad) *
+        Math.cos(pointLongRad - playerLongRad);
 
-  return { x, y };
+    // Safer acos calculation with clamping
+    const c = Math.acos(Math.max(-1, Math.min(1, cosC)));
+
+    // Get the direction vectors for scaling calculation
+    const playerDir = new THREE.Vector3()
+      .subVectors(playerPos, PLANET_CENTER)
+      .normalize();
+    const pointDir = new THREE.Vector3()
+      .subVectors(position, PLANET_CENTER)
+      .normalize();
+    const dotProduct = playerDir.dot(pointDir);
+
+    // Calculate a dynamic scale factor based on distance from center of view
+    // This helps manage distortion at the edges
+    let scaleFactor = 1.0;
+
+    // For points approaching the edge, compress them to avoid extreme stretching
+    // Use a smoother scaling that gradually compresses as we approach the edge
+    if (dotProduct < 0) {
+      // For points beyond 90 degrees from view center (dotProduct < 0)
+      // Apply stronger compression
+      scaleFactor = 0.7 + (dotProduct + 0.3) * 1.0; // Gradual scaling
+    } else if (dotProduct < 0.5) {
+      // For points between 60-90 degrees from view center
+      // Apply mild compression
+      scaleFactor = 0.9 + dotProduct * 0.2; // Mild scaling
+    }
+
+    // Calculate bearing (azimuth angle from player to point)
+    const y1 = Math.sin(pointLongRad - playerLongRad) * Math.cos(pointLatRad);
+    const x1 =
+      Math.cos(playerLatRad) * Math.sin(pointLatRad) -
+      Math.sin(playerLatRad) *
+        Math.cos(pointLatRad) *
+        Math.cos(pointLongRad - playerLongRad);
+    const bearing = Math.atan2(y1, x1);
+
+    // Map distance and bearing to x,y coordinates
+    // Use a smaller value for maxDistance to expand the projection
+    // to fill more of the map radius (Math.PI/1.8 gives ~90% fill for a hemisphere)
+    const maxDistance = Math.PI / 1.8;
+    let k = c !== 0 ? (mapRadius * c * scaleFactor) / maxDistance : 0;
+
+    // Ensure points don't go beyond map radius
+    k = Math.min(k, mapRadius * 0.95);
+
+    // Project coordinates - x is positive to the right, y is positive going down (SVG coordinate system)
+    const x = k * Math.sin(bearing);
+    const y = -k * Math.cos(bearing);
+
+    // Validate output - if we get NaN, return null
+    if (isNaN(x) || isNaN(y)) {
+      console.warn("Projection produced NaN values");
+      return { x: 0, y: 0 }; // Default to center
+    }
+
+    return { x, y };
+  } catch (error) {
+    console.error("Error in projection:", error);
+    return { x: 0, y: 0 }; // Default to center in case of error
+  }
 };
 
 /**
- * Generate latitude and longitude grid lines for the minimap
+ * Generate absolute latitude and longitude grid lines for the minimap
  * @param playerPosition Player's 3D position (center of projection)
  * @param mapRadius Radius of the minimap in pixels
+ * @param centerX X-coordinate of the map center in SVG coordinates
+ * @param centerY Y-coordinate of the map center in SVG coordinates
  * @returns Object containing grid line points
  */
 export const generateGridLines = (
@@ -95,149 +243,218 @@ export const generateGridLines = (
   centerX: number = 100,
   centerY: number = 100
 ) => {
-  const latitudeLines: Array<{ points: string }> = [];
-  const longitudeLines: Array<{ points: string }> = [];
+  const latitudeLines: Array<{ points: string; label: string }> = [];
+  const longitudeLines: Array<{ points: string; label: string }> = [];
+  const poleMarkers: Array<{
+    x: number;
+    y: number;
+    isPole: boolean;
+    isNorth: boolean;
+  }> = [];
 
-  // Generate latitude lines (circles around player)
-  for (let latOffset = 15; latOffset <= 90; latOffset += 15) {
-    // For each latitude offset (15°, 30°, 45°, 60°, 75°, 90°)
-    const northPoints: string[] = [];
-    const southPoints: string[] = [];
+  // Get player's lat/long
+  const playerLatLong = cartesianToLatLong(playerPosition);
 
-    // Generate points around the player at consistent latitude offset
-    for (let longOffset = -180; longOffset <= 180; longOffset += 5) {
-      // Get player's lat/long
-      const playerLatLong = cartesianToLatLong(playerPosition);
+  // Calculate player's facing direction in terms of longitude
+  // This helps us determine which longitude lines to prioritize
+  const playerLong = playerLatLong.long;
 
-      // Calculate points at offset from player latitude
-      // Note: We need to handle wrapping around poles correctly
-      const northLat = Math.min(90, playerLatLong.lat + latOffset);
-      const southLat = Math.max(-90, playerLatLong.lat - latOffset);
+  // Generate more dense latitude lines for better coverage
+  const latitudeSteps = [-75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75];
 
-      // Create positions for north and south points at this longitude
-      const longRad = (playerLatLong.long + longOffset) * (Math.PI / 180);
-      const northLatRad = northLat * (Math.PI / 180);
-      const southLatRad = southLat * (Math.PI / 180);
+  for (const lat of latitudeSteps) {
+    const segments: Array<Array<string>> = [];
+    let currentSegment: Array<string> = [];
+    let lastProjection: { x: number; y: number } | null = null;
 
-      // Convert lat/long to 3D positions
-      const northPos = new THREE.Vector3(
-        PLANET_CENTER.x +
-          PLANET_RADIUS * Math.cos(northLatRad) * Math.cos(longRad),
-        PLANET_CENTER.y + PLANET_RADIUS * Math.sin(northLatRad),
-        PLANET_CENTER.z +
-          PLANET_RADIUS * Math.cos(northLatRad) * Math.sin(longRad)
-      );
+    // Generate points along this latitude at different longitudes
+    // Higher resolution for smoother lines
+    for (let long = -180; long <= 180; long += 2) {
+      // Increased resolution further
+      // Calculate 3D position for this lat/long
+      const pos = latLongToCartesian(lat, long);
 
-      const southPos = new THREE.Vector3(
-        PLANET_CENTER.x +
-          PLANET_RADIUS * Math.cos(southLatRad) * Math.cos(longRad),
-        PLANET_CENTER.y + PLANET_RADIUS * Math.sin(southLatRad),
-        PLANET_CENTER.z +
-          PLANET_RADIUS * Math.cos(southLatRad) * Math.sin(longRad)
-      );
+      // Project this position to the minimap
+      // The projection function already handles visibility checking
+      const projection = projectToMinimap(pos, playerPosition, mapRadius);
 
-      // Project to minimap
-      const northProjection = projectToMinimap(
-        northPos,
-        playerPosition,
-        mapRadius
-      );
-      const southProjection = projectToMinimap(
-        southPos,
-        playerPosition,
-        mapRadius
-      );
+      if (projection) {
+        const point = `${centerX + projection.x},${centerY + projection.y}`;
 
-      // Add points if projection successful
-      if (northProjection) {
-        northPoints.push(
-          `${centerX + northProjection.x},${centerY + northProjection.y}`
-        );
-      }
+        // Check if there's a large jump in projection (might indicate crossing the visibility boundary)
+        if (lastProjection) {
+          const dx = projection.x - lastProjection.x;
+          const dy = projection.y - lastProjection.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (southProjection) {
-        southPoints.push(
-          `${centerX + southProjection.x},${centerY + southProjection.y}`
-        );
+          // If there's a large jump, start a new segment
+          if (distance > mapRadius / 3) {
+            if (currentSegment.length > 1) {
+              segments.push([...currentSegment]);
+              currentSegment = [];
+            }
+          }
+        }
+
+        currentSegment.push(point);
+        lastProjection = projection;
+      } else {
+        // If we had points in the current segment and now hit an invisible point,
+        // store the segment and start a new one
+        if (currentSegment.length > 1) {
+          segments.push([...currentSegment]);
+          currentSegment = [];
+        }
+        lastProjection = null;
       }
     }
 
-    // Add north line if we have enough points
-    if (northPoints.length > 1) {
-      latitudeLines.push({ points: northPoints.join(" ") });
+    // Add the last segment if it has points
+    if (currentSegment.length > 1) {
+      segments.push(currentSegment);
     }
 
-    // Add south line if we have enough points
-    if (southPoints.length > 1) {
-      latitudeLines.push({ points: southPoints.join(" ") });
+    // Add all segments as separate polylines
+    for (let i = 0; i < segments.length; i++) {
+      if (segments[i].length > 1) {
+        latitudeLines.push({
+          points: segments[i].join(" "),
+          label:
+            lat === 0 ? "Equator" : `${Math.abs(lat)}°${lat > 0 ? "N" : "S"}`,
+        });
+      }
     }
   }
 
-  // Generate longitude lines (lines radiating from player)
-  for (let longOffset = 0; longOffset < 360; longOffset += 30) {
-    const points: string[] = [];
+  // Generate longitude lines at regular intervals
+  // Use more lines and finer resolution for better detail
+  const relativeLongs = [
+    -165, -150, -135, -120, -105, -90, -75, -60, -45, -30, -15, 0, 15, 30, 45,
+    60, 75, 90, 105, 120, 135, 150, 165, 180,
+  ];
 
-    // Get player's lat/long
-    const playerLatLong = cartesianToLatLong(playerPosition);
+  // Convert relative longitudes to absolute
+  for (const relLong of relativeLongs) {
+    // Calculate absolute longitude
+    let absLong = (playerLong + relLong) % 360;
+    if (absLong > 180) absLong -= 360;
+    if (absLong < -180) absLong += 360;
 
-    // Create points along this longitude line
-    for (let latOffset = 0; latOffset <= 90; latOffset += 5) {
-      const northLat = Math.min(90, playerLatLong.lat + latOffset);
-      const southLat = Math.max(-90, playerLatLong.lat - latOffset);
+    const segments: Array<Array<string>> = [];
+    let currentSegment: Array<string> = [];
+    let lastProjection: { x: number; y: number } | null = null;
 
-      // We need two points at each latitude offset - one north, one south
-      const longRad = (playerLatLong.long + longOffset) * (Math.PI / 180);
-      const northLatRad = northLat * (Math.PI / 180);
-      const southLatRad = southLat * (Math.PI / 180);
+    // Generate points along this longitude at different latitudes
+    for (let lat = -85; lat <= 85; lat += 2) {
+      // Higher resolution for smoother lines
+      // Calculate 3D position for this lat/long
+      const pos = latLongToCartesian(lat, absLong);
 
-      // Convert lat/long to 3D positions
-      const northPos = new THREE.Vector3(
-        PLANET_CENTER.x +
-          PLANET_RADIUS * Math.cos(northLatRad) * Math.cos(longRad),
-        PLANET_CENTER.y + PLANET_RADIUS * Math.sin(northLatRad),
-        PLANET_CENTER.z +
-          PLANET_RADIUS * Math.cos(northLatRad) * Math.sin(longRad)
-      );
+      // Project this position to the minimap
+      const projection = projectToMinimap(pos, playerPosition, mapRadius);
 
-      const southPos = new THREE.Vector3(
-        PLANET_CENTER.x +
-          PLANET_RADIUS * Math.cos(southLatRad) * Math.cos(longRad),
-        PLANET_CENTER.y + PLANET_RADIUS * Math.sin(southLatRad),
-        PLANET_CENTER.z +
-          PLANET_RADIUS * Math.cos(southLatRad) * Math.sin(longRad)
-      );
+      if (projection) {
+        const point = `${centerX + projection.x},${centerY + projection.y}`;
 
-      // Project to minimap
-      const northProjection = projectToMinimap(
-        northPos,
-        playerPosition,
-        mapRadius
-      );
-      const southProjection = projectToMinimap(
-        southPos,
-        playerPosition,
-        mapRadius
-      );
+        // Check if there's a large jump in projection
+        if (lastProjection) {
+          const dx = projection.x - lastProjection.x;
+          const dy = projection.y - lastProjection.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
 
-      // Add points if projection successful
-      if (northProjection && northLat !== playerLatLong.lat) {
-        points.push(
-          `${centerX + northProjection.x},${centerY + northProjection.y}`
-        );
-      }
+          // If there's a large jump, start a new segment
+          if (distance > mapRadius / 3) {
+            if (currentSegment.length > 1) {
+              segments.push([...currentSegment]);
+              currentSegment = [];
+            }
+          }
+        }
 
-      if (southProjection && southLat !== playerLatLong.lat) {
-        points.push(
-          `${centerX + southProjection.x},${centerY + southProjection.y}`
-        );
+        currentSegment.push(point);
+        lastProjection = projection;
+      } else {
+        // If we had points in the current segment and now hit an invisible point,
+        // store the segment and start a new one
+        if (currentSegment.length > 1) {
+          segments.push([...currentSegment]);
+          currentSegment = [];
+        }
+        lastProjection = null;
       }
     }
 
-    // Add longitude line if we have enough points
-    if (points.length > 1) {
-      longitudeLines.push({ points: points.join(" ") });
+    // Add the last segment if it has points
+    if (currentSegment.length > 1) {
+      segments.push(currentSegment);
+    }
+
+    // Add all segments as separate polylines
+    for (let i = 0; i < segments.length; i++) {
+      if (segments[i].length > 1) {
+        // Determine if this is approximately the Prime Meridian
+        const isPrimeMeridian = Math.abs(absLong) < 5;
+
+        longitudeLines.push({
+          points: segments[i].join(" "),
+          label: isPrimeMeridian
+            ? "Prime Meridian"
+            : `${Math.round(Math.abs(absLong))}°${absLong > 0 ? "E" : "W"}`,
+        });
+      }
     }
   }
 
-  return { latitudeLines, longitudeLines };
+  // Add North and South Pole markers only if they're visible
+  const northPolePos = latLongToCartesian(90, 0);
+  const southPolePos = latLongToCartesian(-90, 0);
+
+  // Use the same visibility threshold as in projectToMinimap for consistency
+  if (
+    isPointVisible(
+      northPolePos,
+      playerPosition,
+      MINI_MAP_VISIBLE_DISTANCE_THRESHOLD
+    )
+  ) {
+    const northPoleProjection = projectToMinimap(
+      northPolePos,
+      playerPosition,
+      mapRadius
+    );
+
+    if (northPoleProjection && northPolePos.distanceTo(playerPosition) > 1) {
+      poleMarkers.push({
+        x: centerX + northPoleProjection.x,
+        y: centerY + northPoleProjection.y,
+        isPole: true,
+        isNorth: true,
+      });
+    }
+  }
+
+  if (
+    isPointVisible(
+      southPolePos,
+      playerPosition,
+      MINI_MAP_VISIBLE_DISTANCE_THRESHOLD
+    )
+  ) {
+    const southPoleProjection = projectToMinimap(
+      southPolePos,
+      playerPosition,
+      mapRadius
+    );
+
+    if (southPoleProjection && southPolePos.distanceTo(playerPosition) > 1) {
+      poleMarkers.push({
+        x: centerX + southPoleProjection.x,
+        y: centerY + southPoleProjection.y,
+        isPole: true,
+        isNorth: false,
+      });
+    }
+  }
+
+  return { latitudeLines, longitudeLines, poleMarkers };
 };

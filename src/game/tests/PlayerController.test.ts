@@ -325,6 +325,19 @@ describe("PlayerController", () => {
     });
   });
 
+  describe("get the direction the player is looking", () => {
+    beforeEach(() => {
+      playerController = new PlayerController(camera);
+    });
+
+    it("should return a normalized vector", () => {
+      const lookDir = playerController.getLookDirection();
+
+      // Verify the vector is normalized
+      expect(lookDir.length()).toBeCloseTo(1);
+    });
+  });
+
   describe("Cleanup", () => {
     it("should remove event listeners when disposed", () => {
       playerController.dispose();

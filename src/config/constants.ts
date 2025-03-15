@@ -47,6 +47,8 @@ export const DEFAULT_PERSON_CONVERSTAION: IConversation = {
   icon: "👤",
 };
 
+/** Virtual Controls */
+
 export const VIRTUAL_CONTROLS_GROUP_WIDTH = "10.0rem";
 export const VIRTUAL_CONTROLS_GROUP_HEIGHT = "10.0rem";
 export const VIRTUAL_CONTROLS_BUTTON_VERTICAL_TOP = "0";
@@ -91,3 +93,19 @@ export const SMALL_FONT_SIZE = "1rem";
 export const MEDIUM_FONT_SIZE = "2rem";
 export const LARGE_FONT_SIZE = "3rem";
 export const FONT_COLOR = "white";
+
+/** Mini map */
+
+export const MINI_MAP_RADIUS = 90;
+export const MINI_MAP_CENTER_X = 100;
+export const MINI_MAP_CENTER_Y = 100;
+export const MINI_MAP_FLAG_COLOR = "#33cc33"; // Green
+export const MINI_MAP_PERSON_COLOR = "#ffcc00"; // Yellow/Gold
+export const MINI_MAP_BILLBOARD_COLOR = "#00aaff"; // Blue
+export const MINI_MAP_DEFAULT_COLOR = "#ffffff"; // White
+export const MINI_MAP_PLAYER_COLOR = "#ff3333"; // Red
+export const MINI_MAP_GRID_COLOR = "rgba(255, 255, 255, 0.4)";
+export const MINI_MAP_VISIBLE_DISTANCE_THRESHOLD = 0.0;
+export const MINI_MAP_NPC_SIZE_SMALL = 4;
+export const MINI_MAP_NPC_SIZE_MEDIUM = 5;
+export const MINI_MAP_NPC_SIZE_LARGE = 6;

@@ -202,6 +202,26 @@ export class PlayerController {
   }
 
   /**
+   * Gets the direction vector that the player/camera is looking at
+   * @returns A normalized direction vector
+   */
+  public getLookDirection(): THREE.Vector3 {
+    // Get the camera's rotation (Euler angles)
+    const rotation = this.getRotation();
+
+    // Create a direction vector pointing forward (0,0,-1) in camera space
+    const direction = new THREE.Vector3(0, 0, -1);
+
+    // Create a quaternion from the rotation
+    const quaternion = new THREE.Quaternion().setFromEuler(rotation);
+
+    // Apply the quaternion to the direction vector to transform it to world space
+    direction.applyQuaternion(quaternion);
+
+    return direction.normalize();
+  }
+
+  /**
    * Check for collisions with nearby NPCs and resolve them
    * Now using the optimized nearby check for better performance
    */

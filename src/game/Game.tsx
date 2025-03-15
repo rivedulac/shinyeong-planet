@@ -237,8 +237,6 @@ const Game: React.FC = () => {
     return <PlayerNameInput onNameSubmit={handleNameSubmit} />;
   }
 
-  const playerPosition = cameraPosition.rotation.yaw * (180 / Math.PI);
-
   // Otherwise show the game with player name displayed
   return (
     <>
@@ -289,10 +287,11 @@ const Game: React.FC = () => {
       <LanguageSelector />
 
       <MinimapToggle isVisible={!!minimapVisible} onToggle={toggleMinimap} />
-      {minimapVisible && (
+      {minimapVisible && playerController && (
         <Minimap
-          playerPosition={playerController?.getPosition()}
-          playerRotation={playerController?.getRotation().y}
+          playerPosition={playerController.getPosition()}
+          playerRotation={playerController.getRotation().y}
+          playerLookDirection={playerController.getLookDirection()}
           npcs={npcState}
         />
       )}
