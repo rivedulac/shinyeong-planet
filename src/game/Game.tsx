@@ -23,6 +23,7 @@ import { INpc } from "./npcs/interfaces/INpc";
 import InfoToggle from "../ui/informationDisplay/InfoToggle";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 import { Minimap } from "../ui/map";
+import { MinimapToggle } from "../ui/map";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -63,6 +64,11 @@ const Game: React.FC = () => {
     useState<PlayerController | null>(null);
 
   const [showControlsInfo, setShowControlsInfo] = useState<boolean>(false);
+
+  const [minimapVisible, setMinimapVisible] = useLocalStorage<boolean>(
+    "shinyeongPlanet.minimapVisible",
+    true
+  );
 
   // Handlers for virtual controls
   const handleVirtualControlStart = (key: string) => {
@@ -112,6 +118,10 @@ const Game: React.FC = () => {
 
   const toggleControlsInfo = () => {
     setShowControlsInfo(!showControlsInfo);
+  };
+
+  const toggleMinimap = () => {
+    setMinimapVisible(!minimapVisible);
   };
 
   useEffect(() => {
@@ -237,9 +247,6 @@ const Game: React.FC = () => {
         />
       )}
 
-      {/* Add Minimap component */}
-      <Minimap />
-
       {/* Show virtual controls if enabled */}
       {virtualControlsEnabled && (
         <>
@@ -261,6 +268,9 @@ const Game: React.FC = () => {
       )}
 
       <LanguageSelector />
+
+      <MinimapToggle isVisible={!!minimapVisible} onToggle={toggleMinimap} />
+      {minimapVisible && <Minimap />}
     </>
   );
 };

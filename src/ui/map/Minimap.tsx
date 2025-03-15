@@ -22,6 +22,7 @@ const Minimap: React.FC<MinimapProps> = () => {
         backgroundColor: "rgba(0, 0, 15, 0.7)",
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
         zIndex: 1000,
+        transition: "all 0.3s ease",
       }}
     >
       <svg
