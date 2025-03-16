@@ -78,8 +78,8 @@ describe("PlayerController", () => {
   describe("initialize", () => {
     it("should initialize with default position", () => {
       const position = playerController.getPosition();
-      expect(position.x).toBe(0);
-      expect(position.y).not.toBe(0); // Position will be at PLANET_RADIUS + FIRST_PERSON_HEIGHT
+      expect(position.x).not.toBe(0);
+      expect(position.y).toBe(0);
       expect(position.z).toBe(0);
     });
 

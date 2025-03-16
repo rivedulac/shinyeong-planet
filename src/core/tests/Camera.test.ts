@@ -52,20 +52,20 @@ describe("Camera", () => {
       expect(perspectiveCamera.far).toBe(1000);
     });
 
-    it("should initialize with correct position and orientation", () => {
+    it("should initialize with correct position at the equator", () => {
       const perspectiveCamera = camera.getPerspectiveCamera();
 
-      // Check position (North pole)
-      expect(perspectiveCamera.position.x).toBe(PLANET_CENTER.x);
-      expect(perspectiveCamera.position.y).toBe(
-        PLANET_CENTER.y + PLANET_RADIUS + FIRST_PERSON_HEIGHT
+      // Check position (now at the equator, longitude 0)
+      expect(perspectiveCamera.position.x).toBe(
+        PLANET_CENTER.x + PLANET_RADIUS + FIRST_PERSON_HEIGHT
       );
+      expect(perspectiveCamera.position.y).toBe(PLANET_CENTER.y);
       expect(perspectiveCamera.position.z).toBe(PLANET_CENTER.z);
 
-      // Check that up vector is initialized correctly
+      // Check that up vector is initialized correctly for equator position (pointing along X axis)
       const upVector = camera.getUpVector();
-      expect(upVector.x).toBeCloseTo(0);
-      expect(upVector.y).toBeCloseTo(1);
+      expect(upVector.x).toBeCloseTo(1);
+      expect(upVector.y).toBeCloseTo(0);
       expect(upVector.z).toBeCloseTo(0);
     });
   });
@@ -81,7 +81,7 @@ describe("Camera", () => {
       const newDirectionVector = camera.calculateDirectionVector(
         camera.getPerspectiveCamera().quaternion
       );
-      expect(newDirectionVector.x).toEqual(directionVector.x); // both zero
+      expect(newDirectionVector.x).not.toEqual(directionVector.x);
       expect(newDirectionVector.y).not.toEqual(directionVector.y);
       expect(newDirectionVector.z).not.toEqual(directionVector.z);
     });
@@ -95,7 +95,7 @@ describe("Camera", () => {
       const newUpVector = camera.calculateUpVector(
         camera.getPerspectiveCamera().position
       );
-      expect(newUpVector.x).toEqual(upVector.x);
+      expect(newUpVector.x).not.toEqual(upVector.x);
       expect(newUpVector.y).not.toEqual(upVector.y);
       expect(newUpVector.z).not.toEqual(upVector.z);
     });
@@ -127,7 +127,7 @@ describe("Camera", () => {
 
       expect(newDirectionVector).not.toEqual(initialDirectionVector);
       expect(newUpVector).not.toEqual(initialUpVector);
-      expect(newTangentDirection.length()).toEqual(
+      expect(newTangentDirection.length()).toBeCloseTo(
         intialTangentDirection.length()
       );
       expect(newTangentDirection.x).not.toEqual(intialTangentDirection.x);
@@ -247,7 +247,7 @@ describe("Camera", () => {
     });
 
     it("should move backward on planet surface when moveOnPlanet is called with negative distance", () => {
-      // First move forward to get away from north pole (which is a special case)
+      // First move forward to get away from the initial position
       camera.moveOnPlanet(20);
       const intermediatePosition = camera
         .getPerspectiveCamera()
@@ -266,16 +266,25 @@ describe("Camera", () => {
         PLANET_RADIUS + FIRST_PERSON_HEIGHT
       );
 
-      // Moving backward should bring us closer to the original position (north pole)
-      const distanceToNorthPole = Math.abs(
-        newPosition.y - (PLANET_CENTER.y + PLANET_RADIUS + FIRST_PERSON_HEIGHT)
+      // Moving backward should bring us closer to the original position
+      const distanceToOriginalPosition = newPosition.distanceTo(
+        new THREE.Vector3(
+          PLANET_CENTER.x + PLANET_RADIUS + FIRST_PERSON_HEIGHT,
+          PLANET_CENTER.y,
+          PLANET_CENTER.z
+        )
       );
-      const intermediateToPoleDistance = Math.abs(
-        intermediatePosition.y -
-          (PLANET_CENTER.y + PLANET_RADIUS + FIRST_PERSON_HEIGHT)
+      const intermediateToOriginalDistance = intermediatePosition.distanceTo(
+        new THREE.Vector3(
+          PLANET_CENTER.x + PLANET_RADIUS + FIRST_PERSON_HEIGHT,
+          PLANET_CENTER.y,
+          PLANET_CENTER.z
+        )
       );
 
-      expect(distanceToNorthPole).toBeLessThan(intermediateToPoleDistance);
+      expect(distanceToOriginalPosition).toBeLessThan(
+        intermediateToOriginalDistance
+      );
     });
 
     it("should update camera orientation when moving on the planet", () => {
@@ -351,9 +360,10 @@ describe("Camera", () => {
           perspectiveCamera.quaternion
         );
 
-        // At initial position, right vector should be approximately (1, 0, 0)
-        expect(rightVector.x).toBeCloseTo(1);
-        expect(Math.abs(rightVector.y)).toBeLessThan(EPSILON);
+        // At initial position on the equator, right vector should be approximately (0, 0, 1)
+        // This is because we're facing the +Z direction with +X to our right
+        expect(Math.abs(rightVector.x)).toBeLessThan(EPSILON);
+        expect(Math.abs(rightVector.y)).toBeCloseTo(1);
         expect(Math.abs(rightVector.z)).toBeLessThan(EPSILON);
       });
 

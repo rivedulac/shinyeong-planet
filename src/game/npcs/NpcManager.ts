@@ -3,7 +3,7 @@ import { INpc } from "./interfaces/INpc";
 import { Billboard } from "./Billboard";
 import { Flag } from "./Flag";
 import { Person } from "./Person";
-import { NEARBY_DISTANCE } from "@/config/constants";
+import { NEARBY_DISTANCE, GUEST_BOOK_CONVERSTAION } from "@/config/constants";
 import { CollisionUtils } from "./CollisionUtils";
 
 export class NpcManager {
@@ -25,28 +25,33 @@ export class NpcManager {
    * Initialize default NPCs in the game
    */
   public initializeDefaultNpcs(): void {
-    // Create and add a billboard NPC
+    // Create a guest book billboard in front of the starting position
+    // The starting position is at the equator (longitude 0)
+    const guestBook = new Billboard("guest-book", "Guest Book");
+
+    guestBook.setPositionOnPlanet(0, 0.7);
+
+    // Set up a custom conversation for the guest book
+    guestBook.setConversation(GUEST_BOOK_CONVERSTAION);
+
+    this.addNpc(guestBook);
+
+    // Create and add a billboard NPC - original code
     const billboard = new Billboard("resume-billboard", "My Resume");
-
-    // Position the billboard at latitude 0 (equator), longitude 0 (prime meridian)
-    billboard.setPositionOnPlanet(0, 0);
-
+    // Position at a different location than the guest book
+    billboard.setPositionOnPlanet(2, 0.5);
     this.addNpc(billboard);
 
     // Create and add a flag NPC
     const flag = new Flag("experience-usa", "🇺🇸", "2020 Internship");
-
-    // Position the flag at latitude 0.2, longitude 0.5
-    flag.setPositionOnPlanet(0.2, 0.5);
-
+    // Position the flag at a different location
+    flag.setPositionOnPlanet(-1.5, -1.5);
     this.addNpc(flag);
 
     // Create and add a person NPC
     const person = new Person("guide-person", "Jane");
-
     // Position the person at a different place on the planet
-    person.setPositionOnPlanet(0.3, -0.5);
-
+    person.setPositionOnPlanet(-0.3, 0.35);
     this.addNpc(person);
   }
 

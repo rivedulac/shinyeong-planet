@@ -42,15 +42,37 @@ export class Camera {
       1000 // Far clipping plane
     );
 
-    // Initial position on the north pole of the planet
-    this.camera.position.copy(PLANET_CENTER);
-    this.camera.position.y += PLANET_RADIUS + FIRST_PERSON_HEIGHT;
+    // Initialize position at the equator (longitude 0) instead of North Pole
+    // At equator, the position is (PLANET_CENTER.x + PLANET_RADIUS, PLANET_CENTER.y, PLANET_CENTER.z)
+    this.camera.position.set(
+      PLANET_CENTER.x + PLANET_RADIUS + FIRST_PERSON_HEIGHT,
+      PLANET_CENTER.y,
+      PLANET_CENTER.z
+    );
 
-    // Calculate the "up" direction based on position (initially pointing along Y)
-    this.up = new THREE.Vector3(0, 1, 0);
+    // Calculate the "up" direction based on position (radially outward from planet center)
+    this.up = new THREE.Vector3()
+      .subVectors(this.camera.position, PLANET_CENTER)
+      .normalize();
 
-    // Add a slight downward tilt by default (around -20 degrees)
-    this.currentPitch = -DEFAULT_CAMERA_PITCH; // Approximately -20 degrees in radians
+    // Point the camera tangent to the planet's surface (looking forward along the equator toward Z)
+    const target = new THREE.Vector3(
+      PLANET_CENTER.x,
+      PLANET_CENTER.y,
+      PLANET_CENTER.z + PLANET_RADIUS
+    );
+
+    // Set the camera's up vector before setting orientation
+    this.camera.up.copy(this.up);
+
+    // Now look at the target
+    this.camera.lookAt(target);
+
+    // Ensure the camera's world matrix is updated
+    this.camera.updateMatrixWorld(true);
+
+    // Apply a slight downward tilt for better visual orientation
+    this.currentPitch = -DEFAULT_CAMERA_PITCH;
     this.applyStoredPitch();
   }
 

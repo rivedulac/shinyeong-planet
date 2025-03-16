@@ -115,6 +115,7 @@ export class Person implements INpc {
 
     // Apply the rotation
     this.mesh.setRotationFromMatrix(rotMatrix);
+    this.mesh.rotateY(-Math.PI / 2);
   }
 
   /**

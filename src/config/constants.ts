@@ -15,14 +15,23 @@ export const PERSON_RADIUS = 2;
 export const NEARBY_DISTANCE = 10;
 export const INTERACTION_DISTANCE = 10;
 
+export const GUEST_BOOK_CONVERSTAION: IConversation = {
+  title: "Guest Book",
+  messages: [
+    "Welcome to Shinyeong Planet! 👋",
+    "⚙️ Change your name and check your coordinates",
+    "🗺️ Toggle the minimap to help navigate the planet.",
+    "ℹ️ View control information",
+    "⌨️ Toggle virtual keyboard",
+    "Feel free to explore the entire planet and get to know me better!",
+    "Thank you for visiting Shinyeong Planet. Enjoy your journey!",
+  ],
+  icon: "📚",
+};
+
 export const DEFAULT_BILLBOARD_CONVERSTAION: IConversation = {
   title: "resume",
-  messages: [
-    "Welcome to my resume billboard!",
-    "This billboard showcases my professional experience and skills.",
-    "Feel free to take a look at my qualifications and projects.",
-    "I'm always open to new opportunities and collaborations.",
-  ],
+  messages: ["I will attach my resume later."],
   icon: "📄",
 };
 
@@ -32,6 +41,7 @@ export const DEFAULT_FLAG_CONVERSTAION: IConversation = {
     "This flag represents an experience in a specific country.",
     "The year indicates when this experience took place.",
     "You can see more details about what I learned and accomplished here.",
+    "I will fill this in later.",
   ],
   icon: "🏳️",
 };
