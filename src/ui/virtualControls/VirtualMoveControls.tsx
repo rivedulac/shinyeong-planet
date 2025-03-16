@@ -34,8 +34,7 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
       {/* Up Arrow Button */}
       <VirtualControlButton
         dataTestId="up-arrow-button"
-        image="/src/assets/look-up.png"
-        imageSize="2.5rem"
+        label="↑"
         position={{
           top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_TOP,
           left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
@@ -55,8 +54,7 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
       {/* Down Arrow Button */}
       <VirtualControlButton
         dataTestId="down-arrow-button"
-        image="/src/assets/look-down.png"
-        imageSize="2.5rem"
+        label="↓"
         position={{
           top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_TOP,
           left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
@@ -91,8 +89,7 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
       {/* Left Arrow Button */}
       <VirtualControlButton
         dataTestId="left-arrow-button"
-        image="/src/assets/rotate-left.png"
-        imageSize="1.0rem"
+        label="←"
         position={{
           top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_BOTTOM,
           left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
@@ -111,8 +108,7 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
       {/* Right Arrow Button */}
       <VirtualControlButton
         dataTestId="right-arrow-button"
-        image="/src/assets/rotate-right.png"
-        imageSize="1.0rem"
+        label="→"
         position={{
           top: VIRTUAL_CONTROLS_BUTTON_VERTICAL_BOTTOM,
           left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
