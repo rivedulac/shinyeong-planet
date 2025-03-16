@@ -2,11 +2,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ToggleButton from "../ToggleButton";
-import {
-  TOGGLE_ACTIVE_COLOR,
-  TOGGLE_INACTIVE_COLOR,
-  TOGGLE_BUTTON_SIZE,
-} from "@/config/constants";
+import { TOGGLE_ACTIVE_COLOR, TOGGLE_INACTIVE_COLOR } from "@/config/constants";
 
 // Mock the constants to ensure test stability
 vi.mock("@/config/constants", () => ({
