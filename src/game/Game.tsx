@@ -9,7 +9,6 @@ import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
 import ConversationModal from "../ui/ConversationModal";
 import {
-  VirtualControlsToggle,
   VirtualMoveControls,
   VirtualZoomControls,
 } from "../ui/virtualControls";
@@ -20,12 +19,11 @@ import { NpcManager } from "./npcs/NpcManager";
 import { IConversation } from "./npcs/interfaces/IConversation";
 import { getConversationForNpc } from "./npcs/interfaces/IConversation";
 import { INpc } from "./npcs/interfaces/INpc";
-import InfoToggle from "../ui/informationDisplay/InfoToggle";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 import { Minimap } from "../ui/map";
-import { MinimapToggle } from "../ui/map";
-import SettingsToggle from "../ui/SettingsToggle";
+import ToggleButton from "../ui/common/ToggleButton";
 import * as THREE from "three";
+import { CORNER_MARGIN } from "@/config/constants";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -259,14 +257,22 @@ const Game: React.FC = () => {
   return (
     <>
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
-      <VirtualControlsToggle
-        isEnabled={virtualControlsEnabled ?? false}
+      <ToggleButton
+        isActive={virtualControlsEnabled ?? false}
         onToggle={toggleVirtualControls}
+        icon="⚙️"
+        position={{ bottom: CORNER_MARGIN, left: CORNER_MARGIN }}
       />
+
       {playerName && <PlayerNameDisplay name={playerName} />}
 
       {/* Settings UI */}
-      <SettingsToggle isEnabled={showSettings} onToggle={toggleSettings} />
+      <ToggleButton
+        isActive={showSettings}
+        onToggle={toggleSettings}
+        icon="⚙️"
+        position={{ top: CORNER_MARGIN, right: CORNER_MARGIN }}
+      />
       {playerName && showSettings && (
         <NameEditButton onClick={handleEditName} />
       )}
@@ -302,13 +308,26 @@ const Game: React.FC = () => {
         </>
       )}
 
-      <InfoToggle onToggle={toggleControlsInfo} active={showControlsInfo} />
+      <ToggleButton
+        isActive={showControlsInfo}
+        onToggle={toggleControlsInfo}
+        icon="ℹ️"
+        position={{
+          top: "calc(" + CORNER_MARGIN + " + 3.5rem)",
+          right: CORNER_MARGIN,
+        }}
+      />
       {showControlsInfo && <ControlsInfoDisplay />}
       {showControlsInfo && (
         <CameraPositionDisplay perspective={cameraPosition} />
       )}
 
-      <MinimapToggle isVisible={!!minimapVisible} onToggle={toggleMinimap} />
+      <ToggleButton
+        isActive={!!minimapVisible}
+        onToggle={toggleMinimap}
+        icon="🗺️"
+        position={{ bottom: CORNER_MARGIN, right: CORNER_MARGIN }}
+      />
       {minimapVisible && playerController && (
         <Minimap
           playerPosition={playerController.getPosition()}

@@ -95,6 +95,9 @@ export const LARGE_FONT_SIZE = "3rem";
 export const FONT_COLOR = "white";
 
 export const TOGGLE_BUTTON_SIZE = "min(40px, 12vw)";
+export const TOGGLE_ACTIVE_COLOR = "rgba(83, 52, 131, 0.8)";
+export const TOGGLE_INACTIVE_COLOR = "rgba(40, 40, 60, 0.8)";
+export const TOGGLE_BORDER_COLOR = "rgba(255, 255, 255, 0.3)";
 
 /** Mini map */
 
