@@ -43,5 +43,11 @@
     "editTitle": "Change Your Explorer Name",
     "save": "Save",
     "cancel": "Cancel"
+  },
+  "compass": {
+    "north": "N",
+    "south": "S",
+    "west": "W",
+    "east": "E"
   }
 }

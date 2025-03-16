@@ -22,6 +22,7 @@ import {
   MINI_MAP_NPC_SIZE_LARGE,
 } from "../../config/constants";
 import { NpcType } from "@/game/npcs/interfaces/INpc";
+import { useTranslation } from "react-i18next";
 
 interface MinimapProps {
   playerPosition?: THREE.Vector3;
@@ -63,6 +64,8 @@ const Minimap: React.FC<MinimapProps> = ({
       y: number;
     }>
   >([]);
+
+  const { t } = useTranslation();
 
   // Calculate relative rotation from planet surface
   const calculateRelativeRotation = (
@@ -315,7 +318,7 @@ const Minimap: React.FC<MinimapProps> = ({
           fontSize="12"
           fontWeight="bold"
         >
-          N
+          {t("compass.north")}
         </text>
         <text
           x={MINI_MAP_CENTER_X}
@@ -325,7 +328,7 @@ const Minimap: React.FC<MinimapProps> = ({
           fontSize="12"
           fontWeight="bold"
         >
-          S
+          {t("compass.south")}
         </text>
         <text
           x="10"
@@ -335,7 +338,7 @@ const Minimap: React.FC<MinimapProps> = ({
           fontSize="12"
           fontWeight="bold"
         >
-          W
+          {t("compass.west")}
         </text>
         <text
           x="190"
@@ -345,7 +348,7 @@ const Minimap: React.FC<MinimapProps> = ({
           fontSize="12"
           fontWeight="bold"
         >
-          E
+          {t("compass.east")}
         </text>
 
         {/* Pole markers */}

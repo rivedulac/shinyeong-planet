@@ -44,6 +44,10 @@ i18n.use(initReactI18next).init({
         "playerName.editTitle": "Change Your Explorer Name",
         "playerName.save": "Save",
         "playerName.cancel": "Cancel",
+        "compass.north": "N",
+        "compass.south": "S",
+        "compass.west": "W",
+        "compass.east": "E",
       },
     },
     ko: {
