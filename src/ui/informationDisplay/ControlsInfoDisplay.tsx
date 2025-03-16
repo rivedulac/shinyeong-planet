@@ -6,22 +6,26 @@ import {
 } from "@/config/constants";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 
 const ControlsInfoDisplay: React.FC = () => {
   const { t } = useTranslation();
+  useResponsiveControls();
 
   return (
     <div
       style={{
         position: "absolute",
-        top: "7.5%",
-        right: CORNER_MARGIN,
+        top: CORNER_MARGIN,
+        left: CORNER_MARGIN,
         padding: "10px",
         backgroundColor: DISPLAY_BACKGROUND_COLOR,
         color: FONT_COLOR,
         fontFamily: "monospace",
         fontSize: TINY_FONT_SIZE,
         borderRadius: "4px",
+        transform: "scale(var(--control-scale, 1))",
+        transformOrigin: "top left",
       }}
     >
       {t("controls.title")}

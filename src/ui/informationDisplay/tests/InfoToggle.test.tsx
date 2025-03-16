@@ -37,12 +37,12 @@ describe("InfoToggle", () => {
     const button = screen.getByRole("button");
 
     // Check that it has the inactive style
-    expect(button).toHaveStyle("background-color: rgba(255, 255, 255, 0.3)");
+    expect(button).toHaveStyle("background-color: rgba(40, 40, 60, 0.8)");
 
     // Re-render with active=true
     rerender(<InfoToggle onToggle={mockToggle} active={true} />);
 
     // Check that it now has the active style
-    expect(button).toHaveStyle("background-color: rgba(0, 0, 0, 0.5)");
+    expect(button).toHaveStyle("background-color: rgba(83, 52, 131, 0.8)");
   });
 });

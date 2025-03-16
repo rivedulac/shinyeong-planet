@@ -6,6 +6,7 @@ import {
   isPointVisible,
 } from "./utils/projection";
 import {
+  CORNER_MARGIN,
   MINI_MAP_RADIUS,
   MINI_MAP_CENTER_X,
   MINI_MAP_CENTER_Y,
@@ -215,10 +216,10 @@ const Minimap: React.FC<MinimapProps> = ({
     <div
       style={{
         position: "absolute",
-        bottom: "20px",
-        right: "20px",
-        width: "200px",
-        height: "200px",
+        bottom: "calc(50px + 8px)", // Position above map toggle with spacing
+        right: CORNER_MARGIN,
+        width: "min(200px, 40vw)", // Responsive width
+        height: "min(200px, 40vw)", // Maintain aspect ratio
         borderRadius: "50%",
         overflow: "hidden",
         border: "2px solid rgba(255, 255, 255, 0.5)",

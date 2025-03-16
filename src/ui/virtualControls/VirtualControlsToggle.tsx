@@ -1,5 +1,10 @@
-import { CORNER_MARGIN, MEDIUM_FONT_SIZE } from "@/config/constants";
+import {
+  CORNER_MARGIN,
+  MEDIUM_FONT_SIZE,
+  TOGGLE_BUTTON_SIZE,
+} from "@/config/constants";
 import React from "react";
+import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 
 interface VirtualControlsToggleProps {
   isEnabled: boolean;
@@ -10,6 +15,8 @@ const VirtualControlsToggle: React.FC<VirtualControlsToggleProps> = ({
   isEnabled,
   onToggle,
 }) => {
+  // Use our responsive hook to apply scaling
+  useResponsiveControls();
   return (
     <button
       onClick={() => onToggle()}
@@ -19,19 +26,21 @@ const VirtualControlsToggle: React.FC<VirtualControlsToggleProps> = ({
       }}
       style={{
         position: "absolute",
-        bottom: CORNER_MARGIN,
-        left: "46.7%",
-        width: "3.5rem",
+        bottom: CORNER_MARGIN, // Keep at bottom
+        left: CORNER_MARGIN, // Change from middle to left corner
+        width: TOGGLE_BUTTON_SIZE, // Responsive width
+        height: TOGGLE_BUTTON_SIZE, // Responsive height
         backgroundColor: isEnabled
           ? "rgba(83, 52, 131, 0.8)"
           : "rgba(40, 40, 60, 0.8)",
         color: "white",
-        justifyContent: "center",
         border: "1px solid rgba(233, 69, 96, 0.8)",
-        borderRadius: "6px",
+        borderRadius: "50%",
         fontFamily: "monospace",
         fontSize: MEDIUM_FONT_SIZE,
         display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         touchAction: "manipulation", // Improves touch response
       }}
     >

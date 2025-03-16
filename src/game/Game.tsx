@@ -24,6 +24,7 @@ import InfoToggle from "../ui/informationDisplay/InfoToggle";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 import { Minimap } from "../ui/map";
 import { MinimapToggle } from "../ui/map";
+import SettingsToggle from "../ui/SettingsToggle";
 import * as THREE from "three";
 
 // Use a consistent key for the player name in localStorage
@@ -65,6 +66,8 @@ const Game: React.FC = () => {
     useState<PlayerController | null>(null);
 
   const [showControlsInfo, setShowControlsInfo] = useState<boolean>(false);
+
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   const [minimapVisible, setMinimapVisible] = useLocalStorage<boolean>(
     "shinyeongPlanet.minimapVisible",
@@ -127,10 +130,25 @@ const Game: React.FC = () => {
 
   const toggleControlsInfo = () => {
     setShowControlsInfo(!showControlsInfo);
+
+    // If we're showing controls info, hide the settings
+    if (!showControlsInfo && showSettings) {
+      setShowSettings(false);
+    }
   };
 
   const toggleMinimap = () => {
     setMinimapVisible(!minimapVisible);
+  };
+
+  // Toggle settings visibility
+  const toggleSettings = () => {
+    setShowSettings(!showSettings);
+
+    // If we're showing settings, hide the controls info
+    if (!showSettings && showControlsInfo) {
+      setShowControlsInfo(false);
+    }
   };
 
   useEffect(() => {
@@ -246,7 +264,13 @@ const Game: React.FC = () => {
         onToggle={toggleVirtualControls}
       />
       {playerName && <PlayerNameDisplay name={playerName} />}
-      {playerName && <NameEditButton onClick={handleEditName} />}
+
+      {/* Settings UI */}
+      <SettingsToggle isEnabled={showSettings} onToggle={toggleSettings} />
+      {playerName && showSettings && (
+        <NameEditButton onClick={handleEditName} />
+      )}
+      {showSettings && <LanguageSelector />}
       {isEditingName && (
         <NameEditModal
           currentName={playerName || ""}
@@ -283,8 +307,6 @@ const Game: React.FC = () => {
       {showControlsInfo && (
         <CameraPositionDisplay perspective={cameraPosition} />
       )}
-
-      <LanguageSelector />
 
       <MinimapToggle isVisible={!!minimapVisible} onToggle={toggleMinimap} />
       {minimapVisible && playerController && (

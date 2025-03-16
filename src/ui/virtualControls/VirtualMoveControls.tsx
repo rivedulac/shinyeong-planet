@@ -1,5 +1,6 @@
 import React from "react";
 import VirtualControlButton from "./VirtualControlButton";
+import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 import {
   VIRTUAL_CONTROL_BUTTON_COLOR,
   VIRTUAL_CONTROLS_GROUP_POSITION,
@@ -11,26 +12,32 @@ import {
   VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
   VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
 } from "@/config/constants";
+
 interface VirtualMoveControlsProps {
   onMoveStart: (key: string) => void;
   onMoveEnd: (key: string) => void;
 }
 
-// Main component that renders all the virtual controls
 const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
   onMoveStart,
   onMoveEnd,
 }) => {
+  // Use our responsive hook to apply scaling
+  useResponsiveControls();
   return (
     <div
       style={{
         position: "absolute",
         left: CORNER_MARGIN,
-        bottom: CORNER_MARGIN,
+        bottom: `calc(${CORNER_MARGIN} + 4.5rem)`, // Position above toggle button with some spacing
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
         height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
+        maxWidth: "40vw", // Limit maximum width on larger screens
+        transform: "scale(var(--control-scale, 1))", // Allow scaling on smaller screens
+        transformOrigin: "bottom left", // Scale from bottom left
       }}
     >
+      {/* Rest of the component remains unchanged */}
       {/* Up Arrow Button */}
       <VirtualControlButton
         dataTestId="up-arrow-button"

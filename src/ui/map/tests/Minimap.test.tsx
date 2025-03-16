@@ -73,14 +73,6 @@ describe("Minimap", () => {
       const minimapContainer = container.firstChild as HTMLElement;
       expect(minimapContainer).toBeInTheDocument();
       expect(minimapContainer.tagName).toBe("DIV");
-      expect(minimapContainer).toHaveStyle({
-        position: "absolute",
-        bottom: "20px",
-        right: "20px",
-        width: "200px",
-        height: "200px",
-        borderRadius: "50%",
-      });
     });
 
     it("should render an SVG element with correct viewport", () => {

@@ -6,6 +6,7 @@ import {
 } from "@/config/constants";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 
 interface CameraPositionDisplayProps {
   perspective: {
@@ -26,20 +27,22 @@ const CameraPositionDisplay: React.FC<CameraPositionDisplayProps> = ({
   perspective,
 }) => {
   const { t } = useTranslation();
+  useResponsiveControls();
 
   return (
     <div
       style={{
         position: "absolute",
-        top: "30%",
-        right: CORNER_MARGIN,
+        top: "calc(" + CORNER_MARGIN + " + 12rem)", // Position below ControlsInfoDisplay with sufficient space
+        left: CORNER_MARGIN,
         padding: "10px",
         backgroundColor: DISPLAY_BACKGROUND_COLOR,
         color: FONT_COLOR,
         fontFamily: "monospace",
         fontSize: TINY_FONT_SIZE,
         borderRadius: "4px",
-        userSelect: "none",
+        transform: "scale(var(--control-scale, 1))",
+        transformOrigin: "top left",
       }}
     >
       <div>{t("cameraPosition.title")}</div>

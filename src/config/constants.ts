@@ -94,6 +94,8 @@ export const MEDIUM_FONT_SIZE = "2rem";
 export const LARGE_FONT_SIZE = "3rem";
 export const FONT_COLOR = "white";
 
+export const TOGGLE_BUTTON_SIZE = "min(40px, 12vw)";
+
 /** Mini map */
 
 export const MINI_MAP_RADIUS = 90;

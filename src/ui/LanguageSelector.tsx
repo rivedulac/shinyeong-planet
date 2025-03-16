@@ -1,9 +1,11 @@
 import { CORNER_MARGIN } from "@/config/constants";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 
 const LanguageSelector: React.FC = () => {
   const { t, i18n } = useTranslation();
+  useResponsiveControls();
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
@@ -13,18 +15,22 @@ const LanguageSelector: React.FC = () => {
     <div
       style={{
         position: "absolute",
-        top: CORNER_MARGIN,
-        right: "10%",
-        padding: "10px",
+        top: "calc(" + CORNER_MARGIN + " + 3rem)", // Position below NameEditButton
+        left: CORNER_MARGIN,
+        padding: "8px 10px",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         color: "white",
         fontFamily: "monospace",
-        fontSize: "14px",
+        fontSize: "0.85rem",
         borderRadius: "4px",
         zIndex: 1000,
+        transform: "scale(var(--control-scale, 1))",
+        transformOrigin: "top left",
       }}
     >
-      <div>{t("language.title")}</div>
+      <div style={{ marginBottom: "5px", whiteSpace: "nowrap" }}>
+        {t("language.title")}
+      </div>
       <select
         value={i18n.language}
         onChange={(e) => changeLanguage(e.target.value)}
@@ -34,7 +40,6 @@ const LanguageSelector: React.FC = () => {
           border: "1px solid #555",
           borderRadius: "3px",
           padding: "3px",
-          marginTop: "5px",
           cursor: "pointer",
           width: "100%",
         }}

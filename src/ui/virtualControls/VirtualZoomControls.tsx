@@ -8,6 +8,7 @@ import {
   VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
   VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
 } from "@/config/constants";
+import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 
 interface VirtualZoomControlsProps {
   onZoomStart: (key: string) => void;
@@ -18,13 +19,18 @@ const VirtualZoomControls: React.FC<VirtualZoomControlsProps> = ({
   onZoomStart,
   onZoomEnd,
 }) => {
+  // Use our responsive hook to apply scaling
+  useResponsiveControls();
   return (
     <div
       style={{
         position: "absolute",
-        top: CORNER_MARGIN,
         left: CORNER_MARGIN,
+        bottom: `calc(${CORNER_MARGIN} + 18rem)`, // Position above move controls with sufficient spacing
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
+        maxWidth: "40vw", // Limit maximum width on larger screens
+        transform: "scale(var(--control-scale, 1))", // Allow scaling on smaller screens
+        transformOrigin: "bottom left", // Scale from bottom left
       }}
     >
       <VirtualControlButton

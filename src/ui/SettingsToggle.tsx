@@ -1,55 +1,52 @@
 import {
   CORNER_MARGIN,
-  SMALL_FONT_SIZE,
+  MEDIUM_FONT_SIZE,
   TOGGLE_BUTTON_SIZE,
 } from "@/config/constants";
 import React from "react";
 import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 
-interface MinimapToggleProps {
-  isVisible: boolean;
+interface SettingsToggleProps {
+  isEnabled: boolean;
   onToggle: () => void;
 }
 
-/**
- * A toggle button for showing/hiding the minimap
- */
-const MinimapToggle: React.FC<MinimapToggleProps> = ({
-  isVisible,
+const SettingsToggle: React.FC<SettingsToggleProps> = ({
+  isEnabled,
   onToggle,
 }) => {
   // Use our responsive hook for scaling
   useResponsiveControls();
+
   return (
     <button
-      onClick={onToggle}
-      aria-label={isVisible ? "Hide minimap" : "Show minimap"}
-      data-testid="minimap-toggle"
+      onClick={() => onToggle()}
+      aria-label={isEnabled ? "Hide settings" : "Show settings"}
       style={{
         position: "absolute",
-        bottom: CORNER_MARGIN,
+        top: CORNER_MARGIN,
         right: CORNER_MARGIN,
         width: TOGGLE_BUTTON_SIZE,
         height: TOGGLE_BUTTON_SIZE,
-        borderRadius: "50%",
-        backgroundColor: isVisible
+        backgroundColor: isEnabled
           ? "rgba(83, 52, 131, 0.8)"
           : "rgba(40, 40, 60, 0.8)",
         color: "white",
-        border: "1px solid rgba(255, 255, 255, 0.3)",
-        fontSize: SMALL_FONT_SIZE,
         display: "flex",
-        transition: "background-color 0.3s",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
+        border: "1px solid rgba(255, 255, 255, 0.3)",
+        borderRadius: "50%",
+        fontSize: MEDIUM_FONT_SIZE,
         cursor: "pointer",
         zIndex: 1001,
-        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+        transform: "scale(var(--control-scale, 1))",
+        transformOrigin: "top right",
       }}
     >
-      {isVisible ? "🗺️" : "📍"}
+      ⚙️
     </button>
   );
 };
 
-export default MinimapToggle;
+export default SettingsToggle;
