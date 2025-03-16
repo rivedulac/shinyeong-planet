@@ -290,7 +290,6 @@ const Game: React.FC = () => {
       {minimapVisible && playerController && (
         <Minimap
           playerPosition={playerController.getPosition()}
-          playerRotation={playerController.getRotation().y}
           playerLookDirection={playerController.getLookDirection()}
           npcs={npcState}
         />

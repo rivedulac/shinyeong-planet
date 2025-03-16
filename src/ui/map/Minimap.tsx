@@ -41,7 +41,6 @@ interface MinimapProps {
  */
 const Minimap: React.FC<MinimapProps> = ({
   playerPosition,
-  playerRotation,
   playerLookDirection,
   npcs,
 }) => {
@@ -404,11 +403,7 @@ const Minimap: React.FC<MinimapProps> = ({
           strokeWidth="0.5"
           transform={`rotate(${
             playerPosition
-              ? calculateRelativeRotation(
-                  playerPosition,
-                  playerLookDirection,
-                  playerRotation
-                )
+              ? calculateRelativeRotation(playerPosition, playerLookDirection)
               : 0
           }, ${MINI_MAP_CENTER_X}, ${MINI_MAP_CENTER_Y})`}
         />
