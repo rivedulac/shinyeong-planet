@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { IConversation } from "../game/npcs/interfaces/IConversation";
+import { CORNER_MARGIN } from "@/config/constants";
 
 interface ConversationModalProps {
   conversation: IConversation;
@@ -28,9 +29,9 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
     <div
       style={{
         position: "absolute",
-        top: "20px",
-        right: "20px",
-        width: "350px",
+        top: CORNER_MARGIN,
+        right: CORNER_MARGIN,
+        width: "calc(min(60%, 350px))",
         backgroundColor: "rgba(30, 30, 50, 0.9)",
         borderRadius: "10px",
         padding: "15px",

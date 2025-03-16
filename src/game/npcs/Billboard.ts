@@ -134,7 +134,7 @@ export class Billboard implements INpc {
 
     // Rotate the billboard 90 degrees around the X axis to face outward properly
     this.mesh.rotateX(-Math.PI / 2);
-    this.mesh.rotateY(-Math.PI / 2);
+    this.mesh.rotateY(Math.PI);
   }
 
   private createBillboardMesh(): THREE.Group {

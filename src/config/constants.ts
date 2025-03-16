@@ -16,7 +16,7 @@ export const NEARBY_DISTANCE = 10;
 export const INTERACTION_DISTANCE = 10;
 
 export const GUEST_BOOK_CONVERSTAION: IConversation = {
-  title: "Guest Book",
+  title: "Welcome",
   messages: [
     "Welcome to Shinyeong Planet! 👋",
     "⚙️ Change your name and check your coordinates",

@@ -11,6 +11,8 @@ import {
   VIRTUAL_CONTROLS_BUTTON_VERTICAL_BOTTOM,
   VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
   VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
+  VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER,
+  TOGGLE_BUTTON_SIZE,
 } from "@/config/constants";
 
 interface VirtualMoveControlsProps {
@@ -29,7 +31,7 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
       style={{
         position: "absolute",
         left: CORNER_MARGIN,
-        bottom: `calc(${CORNER_MARGIN} + 4.5rem)`, // Position above toggle button with some spacing
+        bottom: `calc(${CORNER_MARGIN} + ${TOGGLE_BUTTON_SIZE} + 3.5vw)`, // Position above toggle button with some spacing
         width: VIRTUAL_CONTROLS_GROUP_WIDTH,
         height: VIRTUAL_CONTROLS_GROUP_HEIGHT,
         maxWidth: "40vw", // Limit maximum width on larger screens
@@ -37,6 +39,39 @@ const VirtualMoveControls: React.FC<VirtualMoveControlsProps> = ({
         transformOrigin: "bottom left", // Scale from bottom left
       }}
     >
+      <VirtualControlButton
+        label="🔍"
+        position={{
+          left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_CENTER,
+          top: "150px",
+        }}
+        onTouchStart={() => void 0}
+        onTouchEnd={() => void 0}
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.center}
+      />
+      {/* Zoom In Button */}
+      <VirtualControlButton
+        label="+"
+        position={{
+          left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_LEFT,
+          top: "150px",
+        }}
+        onTouchStart={() => onMoveStart("+")}
+        onTouchEnd={() => onMoveEnd("+")}
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
+      />
+
+      {/* Zoom Out Button */}
+      <VirtualControlButton
+        label="-"
+        position={{
+          left: VIRTUAL_CONTROLS_BUTTON_HORIZONTAL_RIGHT,
+          top: "150px",
+        }}
+        onTouchStart={() => onMoveStart("-")}
+        onTouchEnd={() => onMoveEnd("-")}
+        color={VIRTUAL_CONTROL_BUTTON_COLOR.default}
+      />
       {/* Rest of the component remains unchanged */}
       {/* Up Arrow Button */}
       <VirtualControlButton

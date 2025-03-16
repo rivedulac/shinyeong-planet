@@ -29,7 +29,7 @@ export class NpcManager {
     // The starting position is at the equator (longitude 0)
     const guestBook = new Billboard("guest-book", "Guest Book");
 
-    guestBook.setPositionOnPlanet(0, 0.7);
+    guestBook.setPositionOnPlanet(0.65, 0);
 
     // Set up a custom conversation for the guest book
     guestBook.setConversation(GUEST_BOOK_CONVERSTAION);
@@ -39,7 +39,7 @@ export class NpcManager {
     // Create and add a billboard NPC - original code
     const billboard = new Billboard("resume-billboard", "My Resume");
     // Position at a different location than the guest book
-    billboard.setPositionOnPlanet(2, 0.5);
+    billboard.setPositionOnPlanet(1.5, -1.5);
     this.addNpc(billboard);
 
     // Create and add a flag NPC
@@ -51,7 +51,7 @@ export class NpcManager {
     // Create and add a person NPC
     const person = new Person("guide-person", "Jane");
     // Position the person at a different place on the planet
-    person.setPositionOnPlanet(-0.3, 0.35);
+    person.setPositionOnPlanet(0.4, -0.35);
     this.addNpc(person);
   }
 

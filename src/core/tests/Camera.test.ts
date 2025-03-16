@@ -363,8 +363,8 @@ describe("Camera", () => {
         // At initial position on the equator, right vector should be approximately (0, 0, 1)
         // This is because we're facing the +Z direction with +X to our right
         expect(Math.abs(rightVector.x)).toBeLessThan(EPSILON);
-        expect(Math.abs(rightVector.y)).toBeCloseTo(1);
-        expect(Math.abs(rightVector.z)).toBeLessThan(EPSILON);
+        expect(Math.abs(rightVector.y)).toBeLessThan(EPSILON);
+        expect(Math.abs(rightVector.z)).toBeCloseTo(1);
       });
 
       it("should return a normalized right vector", () => {

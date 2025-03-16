@@ -8,10 +8,7 @@ import PlayerNameDisplay from "../ui/PlayerNameDisplay";
 import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
 import ConversationModal from "../ui/ConversationModal";
-import {
-  VirtualMoveControls,
-  VirtualZoomControls,
-} from "../ui/virtualControls";
+import { VirtualMoveControls } from "../ui/virtualControls";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { useMobileDetect } from "../hooks/useMobileDetect";
@@ -257,15 +254,7 @@ const Game: React.FC = () => {
   return (
     <>
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
-      <ToggleButton
-        isActive={virtualControlsEnabled ?? false}
-        onToggle={toggleVirtualControls}
-        icon="⚙️"
-        position={{ bottom: CORNER_MARGIN, left: CORNER_MARGIN }}
-      />
-
       {playerName && <PlayerNameDisplay name={playerName} />}
-
       {/* Settings UI */}
       <ToggleButton
         isActive={showSettings}
@@ -294,20 +283,22 @@ const Game: React.FC = () => {
         />
       )}
 
-      {/* Show virtual controls if enabled */}
+      {/* Virtual Move Controls */}
+      <ToggleButton
+        isActive={virtualControlsEnabled ?? false}
+        onToggle={toggleVirtualControls}
+        icon="⌨️"
+        position={{ bottom: CORNER_MARGIN, left: CORNER_MARGIN }}
+      />
       {virtualControlsEnabled && (
         <>
           <VirtualMoveControls
             onMoveStart={handleVirtualControlStart}
             onMoveEnd={handleVirtualControlEnd}
           />
-          <VirtualZoomControls
-            onZoomStart={handleVirtualControlStart}
-            onZoomEnd={handleVirtualControlEnd}
-          />
         </>
       )}
-
+      {/* Controls Info Display */}
       <ToggleButton
         isActive={showControlsInfo}
         onToggle={toggleControlsInfo}
@@ -321,7 +312,7 @@ const Game: React.FC = () => {
       {showControlsInfo && (
         <CameraPositionDisplay perspective={cameraPosition} />
       )}
-
+      {/* Minimap */}
       <ToggleButton
         isActive={!!minimapVisible}
         onToggle={toggleMinimap}

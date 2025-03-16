@@ -58,8 +58,8 @@ export class Camera {
     // Point the camera tangent to the planet's surface (looking forward along the equator toward Z)
     const target = new THREE.Vector3(
       PLANET_CENTER.x,
-      PLANET_CENTER.y,
-      PLANET_CENTER.z + PLANET_RADIUS
+      PLANET_CENTER.y + PLANET_RADIUS,
+      PLANET_CENTER.z
     );
 
     // Set the camera's up vector before setting orientation
