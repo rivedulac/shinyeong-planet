@@ -45,8 +45,8 @@ const Minimap: React.FC<MinimapProps> = ({
   npcs,
 }) => {
   const [gridLines, setGridLines] = useState<{
-    latitudeLines: Array<{ points: string; label: string }>;
-    longitudeLines: Array<{ points: string; label: string }>;
+    latitudeLines: Array<{ points: string }>;
+    longitudeLines: Array<{ points: string }>;
     poleMarkers: Array<{
       x: number;
       y: number;
@@ -258,54 +258,26 @@ const Minimap: React.FC<MinimapProps> = ({
 
         {/* Latitude grid lines (parallels) */}
         {gridLines.latitudeLines.map((line, index) => (
-          <g key={`lat-${index}`}>
-            <polyline
-              points={line.points}
-              stroke={MINI_MAP_GRID_COLOR}
-              strokeWidth="0.6"
-              fill="none"
-              opacity="0.5"
-            />
-            {/* Only show Equator label */}
-            {line.label === "Equator" && (
-              <text
-                x={MINI_MAP_CENTER_X + 35}
-                y={MINI_MAP_CENTER_Y}
-                textAnchor="middle"
-                fill="#ffffff"
-                fontSize="6"
-                opacity="0.9"
-              >
-                {line.label}
-              </text>
-            )}
-          </g>
+          <polyline
+            key={`lat-${index}`}
+            points={line.points}
+            stroke={MINI_MAP_GRID_COLOR}
+            strokeWidth="0.6"
+            fill="none"
+            opacity="0.5"
+          />
         ))}
 
         {/* Longitude grid lines (meridians) */}
         {gridLines.longitudeLines.map((line, index) => (
-          <g key={`long-${index}`}>
-            <polyline
-              points={line.points}
-              stroke={MINI_MAP_GRID_COLOR}
-              strokeWidth="0.6"
-              fill="none"
-              opacity="0.5"
-            />
-            {/* Only show Prime Meridian label */}
-            {line.label === "Prime Meridian" && (
-              <text
-                x={MINI_MAP_CENTER_X}
-                y={MINI_MAP_CENTER_Y + 35}
-                textAnchor="middle"
-                fill="#ffffff"
-                fontSize="6"
-                opacity="0.9"
-              >
-                {line.label}
-              </text>
-            )}
-          </g>
+          <polyline
+            key={`long-${index}`}
+            points={line.points}
+            stroke={MINI_MAP_GRID_COLOR}
+            strokeWidth="0.6"
+            fill="none"
+            opacity="0.5"
+          />
         ))}
 
         {/* Compass direction indicators */}

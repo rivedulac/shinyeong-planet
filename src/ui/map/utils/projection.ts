@@ -224,8 +224,8 @@ export const generateGridLines = (
   centerX: number = 100,
   centerY: number = 100
 ) => {
-  const latitudeLines: Array<{ points: string; label: string }> = [];
-  const longitudeLines: Array<{ points: string; label: string }> = [];
+  const latitudeLines: Array<{ points: string }> = [];
+  const longitudeLines: Array<{ points: string }> = [];
   const poleMarkers: Array<{
     x: number;
     y: number;
@@ -301,8 +301,6 @@ export const generateGridLines = (
       if (segments[i].length > 1) {
         latitudeLines.push({
           points: segments[i].join(" "),
-          label:
-            lat === 0 ? "Equator" : `${Math.abs(lat)}°${lat > 0 ? "N" : "S"}`,
         });
       }
     }
@@ -374,14 +372,8 @@ export const generateGridLines = (
     // Add all segments as separate polylines
     for (let i = 0; i < segments.length; i++) {
       if (segments[i].length > 1) {
-        // Determine if this is approximately the Prime Meridian
-        const isPrimeMeridian = Math.abs(absLong) < 5;
-
         longitudeLines.push({
           points: segments[i].join(" "),
-          label: isPrimeMeridian
-            ? "Prime Meridian"
-            : `${Math.round(Math.abs(absLong))}°${absLong > 0 ? "E" : "W"}`,
         });
       }
     }
