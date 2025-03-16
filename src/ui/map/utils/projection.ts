@@ -56,31 +56,6 @@ export const latLongToCartesian = (
 };
 
 /**
- * Calculate the heading (angle) based on relative position from planet center
- * @param position Player's current position
- * @returns Angle in radians
- */
-export const calculateHeadingFromPosition = (
-  position: THREE.Vector3
-): number => {
-  // Calculate relative position from planet center
-  const relativePos = new THREE.Vector3().subVectors(position, PLANET_CENTER);
-
-  // Normalize the relative position
-  relativePos.normalize();
-
-  // Use Math.atan2 to get the angle in the XZ plane
-  // Adjust to match Three.js coordinate system
-  // (0 is positive Z, rotates counterclockwise)
-  let angle = Math.atan2(relativePos.x, relativePos.z);
-
-  // Normalize to 0-2π range
-  if (angle < 0) angle += 2 * Math.PI;
-
-  return angle;
-};
-
-/**
  * Check if a point on the planet is visible from the player's position
  * @param position Position to check
  * @param playerPos Player's position
@@ -116,7 +91,8 @@ export const isPointVisible = (
  * @param position 3D position to project
  * @param playerPos Player's 3D position (center of projection)
  * @param mapRadius Radius of the minimap in pixels
- * @returns Projected 2D coordinates {x, y} relative to center of minimap, or null if point is not projectable or visible
+ * @returns Projected 2D coordinates {x, y} relative to center of minimap,
+ *   or null if point is not projectable or visible
  */
 export const projectToMinimap = (
   position: THREE.Vector3,
@@ -124,15 +100,17 @@ export const projectToMinimap = (
   mapRadius: number
 ): { x: number; y: number } | null => {
   try {
-    // First check if the point is on the visible hemisphere with a more permissive threshold
-    // This allows us to see slightly more than a hemisphere for better visualization
+    // First check if the point is on the visible hemisphere with a more
+    // permissive threshold. This allows us to see slightly more than a
+    // hemisphere for better visualization.
     if (
       !isPointVisible(position, playerPos, MINI_MAP_VISIBLE_DISTANCE_THRESHOLD)
     ) {
       return null; // Point is not visible, don't project it
     }
 
-    // Safety check - ensure neither position is at planet center (would cause NaN)
+    // Safety check - ensure neither position is at planet center
+    // (would cause NaN)
     const posDistanceFromCenter = position.distanceTo(PLANET_CENTER);
     const playerDistanceFromCenter = playerPos.distanceTo(PLANET_CENTER);
 
@@ -178,12 +156,13 @@ export const projectToMinimap = (
       .normalize();
     const dotProduct = playerDir.dot(pointDir);
 
-    // Calculate a dynamic scale factor based on distance from center of view
-    // This helps manage distortion at the edges
+    // Calculate a dynamic scale factor based on distance from center of
+    // view. This helps manage distortion at the edges
     let scaleFactor = 1.0;
 
-    // For points approaching the edge, compress them to avoid extreme stretching
-    // Use a smoother scaling that gradually compresses as we approach the edge
+    // For points approaching the edge, compress them to avoid extreme
+    // stretching. Use a smoother scaling that gradually compresses as
+    // we approach the edge.
     if (dotProduct < 0) {
       // For points beyond 90 degrees from view center (dotProduct < 0)
       // Apply stronger compression
@@ -205,14 +184,16 @@ export const projectToMinimap = (
 
     // Map distance and bearing to x,y coordinates
     // Use a smaller value for maxDistance to expand the projection
-    // to fill more of the map radius (Math.PI/1.8 gives ~90% fill for a hemisphere)
+    // to fill more of the map radius (Math.PI/1.8 gives ~90% fill for
+    // a hemisphere)
     const maxDistance = Math.PI / 1.8;
     let k = c !== 0 ? (mapRadius * c * scaleFactor) / maxDistance : 0;
 
     // Ensure points don't go beyond map radius
     k = Math.min(k, mapRadius * 0.95);
 
-    // Project coordinates - x is positive to the right, y is positive going down (SVG coordinate system)
+    // Project coordinates - x is positive to the right, y is positive
+    // going down (SVG coordinate system)
     const x = k * Math.sin(bearing);
     const y = -k * Math.cos(bearing);
 
@@ -281,7 +262,8 @@ export const generateGridLines = (
       if (projection) {
         const point = `${centerX + projection.x},${centerY + projection.y}`;
 
-        // Check if there's a large jump in projection (might indicate crossing the visibility boundary)
+        // Check if there's a large jump in projection (might indicate
+        // crossing the visibility boundary)
         if (lastProjection) {
           const dx = projection.x - lastProjection.x;
           const dy = projection.y - lastProjection.y;
@@ -299,8 +281,8 @@ export const generateGridLines = (
         currentSegment.push(point);
         lastProjection = projection;
       } else {
-        // If we had points in the current segment and now hit an invisible point,
-        // store the segment and start a new one
+        // If we had points in the current segment and now hit an invisible
+        // point, store the segment and start a new one
         if (currentSegment.length > 1) {
           segments.push([...currentSegment]);
           currentSegment = [];
@@ -374,8 +356,8 @@ export const generateGridLines = (
         currentSegment.push(point);
         lastProjection = projection;
       } else {
-        // If we had points in the current segment and now hit an invisible point,
-        // store the segment and start a new one
+        // If we had points in the current segment and now hit an invisible
+        // point, store the segment and start a new one
         if (currentSegment.length > 1) {
           segments.push([...currentSegment]);
           currentSegment = [];
