@@ -1,3 +1,7 @@
 dist/
 *.DS_Store
 node_modules/
+.env
+myenv/
+data/conversation-history.json
+.vercel

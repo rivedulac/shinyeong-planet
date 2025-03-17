@@ -1,12 +1,3 @@
 # 3D Game Project
 
-## Setup
-
-```bash
-npm install
-npm run dev
-```
-
-## Testing
-
-Visit https://rivedulac.github.io/shinyeong-planet/
+Visit https://shinyeong-planet.vercel.app
