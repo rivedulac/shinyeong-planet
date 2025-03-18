@@ -8,10 +8,8 @@ import PlayerNameDisplay from "../ui/PlayerNameDisplay";
 import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
 import ConversationModal from "../ui/ConversationModal";
-import { VirtualMoveControls } from "../ui/virtualControls";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
-import { useMobileDetect } from "../hooks/useMobileDetect";
 import { NpcManager } from "./npcs/NpcManager";
 import { IConversation } from "./npcs/interfaces/IConversation";
 import { getConversationForNpc } from "./npcs/interfaces/IConversation";
@@ -25,21 +23,12 @@ import VirtualPad from "@/ui/virtualControls/VirtualPad";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
-const VIRTUAL_CONTROLS_KEY = "shinyeongPlanet.virtualControlsEnabled";
 
 const Game: React.FC = () => {
-  const isMobile = useMobileDetect();
   const [cameraPosition, setCameraPosition] = useState({
     position: { x: 0, y: 0, z: 0 },
     rotation: { pitch: 0, yaw: 0, roll: 0 },
   });
-
-  // Simple toggle state for virtual controls - default to true on mobile
-  const [virtualControlsEnabled, setVirtualControlsEnabled] =
-    useLocalStorage<boolean>(
-      VIRTUAL_CONTROLS_KEY,
-      isMobile // Default to true on mobile devices
-    );
 
   // Use the localStorage hook for player name persistence
   const [playerName, setPlayerName] = useLocalStorage<string>(
@@ -103,11 +92,6 @@ const Game: React.FC = () => {
 
   const handleCancelEdit = () => {
     setIsEditingName(false);
-  };
-
-  // Toggle virtual controls
-  const toggleVirtualControls = () => {
-    setVirtualControlsEnabled(!virtualControlsEnabled);
   };
 
   // Function to start a conversation with an NPC
@@ -284,21 +268,6 @@ const Game: React.FC = () => {
         />
       )}
 
-      {/* Virtual Move Controls */}
-      <ToggleButton
-        isActive={virtualControlsEnabled ?? false}
-        onToggle={toggleVirtualControls}
-        icon="⌨️"
-        position={{ bottom: CORNER_MARGIN, left: CORNER_MARGIN }}
-      />
-      {virtualControlsEnabled && (
-        <>
-          <VirtualMoveControls
-            onMoveStart={handleVirtualControlStart}
-            onMoveEnd={handleVirtualControlEnd}
-          />
-        </>
-      )}
       {/* Controls Info Display */}
       <ToggleButton
         isActive={showControlsInfo}
