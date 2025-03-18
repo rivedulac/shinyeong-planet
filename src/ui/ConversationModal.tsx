@@ -82,7 +82,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
       style={{
         position: "absolute",
         top: CORNER_MARGIN,
-        right: CORNER_MARGIN,
+        left: CORNER_MARGIN,
         width: "calc(min(80%, 450px))",
         backgroundColor: "rgba(30, 30, 50, 0.9)",
         borderRadius: "10px",
