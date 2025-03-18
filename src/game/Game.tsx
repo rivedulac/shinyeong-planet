@@ -21,6 +21,7 @@ import { Minimap } from "../ui/map";
 import ToggleButton from "../ui/common/ToggleButton";
 import * as THREE from "three";
 import { CORNER_MARGIN } from "@/config/constants";
+import VirtualPad from "@/ui/virtualControls/VirtualPad";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -326,6 +327,10 @@ const Game: React.FC = () => {
           npcs={npcState}
         />
       )}
+      <VirtualPad
+        onMoveStart={handleVirtualControlStart}
+        onMoveEnd={handleVirtualControlEnd}
+      />
     </>
   );
 };
