@@ -1,3 +1,4 @@
+import { BACKGROUND_COLOR_RGBA } from "@/config/constants";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -38,7 +39,7 @@ const PlayerNameInput: React.FC<PlayerNameInputProps> = ({ onNameSubmit }) => {
         justifyContent: "center",
         height: "100vh",
         width: "100vw",
-        backgroundImage: "url('/src/assets/background-texture.svg')",
+        backgroundColor: BACKGROUND_COLOR_RGBA,
         backgroundSize: "cover",
         backgroundPosition: "center",
         position: "absolute",
@@ -49,7 +50,7 @@ const PlayerNameInput: React.FC<PlayerNameInputProps> = ({ onNameSubmit }) => {
     >
       <div
         style={{
-          backgroundColor: "rgba(20, 20, 40, 0.5)",
+          backgroundColor: "rgba(127, 127, 127, 0.3)",
           padding: "30px",
           borderRadius: "10px",
           maxWidth: "450px",

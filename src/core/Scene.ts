@@ -1,5 +1,9 @@
 import * as THREE from "three";
-import { PLANET_CENTER, PLANET_RADIUS } from "../config/constants";
+import {
+  BACKGROUND_COLOR_CODE,
+  PLANET_CENTER,
+  PLANET_RADIUS,
+} from "../config/constants";
 const planetTexturePath = "src/assets/planet-texture.svg";
 
 export class Scene {
@@ -41,7 +45,7 @@ export class Scene {
   }
 
   public setup() {
-    this.setBackground(new THREE.Color(0x00001a));
+    this.setBackground(new THREE.Color(BACKGROUND_COLOR_CODE));
     this.setPlanet(undefined, this.loadTexture(planetTexturePath));
     this.addGridHelper();
     this.addLights();

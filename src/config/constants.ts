@@ -124,3 +124,7 @@ export const MINI_MAP_VISIBLE_DISTANCE_THRESHOLD = 0.0;
 export const MINI_MAP_NPC_SIZE_SMALL = 4;
 export const MINI_MAP_NPC_SIZE_MEDIUM = 5;
 export const MINI_MAP_NPC_SIZE_LARGE = 6;
+
+/** Scene */
+export const BACKGROUND_COLOR_CODE = 0x00001a;
+export const BACKGROUND_COLOR_RGBA = "rgba(0, 0, 26, 1)";
