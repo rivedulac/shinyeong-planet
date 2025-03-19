@@ -20,6 +20,7 @@ import ToggleButton from "../ui/common/ToggleButton";
 import * as THREE from "three";
 import { CORNER_MARGIN } from "@/config/constants";
 import VirtualPad from "@/ui/virtualControls/VirtualPad";
+import MenuBar from "@/ui/menuBar/menuBar";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -249,8 +250,8 @@ const Game: React.FC = () => {
   // Otherwise show the game with player name displayed
   return (
     <>
+      <MenuBar playerName={playerName || ""} />
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
-      {playerName && <PlayerNameDisplay name={playerName} />}
       {/* Settings UI */}
       <ToggleButton
         isActive={showSettings}
