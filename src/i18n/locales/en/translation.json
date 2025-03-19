@@ -49,5 +49,22 @@
     "south": "S",
     "west": "W",
     "east": "E"
+  },
+  "settings": {
+    "title": "Settings"
+  },
+  "info": {
+    "title": "Information"
+  },
+  "conversation": {
+    "aiMode": "AI Chat",
+    "scriptedMode": "Scripted Mode",
+    "send": "Send",
+    "thinking": "Thinking...",
+    "error": "Failed to get AI response. Please try again.",
+    "placeholder": "Ask me anything..."
+  },
+  "toggle": {
+    "minimap": "Toggle Minimap"
   }
 }

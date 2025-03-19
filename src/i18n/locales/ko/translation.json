@@ -19,8 +19,8 @@
     "rotateRight": "→ - 오른쪽으로 회전",
     "lookUp": "↑ - 위쪽 보기",
     "lookDown": "↓ - 아래쪽 보기",
-    "zoomIn": "+ - 확대 (FOV 감소)",
-    "zoomOut": "- - 축소 (FOV 증가)"
+    "zoomIn": "+ - 확대",
+    "zoomOut": "- - 축소"
   },
   "language": {
     "title": "언어",
@@ -34,14 +34,37 @@
   },
   "playerName": {
     "title": "신영 행성에 오신 것을 환영합니다",
-    "enterName": "이름을 입력해주세요:",
+    "enterName": "이름을 입력해주세요：",
     "placeholder": "이름 입력",
     "start": "탐험 시작",
     "error": "이름은 비어있을 수 없습니다",
-    "display": "탐험가: {{name}}",
+    "display": "탐험가：{{name}}",
     "edit": "이름 변경",
     "editTitle": "탐험가 이름 변경",
     "save": "저장",
     "cancel": "취소"
+  },
+  "compass": {
+    "north": "북",
+    "south": "남",
+    "west": "서",
+    "east": "동"
+  },
+  "settings": {
+    "title": "설정"
+  },
+  "info": {
+    "title": "정보"
+  },
+  "conversation": {
+    "aiMode": "AI 채팅",
+    "scriptedMode": "스크립트 모드",
+    "send": "보내기",
+    "thinking": "생각 중...",
+    "error": "AI 응답을 가져오지 못했습니다. 다시 시도해 주세요.",
+    "placeholder": "무엇을 도와드릴까요?"
+  },
+  "toggle": {
+    "minimap": "미니맵 전환"
   }
 }

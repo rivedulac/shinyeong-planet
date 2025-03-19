@@ -10,7 +10,7 @@
     "roll": "Roulis: {{value}}"
   },
   "controls": {
-    "title": "Contrôles:",
+    "title": "Contrôles",
     "moveForward": "W - Avancer",
     "moveBackward": "S - Reculer",
     "strafeLeft": "A - Déplacement Latéral Gauche",
@@ -19,8 +19,8 @@
     "rotateRight": "→ - Rotation Droite",
     "lookUp": "↑ - Regarder en Haut",
     "lookDown": "↓ - Regarder en Bas",
-    "zoomIn": "+ - Zoom Avant (Diminuer FOV)",
-    "zoomOut": "- - Zoom Arrière (Augmenter FOV)"
+    "zoomIn": "+ - Zoom Avant",
+    "zoomOut": "- - Zoom Arrière"
   },
   "language": {
     "title": "Langue",
@@ -34,14 +34,37 @@
   },
   "playerName": {
     "title": "Bienvenue sur la Planète Shinyeong",
-    "enterName": "Veuillez entrer votre nom:",
+    "enterName": "Veuillez entrer votre nom :",
     "placeholder": "Votre nom ici",
     "start": "Commencer l'Aventure",
     "error": "Le nom ne peut pas être vide",
-    "display": "Explorateur: {{name}}",
+    "display": "Explorateur : {{name}}",
     "edit": "Modifier le Nom",
     "editTitle": "Modifier le Nom de l'Explorateur",
     "save": "Sauvegarder",
     "cancel": "Annuler"
+  },
+  "compass": {
+    "north": "N",
+    "south": "S",
+    "west": "O",
+    "east": "E"
+  },
+  "settings": {
+    "title": "Paramètres"
+  },
+  "info": {
+    "title": "Informations"
+  },
+  "conversation": {
+    "aiMode": "Chat IA",
+    "scriptedMode": "Mode Scénarisé",
+    "send": "Envoyer",
+    "thinking": "Réflexion...",
+    "error": "Échec de l'obtention de la réponse de l'IA. Veuillez réessayer.",
+    "placeholder": "Posez-moi une question..."
+  },
+  "toggle": {
+    "minimap": "Basculer la Mini-carte"
   }
 }

@@ -10,7 +10,7 @@
     "roll": "翻滾角: {{value}}"
   },
   "controls": {
-    "title": "控制方式:",
+    "title": "控制方式",
     "moveForward": "W - 向前移動",
     "moveBackward": "S - 向後移動",
     "strafeLeft": "A - 向左平移",
@@ -19,8 +19,8 @@
     "rotateRight": "→ - 向右旋轉",
     "lookUp": "↑ - 向上看",
     "lookDown": "↓ - 向下看",
-    "zoomIn": "+ - 放大 (減小視場角)",
-    "zoomOut": "- - 縮小 (增大視場角)"
+    "zoomIn": "+ - 放大",
+    "zoomOut": "- - 縮小"
   },
   "language": {
     "title": "語言",
@@ -34,14 +34,37 @@
   },
   "playerName": {
     "title": "歡迎來到信渶星球",
-    "enterName": "請輸入您的名字:",
+    "enterName": "請輸入您的名字：",
     "placeholder": "在此輸入名字",
     "start": "開始探索",
     "error": "名字不能為空",
-    "display": "探索者: {{name}}",
+    "display": "探索者：{{name}}",
     "edit": "修改名字",
     "editTitle": "修改探索者名字",
     "save": "儲存",
     "cancel": "取消"
+  },
+  "compass": {
+    "north": "北",
+    "south": "南",
+    "west": "西",
+    "east": "東"
+  },
+  "settings": {
+    "title": "設定"
+  },
+  "info": {
+    "title": "資訊"
+  },
+  "conversation": {
+    "aiMode": "AI對話",
+    "scriptedMode": "預設對話模式",
+    "send": "傳送",
+    "thinking": "思考中...",
+    "error": "無法取得AI回應。請重試。",
+    "placeholder": "有什麼可以幫您的？"
+  },
+  "toggle": {
+    "minimap": "切換小地圖"
   }
 }

@@ -10,7 +10,7 @@
     "roll": "ロール: {{value}}"
   },
   "controls": {
-    "title": "操作方法:",
+    "title": "操作方法",
     "moveForward": "W - 前進",
     "moveBackward": "S - 後退",
     "strafeLeft": "A - 左へ移動",
@@ -19,8 +19,8 @@
     "rotateRight": "→ - 右回転",
     "lookUp": "↑ - 上を見る",
     "lookDown": "↓ - 下を見る",
-    "zoomIn": "+ - ズームイン（FOV減少）",
-    "zoomOut": "- - ズームアウト（FOV増加）"
+    "zoomIn": "+ - ズームイン",
+    "zoomOut": "- - ズームアウト"
   },
   "language": {
     "title": "言語",
@@ -34,14 +34,37 @@
   },
   "playerName": {
     "title": "シンヨン惑星へようこそ",
-    "enterName": "名前を入力してください:",
+    "enterName": "名前を入力してください：",
     "placeholder": "名前を入力",
     "start": "探検開始",
     "error": "名前を入力してください",
-    "display": "探検家: {{name}}",
+    "display": "探検家：{{name}}",
     "edit": "名前を変更",
     "editTitle": "探検家の名前を変更",
     "save": "保存",
     "cancel": "キャンセル"
+  },
+  "compass": {
+    "north": "N",
+    "south": "S",
+    "west": "W",
+    "east": "E"
+  },
+  "settings": {
+    "title": "設定"
+  },
+  "info": {
+    "title": "情報"
+  },
+  "conversation": {
+    "aiMode": "AIチャット",
+    "scriptedMode": "シナリオモード",
+    "send": "送信",
+    "thinking": "考え中...",
+    "error": "AI応答の取得に失敗しました。もう一度お試しください。",
+    "placeholder": "何か質問してください..."
+  },
+  "toggle": {
+    "minimap": "ミニマップ切り替え"
   }
 }

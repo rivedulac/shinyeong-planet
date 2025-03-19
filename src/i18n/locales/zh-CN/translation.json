@@ -10,15 +10,17 @@
     "roll": "翻滚角: {{value}}"
   },
   "controls": {
-    "title": "控制方式:",
+    "title": "控制方式",
     "moveForward": "W - 向前移动",
     "moveBackward": "S - 向后移动",
-    "rotateLeft": "A - 向左旋转",
-    "rotateRight": "D - 向右旋转",
+    "strafeLeft": "A - 向左平移",
+    "strafeRight": "D - 向右平移",
+    "rotateLeft": "← - 向左旋转",
+    "rotateRight": "→ - 向右旋转",
     "lookUp": "↑ - 向上看",
     "lookDown": "↓ - 向下看",
-    "zoomIn": "+ - 放大 (减小视场角)",
-    "zoomOut": "- - 缩小 (增大视场角)"
+    "zoomIn": "+ - 放大",
+    "zoomOut": "- - 缩小"
   },
   "language": {
     "title": "语言",
@@ -29,5 +31,40 @@
     "zh-TW": "繁體中文",
     "de": "Deutsch",
     "ja": "日本語"
+  },
+  "playerName": {
+    "title": "欢迎来到信渶星球",
+    "enterName": "请输入您的名字：",
+    "placeholder": "在此输入名字",
+    "start": "开始探索",
+    "error": "名字不能为空",
+    "display": "探索者：{{name}}",
+    "edit": "修改名字",
+    "editTitle": "修改探索者名字",
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "compass": {
+    "north": "北",
+    "south": "南",
+    "west": "西",
+    "east": "东"
+  },
+  "settings": {
+    "title": "设置"
+  },
+  "info": {
+    "title": "信息"
+  },
+  "conversation": {
+    "aiMode": "AI对话",
+    "scriptedMode": "预设对话模式",
+    "send": "发送",
+    "thinking": "思考中...",
+    "error": "获取AI响应失败。请重试。",
+    "placeholder": "有什么可以帮您的？"
+  },
+  "toggle": {
+    "minimap": "切换小地图"
   }
 }

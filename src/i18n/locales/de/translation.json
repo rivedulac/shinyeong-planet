@@ -10,7 +10,7 @@
     "roll": "Rollwinkel: {{value}}"
   },
   "controls": {
-    "title": "Steuerung:",
+    "title": "Steuerung",
     "moveForward": "W - Vorwärts bewegen",
     "moveBackward": "S - Rückwärts bewegen",
     "strafeLeft": "A - Nach links gleiten",
@@ -19,8 +19,8 @@
     "rotateRight": "→ - Nach rechts drehen",
     "lookUp": "↑ - Nach oben schauen",
     "lookDown": "↓ - Nach unten schauen",
-    "zoomIn": "+ - Hineinzoomen (Sichtfeld verkleinern)",
-    "zoomOut": "- - Herauszoomen (Sichtfeld vergrößern)"
+    "zoomIn": "+ - Hineinzoomen",
+    "zoomOut": "- - Herauszoomen"
   },
   "language": {
     "title": "Sprache",
@@ -43,5 +43,28 @@
     "editTitle": "Entdeckernamen ändern",
     "save": "Speichern",
     "cancel": "Abbrechen"
+  },
+  "compass": {
+    "north": "N",
+    "south": "S",
+    "west": "W",
+    "east": "O"
+  },
+  "settings": {
+    "title": "Einstellungen"
+  },
+  "info": {
+    "title": "Informationen"
+  },
+  "conversation": {
+    "aiMode": "KI-Chat",
+    "scriptedMode": "Vorgeschriebener Modus",
+    "send": "Senden",
+    "thinking": "Nachdenken...",
+    "error": "Fehler bei der KI-Antwort. Bitte versuchen Sie es erneut.",
+    "placeholder": "Fragen Sie mich etwas..."
+  },
+  "toggle": {
+    "minimap": "Minikarte umschalten"
   }
 }
