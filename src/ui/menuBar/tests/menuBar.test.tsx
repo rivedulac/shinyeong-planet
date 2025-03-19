@@ -4,7 +4,16 @@ import MenuBar from "../menuBar";
 
 // Mock the SettingsDropdown and InfoDropdown components
 vi.mock("../SettingsDropdown", () => ({
-  default: ({ isOpen, onClose, onEditName, onToggleControls }) => {
+  default: ({
+    isOpen,
+    onClose,
+    onEditName,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+    onEditName: () => void;
+    onToggleControls: () => void;
+  }) => {
     if (!isOpen) return null;
     return (
       <div data-testid="settings-dropdown">
@@ -25,7 +34,15 @@ vi.mock("../SettingsDropdown", () => ({
 }));
 
 vi.mock("../InfoDropdown", () => ({
-  default: ({ isOpen, onClose, onToggleControls }) => {
+  default: ({
+    isOpen,
+    onClose,
+    onToggleControls,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+    onToggleControls: () => void;
+  }) => {
     if (!isOpen) return null;
     return (
       <div data-testid="info-dropdown">
