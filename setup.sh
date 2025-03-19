@@ -27,6 +27,7 @@ npm install -D typescript \
               react-i18next \
               i18next-http-backend \
               i18next-browser-languagedetector \
-              @google/generative-ai
+              @google/generative-ai \
+              @types/node
 
 echo "Project setup complete! Run 'npm run dev' to start the development server."

@@ -199,6 +199,17 @@ const Game: React.FC = () => {
       // Update camera position state on each frame
       setCameraPosition(camera.getPerspectivePosition());
 
+      // Update npc states periodically (for minimap and any other UI that needs it)
+      if (time % 100 < 16) {
+        // Update roughly every 100ms
+        const updatedNpcsData = allNpcs.map((npc) => ({
+          type: npc.getType(),
+          position: npc.getMesh().position.clone(),
+          id: npc.getId(),
+        }));
+        setNpcState(updatedNpcsData);
+      }
+
       animationId = requestAnimationFrame(animate);
       scene.render(camera.getPerspectiveCamera());
     };

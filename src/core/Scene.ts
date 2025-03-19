@@ -4,7 +4,7 @@ import {
   PLANET_CENTER,
   PLANET_RADIUS,
 } from "../config/constants";
-const planetTexturePath = "src/assets/planet-texture.svg";
+import { textures } from "../../public/assets";
 
 export class Scene {
   private container: HTMLDivElement;
@@ -46,7 +46,7 @@ export class Scene {
 
   public setup() {
     this.setBackground(new THREE.Color(BACKGROUND_COLOR_CODE));
-    this.setPlanet(undefined, this.loadTexture(planetTexturePath));
+    this.setPlanet(undefined, this.loadTexture(textures.planetTexture));
     this.addGridHelper();
     this.addLights();
 

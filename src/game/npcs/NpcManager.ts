@@ -3,8 +3,14 @@ import { INpc } from "./interfaces/INpc";
 import { Billboard } from "./Billboard";
 import { Flag } from "./Flag";
 import { Person } from "./Person";
-import { NEARBY_DISTANCE, GUEST_BOOK_CONVERSTAION } from "@/config/constants";
+import {
+  NEARBY_DISTANCE,
+  GUEST_BOOK_CONVERSTAION,
+  DEFAULT_PERSON_CONVERSTAION,
+} from "@/config/constants";
 import { CollisionUtils } from "./CollisionUtils";
+import { StaticModel } from "./StaticModel";
+import { models } from "../../../public/assets";
 
 export class NpcManager {
   private npcs: Map<string, INpc> = new Map();
@@ -51,8 +57,52 @@ export class NpcManager {
     // Create and add a person NPC
     const person = new Person("guide-person", "Jane");
     // Position the person at a different place on the planet
-    person.setPositionOnPlanet(0.4, -0.35);
+    person.setPositionOnPlanet(1.5, 0.35);
     this.addNpc(person);
+
+    // Create and add an animated person NPC
+    const alien = new StaticModel(
+      "alien",
+      "Jane Doe",
+      models.alien,
+      DEFAULT_PERSON_CONVERSTAION,
+      -0.5
+    );
+    alien.setPositionOnPlanet(0.4, -0.35);
+    this.addNpc(alien);
+
+    const iss = new StaticModel(
+      "iss",
+      "ISS",
+      models.iss,
+      DEFAULT_PERSON_CONVERSTAION,
+      100
+    );
+    iss.setPositionOnPlanet(1.25, 0.2);
+    this.addNpc(iss);
+
+    const earth = new StaticModel(
+      "earth",
+      "Earth",
+      models.earth,
+      DEFAULT_PERSON_CONVERSTAION,
+      100
+    );
+    earth.setScale(0.05);
+    earth.setPositionOnPlanet(1.25, 1.25);
+    this.addNpc(earth);
+
+    const astronaut = new StaticModel(
+      "astronaut",
+      "Astronaut",
+      models.astronaut,
+      DEFAULT_PERSON_CONVERSTAION,
+      40
+    );
+    astronaut.setPositionOnPlanet(1.0, -0.5);
+    astronaut.setScale(2);
+    astronaut.getMesh().rotation.y = -Math.PI / 4;
+    this.addNpc(astronaut);
   }
 
   /**
