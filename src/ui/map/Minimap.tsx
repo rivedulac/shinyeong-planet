@@ -216,7 +216,7 @@ const Minimap: React.FC<MinimapProps> = ({
     <div
       style={{
         position: "absolute",
-        bottom: "calc(50px + 8px)", // Position above map toggle with spacing
+        top: "calc(50px + 8px)", // Position above map toggle with spacing
         right: CORNER_MARGIN,
         width: "min(200px, 40vw)", // Responsive width
         height: "min(200px, 40vw)", // Maintain aspect ratio

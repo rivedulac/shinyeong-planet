@@ -148,8 +148,8 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
     <div
       style={{
         position: "absolute",
-        left: "35%",
-        width: "30%",
+        left: "25%",
+        width: "50%",
         height: "20%",
         bottom: CORNER_MARGIN,
         borderRadius: "10px",
