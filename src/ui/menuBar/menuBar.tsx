@@ -1,19 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useResponsiveControls } from "@/hooks/useResponsiveControls";
-import { DISPLAY_BACKGROUND_COLOR, FONT_COLOR } from "@/config/constants";
+import {
+  DISPLAY_BACKGROUND_COLOR,
+  FONT_COLOR,
+  SMALL_FONT_SIZE,
+} from "@/config/constants";
+import SettingsDropdown from "./SettingsDropdown";
+import InfoDropdown from "./InfoDropdown";
 
 interface MenuBarProps {
   playerName: string;
+  onEditName?: () => void;
+  onToggleControls?: () => void;
+  onToggleCamera?: () => void;
+  onChangeLanguage?: (lang: string) => void;
+  onToggleMinimap?: () => void;
+  currentLanguage?: string;
 }
 
-/**
- * Top bar component that displays across the top of the screen
- * Contains settings icon, information icon, and player name
- */
-const MenuBar: React.FC<MenuBarProps> = ({ playerName }) => {
-  const { t } = useTranslation();
+const MenuBar: React.FC<MenuBarProps> = ({
+  playerName,
+  onEditName,
+  onToggleControls,
+  onToggleCamera,
+  onChangeLanguage,
+  onToggleMinimap,
+  currentLanguage,
+}) => {
+  const { t, i18n } = useTranslation();
   useResponsiveControls(); // Apply responsive scaling
+
+  // Track hover state for icons
+  const [settingsHovered, setSettingsHovered] = useState(false);
+  const [infoHovered, setInfoHovered] = useState(false);
+
+  // Track dropdown states
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+
+  // Toggle dropdown states
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen);
+    if (infoOpen) setInfoOpen(false);
+  };
+
+  const toggleInfo = () => {
+    setInfoOpen(!infoOpen);
+    if (settingsOpen) setSettingsOpen(false);
+  };
 
   return (
     <div
@@ -36,21 +71,92 @@ const MenuBar: React.FC<MenuBarProps> = ({ playerName }) => {
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
       }}
     >
-      {/* Left section - will contain icons */}
+      {/* Left section - icons with dropdowns */}
       <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-        {/* Settings icon placeholder */}
-        <div style={{ width: "24px", height: "24px", cursor: "pointer" }}>
-          ⚙️
+        {/* Settings icon and dropdown */}
+        <div style={{ position: "relative" }}>
+          <div
+            style={{
+              width: "28px",
+              height: "28px",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+              fontSize: SMALL_FONT_SIZE,
+              backgroundColor:
+                settingsHovered || settingsOpen
+                  ? "rgba(255, 255, 255, 0.2)"
+                  : "transparent",
+              transition: "background-color 0.2s ease",
+            }}
+            onClick={toggleSettings}
+            onMouseEnter={() => setSettingsHovered(true)}
+            onMouseLeave={() => setSettingsHovered(false)}
+            title={t("settings.title", "Settings")}
+          >
+            ⚙️
+          </div>
+
+          <SettingsDropdown
+            isOpen={settingsOpen}
+            onClose={() => setSettingsOpen(false)}
+            onEditName={onEditName}
+            onToggleMinimap={onToggleMinimap}
+            onChangeLanguage={onChangeLanguage}
+            currentLanguage={currentLanguage || i18n.language}
+          />
         </div>
 
-        {/* Information icon placeholder */}
-        <div style={{ width: "24px", height: "24px", cursor: "pointer" }}>
-          ℹ️
+        {/* Information icon and dropdown */}
+        <div style={{ position: "relative" }}>
+          <div
+            style={{
+              width: "28px",
+              height: "28px",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+              fontSize: SMALL_FONT_SIZE,
+              backgroundColor:
+                infoHovered || infoOpen
+                  ? "rgba(255, 255, 255, 0.2)"
+                  : "transparent",
+              transition: "background-color 0.2s ease",
+            }}
+            onClick={toggleInfo}
+            onMouseEnter={() => setInfoHovered(true)}
+            onMouseLeave={() => setInfoHovered(false)}
+            title={t("info.title", "Information")}
+          >
+            ℹ️
+          </div>
+
+          <InfoDropdown
+            isOpen={infoOpen}
+            onClose={() => setInfoOpen(false)}
+            onToggleControls={onToggleControls}
+            onToggleCamera={onToggleCamera}
+          />
         </div>
       </div>
 
       {/* Right section - player name */}
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          padding: "6px 12px",
+          borderRadius: "4px",
+          cursor: onEditName ? "pointer" : "default",
+          fontSize: SMALL_FONT_SIZE,
+        }}
+        onClick={onEditName}
+        title={onEditName ? t("playerName.edit", "Edit Name") : ""}
+      >
         {playerName ? (
           <div>{t("playerName.display", { name: playerName })}</div>
         ) : null}

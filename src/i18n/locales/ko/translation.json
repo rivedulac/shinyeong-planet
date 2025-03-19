@@ -10,7 +10,7 @@
     "roll": "Roll: {{value}}"
   },
   "controls": {
-    "title": "조작법:",
+    "title": "조작법",
     "moveForward": "W - 앞으로 이동",
     "moveBackward": "S - 뒤로 이동",
     "strafeLeft": "A - 왼쪽으로 이동",

@@ -4,7 +4,6 @@ import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "../ui/informationDisplay/CameraPositionDisplay";
 import LanguageSelector from "../ui/LanguageSelector";
 import PlayerNameInput from "../ui/PlayerNameInput";
-import PlayerNameDisplay from "../ui/PlayerNameDisplay";
 import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
 import ConversationModal from "../ui/ConversationModal";
@@ -21,11 +20,13 @@ import * as THREE from "three";
 import { CORNER_MARGIN } from "@/config/constants";
 import VirtualPad from "@/ui/virtualControls/VirtualPad";
 import MenuBar from "@/ui/menuBar/menuBar";
+import { useTranslation } from "react-i18next";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
 
 const Game: React.FC = () => {
+  const { i18n } = useTranslation();
   const [cameraPosition, setCameraPosition] = useState({
     position: { x: 0, y: 0, z: 0 },
     rotation: { pitch: 0, yaw: 0, roll: 0 },
@@ -67,6 +68,8 @@ const Game: React.FC = () => {
       id: string;
     }>
   >([]);
+
+  const [showCameraInfo, setShowCameraInfo] = useState<boolean>(false);
 
   // Handlers for virtual controls
   const handleVirtualControlStart = (key: string) => {
@@ -250,15 +253,17 @@ const Game: React.FC = () => {
   // Otherwise show the game with player name displayed
   return (
     <>
-      <MenuBar playerName={playerName || ""} />
+      <MenuBar
+        playerName={playerName || ""}
+        onEditName={handleEditName}
+        onToggleControls={toggleControlsInfo}
+        onToggleCamera={() => setShowCameraInfo(!showCameraInfo)}
+        onChangeLanguage={toggleSettings}
+        onToggleMinimap={toggleMinimap}
+        currentLanguage={i18n.language}
+      />
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
       {/* Settings UI */}
-      <ToggleButton
-        isActive={showSettings}
-        onToggle={toggleSettings}
-        icon="⚙️"
-        position={{ top: CORNER_MARGIN, right: CORNER_MARGIN }}
-      />
       {playerName && showSettings && (
         <NameEditButton onClick={handleEditName} />
       )}
@@ -280,20 +285,8 @@ const Game: React.FC = () => {
         />
       )}
 
-      {/* Controls Info Display */}
-      <ToggleButton
-        isActive={showControlsInfo}
-        onToggle={toggleControlsInfo}
-        icon="ℹ️"
-        position={{
-          top: "calc(" + CORNER_MARGIN + " + 3.5rem)",
-          right: CORNER_MARGIN,
-        }}
-      />
       {showControlsInfo && <ControlsInfoDisplay />}
-      {showControlsInfo && (
-        <CameraPositionDisplay perspective={cameraPosition} />
-      )}
+      {showCameraInfo && <CameraPositionDisplay perspective={cameraPosition} />}
       {/* Minimap */}
       <ToggleButton
         isActive={!!minimapVisible}

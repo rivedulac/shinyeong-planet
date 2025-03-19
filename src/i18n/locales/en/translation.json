@@ -10,7 +10,7 @@
     "roll": "Roll: {{value}}"
   },
   "controls": {
-    "title": "Controls:",
+    "title": "Controls",
     "moveForward": "W - Move Forward",
     "moveBackward": "S - Move Backward",
     "strafeLeft": "A - Strafe Left",
