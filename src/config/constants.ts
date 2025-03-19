@@ -128,3 +128,38 @@ export const MINI_MAP_NPC_SIZE_LARGE = 6;
 /** Scene */
 export const BACKGROUND_COLOR_CODE = 0x00001a;
 export const BACKGROUND_COLOR_RGBA = "rgba(0, 0, 26, 1)";
+
+export const BACKGROUND_UPDATE_INTERVAL = 300000; // 5 minutes in milliseconds
+
+export const TIME_BASED_BACKGROUND_GRADIENTS = {
+  morning: {
+    top: new THREE.Color("rgba(255, 192, 203, 1)"),
+    middle: new THREE.Color("rgb(0, 140, 191)"),
+    bottom: new THREE.Color("rgb(30, 30, 118)"),
+  },
+  day: {
+    top: new THREE.Color("rgba(135, 206, 235, 1)"),
+    middle: new THREE.Color("rgba(22, 144, 255, 1)"),
+    bottom: new THREE.Color("rgba(70, 130, 180, 1)"),
+  },
+  evening: {
+    top: new THREE.Color("rgba(255, 69, 0, 1)"),
+    middle: new THREE.Color("rgba(25, 25, 112, 1)"),
+    bottom: new THREE.Color("rgba(139, 0, 0, 1)"),
+  },
+  night: {
+    top: new THREE.Color("rgba(0, 0, 0, 1)"),
+    middle: new THREE.Color("rgba(0, 0, 51, 1)"),
+    bottom: new THREE.Color("rgba(25, 25, 112, 1)"),
+  },
+};
+
+export function getDaytimePeriod(
+  date: Date = new Date()
+): keyof typeof TIME_BASED_BACKGROUND_GRADIENTS {
+  const hour = date.getHours();
+  if (hour >= 5 && hour < 9) return "morning";
+  if (hour >= 9 && hour < 17) return "day";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
+}

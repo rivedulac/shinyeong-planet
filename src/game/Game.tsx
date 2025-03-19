@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Camera } from "../core/Camera";
 import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "../ui/informationDisplay/CameraPositionDisplay";
-import LanguageSelector from "../ui/LanguageSelector";
 import PlayerNameInput from "../ui/PlayerNameInput";
 import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
@@ -17,7 +16,7 @@ import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 import { Minimap } from "../ui/map";
 import ToggleButton from "../ui/common/ToggleButton";
 import * as THREE from "three";
-import { CORNER_MARGIN } from "@/config/constants";
+import { BACKGROUND_UPDATE_INTERVAL, CORNER_MARGIN } from "@/config/constants";
 import VirtualPad from "@/ui/virtualControls/VirtualPad";
 import MenuBar from "@/ui/menuBar/menuBar";
 import { useTranslation } from "react-i18next";
@@ -71,6 +70,8 @@ const Game: React.FC = () => {
 
   const [showCameraInfo, setShowCameraInfo] = useState<boolean>(false);
 
+  let lastBackgroundUpdateTime = 0;
+
   // Handlers for virtual controls
   const handleVirtualControlStart = (key: string) => {
     playerController?.triggerKeyDown(key);
@@ -123,16 +124,6 @@ const Game: React.FC = () => {
 
   const toggleMinimap = () => {
     setMinimapVisible(!minimapVisible);
-  };
-
-  // Toggle settings visibility
-  const toggleSettings = () => {
-    setShowSettings(!showSettings);
-
-    // If we're showing settings, hide the controls info
-    if (!showSettings && showControlsInfo) {
-      setShowControlsInfo(false);
-    }
   };
 
   useEffect(() => {
@@ -203,6 +194,12 @@ const Game: React.FC = () => {
       // Update camera position state on each frame
       setCameraPosition(camera.getPerspectivePosition());
 
+      // Update background color every 5 minutes (300,000 milliseconds)
+      if (time - lastBackgroundUpdateTime > BACKGROUND_UPDATE_INTERVAL) {
+        scene.updateBackgroundForTime();
+        lastBackgroundUpdateTime = time;
+      }
+
       // Update npc states periodically (for minimap and any other UI that needs it)
       if (time % 100 < 16) {
         // Update roughly every 100ms
@@ -241,7 +238,7 @@ const Game: React.FC = () => {
       cancelAnimationFrame(animationId);
 
       // Dispose resources
-      scene.destory();
+      scene.destroy();
     };
   }, [gameStarted]);
 
@@ -258,7 +255,7 @@ const Game: React.FC = () => {
         onEditName={handleEditName}
         onToggleControls={toggleControlsInfo}
         onToggleCamera={() => setShowCameraInfo(!showCameraInfo)}
-        onChangeLanguage={toggleSettings}
+        onChangeLanguage={i18n.changeLanguage}
         onToggleMinimap={toggleMinimap}
         currentLanguage={i18n.language}
       />
@@ -267,7 +264,6 @@ const Game: React.FC = () => {
       {playerName && showSettings && (
         <NameEditButton onClick={handleEditName} />
       )}
-      {showSettings && <LanguageSelector />}
       {isEditingName && (
         <NameEditModal
           currentName={playerName || ""}

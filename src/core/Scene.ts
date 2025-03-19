@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import {
-  BACKGROUND_COLOR_CODE,
   PLANET_CENTER,
   PLANET_RADIUS,
+  TIME_BASED_BACKGROUND_GRADIENTS,
+  getDaytimePeriod,
 } from "../config/constants";
 import { textures } from "../../public/assets";
 
@@ -16,6 +17,8 @@ export class Scene {
   private textureLoader: THREE.TextureLoader;
 
   private planet: THREE.Mesh | null = null;
+
+  private backgroundMesh: THREE.Mesh | null = null;
 
   constructor(
     documentDI?: HTMLDivElement,
@@ -36,6 +39,46 @@ export class Scene {
     this.textureLoader = new THREE.TextureLoader();
   }
 
+  private createGradientTexture(
+    top: THREE.Color,
+    middle: THREE.Color,
+    bottom: THREE.Color
+  ): THREE.Texture {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 256;
+    const context = canvas.getContext("2d")!;
+
+    // Create gradient
+    const gradient = context.createLinearGradient(0, 0, 0, 256);
+    gradient.addColorStop(0, `#${top.getHexString()}`);
+    gradient.addColorStop(0.5, `#${middle.getHexString()}`);
+    gradient.addColorStop(1, `#${bottom.getHexString()}`);
+
+    // Fill gradient
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, 1, 256);
+
+    // Create texture from canvas
+    const gradientTexture = new THREE.CanvasTexture(canvas);
+    gradientTexture.magFilter = THREE.LinearFilter;
+    gradientTexture.minFilter = THREE.LinearFilter;
+
+    return gradientTexture;
+  }
+
+  private createBackgroundMesh(texture: THREE.Texture): THREE.Mesh {
+    // Create a large sphere to act as background
+    const geometry = new THREE.SphereGeometry(500, 32, 32);
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.BackSide,
+      depthWrite: false,
+    });
+
+    return new THREE.Mesh(geometry, material);
+  }
+
   public setSize(width: number, height: number) {
     this.renderer.setSize(width, height);
   }
@@ -45,7 +88,24 @@ export class Scene {
   }
 
   public setup() {
-    this.setBackground(new THREE.Color(BACKGROUND_COLOR_CODE));
+    // Determine current time period and set background
+    const timePeriod = getDaytimePeriod();
+    const gradientColors =
+      TIME_BASED_BACKGROUND_GRADIENTS[
+        timePeriod as keyof typeof TIME_BASED_BACKGROUND_GRADIENTS
+      ];
+
+    // Create gradient texture
+    const gradientTexture = this.createGradientTexture(
+      gradientColors.top,
+      gradientColors.middle,
+      gradientColors.bottom
+    );
+
+    // Create and add background mesh
+    this.backgroundMesh = this.createBackgroundMesh(gradientTexture);
+    this.scene.add(this.backgroundMesh);
+
     this.setPlanet(undefined, this.loadTexture(textures.planetTexture));
     this.addGridHelper();
     this.addLights();
@@ -110,6 +170,96 @@ export class Scene {
     planet.position.copy(PLANET_CENTER);
     this.planet = planet;
     this.scene.add(planet);
+  }
+
+  /**
+   * Smoothly transition background gradient
+   * @param top Top color of the gradient
+   * @param middle Middle color of the gradient
+   * @param bottom Bottom color of the gradient
+   * @param duration Transition duration in milliseconds
+   */
+  public transitionBackground(
+    top: THREE.Color,
+    middle: THREE.Color,
+    bottom: THREE.Color,
+    duration: number = 2000
+  ) {
+    if (!this.backgroundMesh) return;
+
+    // Create new gradient texture
+    const targetTexture = this.createGradientTexture(top, middle, bottom);
+    const originalTexture = (
+      this.backgroundMesh.material as THREE.MeshBasicMaterial
+    ).map;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Smooth transition
+      const material = this.backgroundMesh!.material as THREE.MeshBasicMaterial;
+      material.opacity = 1;
+      material.transparent = true;
+      material.map = this.blendTextures(
+        originalTexture!,
+        targetTexture,
+        progress
+      );
+      material.needsUpdate = true;
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }
+
+  private blendTextures(
+    texture1: THREE.Texture,
+    texture2: THREE.Texture,
+    progress: number
+  ): THREE.Texture {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 256;
+    const context = canvas.getContext("2d")!;
+
+    // Create temporary canvases for source textures
+    const canvas1 = texture1.image;
+    const canvas2 = texture2.image;
+
+    // Draw blended image
+    context.globalAlpha = 1 - progress;
+    context.drawImage(canvas1, 0, 0, 1, 256, 0, 0, 1, 256);
+    context.globalAlpha = progress;
+    context.drawImage(canvas2, 0, 0, 1, 256, 0, 0, 1, 256);
+
+    // Create and return new blended texture
+    const blendedTexture = new THREE.CanvasTexture(canvas);
+    blendedTexture.magFilter = THREE.LinearFilter;
+    blendedTexture.minFilter = THREE.LinearFilter;
+
+    return blendedTexture;
+  }
+
+  /**
+   * Check and update background based on current time
+   */
+  public updateBackgroundForTime() {
+    const timePeriod = getDaytimePeriod();
+    const gradientColors =
+      TIME_BASED_BACKGROUND_GRADIENTS[
+        timePeriod as keyof typeof TIME_BASED_BACKGROUND_GRADIENTS
+      ];
+
+    this.transitionBackground(
+      gradientColors.top,
+      gradientColors.middle,
+      gradientColors.bottom
+    );
   }
 
   public addGridHelper() {
@@ -260,7 +410,7 @@ export class Scene {
     return starfield;
   }
 
-  public destory() {
+  public destroy() {
     if (this.container && this.renderer.domElement) {
       this.container.removeChild(this.renderer.domElement);
     }
