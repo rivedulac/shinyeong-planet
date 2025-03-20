@@ -1,6 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { DISPLAY_BACKGROUND_COLOR } from "@/config/constants";
+import {
+  infoDropdownReducer,
+  initialInfoDropdownState,
+} from "./InfoDropdownReducer";
 
 interface InfoDropdownProps {
   isOpen: boolean;
@@ -16,6 +20,10 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
   onToggleCamera,
 }) => {
   const { t } = useTranslation();
+  const [_, dispatch] = useReducer(
+    infoDropdownReducer,
+    initialInfoDropdownState
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -35,17 +43,24 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      dispatch({ type: "HIDE_ALL" });
     };
   }, [isOpen, onClose]);
 
   // Handle menu item clicks
   const handleControlsToggle = () => {
-    if (onToggleControls) onToggleControls();
+    if (onToggleControls) {
+      onToggleControls();
+      dispatch({ type: "TOGGLE_CONTROLS" });
+    }
     onClose();
   };
 
   const handleCameraToggle = () => {
-    if (onToggleCamera) onToggleCamera();
+    if (onToggleCamera) {
+      onToggleCamera();
+      dispatch({ type: "TOGGLE_CAMERA" });
+    }
     onClose();
   };
 
