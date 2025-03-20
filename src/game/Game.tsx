@@ -3,13 +3,11 @@ import { Camera } from "../core/Camera";
 import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "../ui/informationDisplay/CameraPositionDisplay";
 import PlayerNameInput from "../ui/PlayerNameInput";
-import NameEditButton from "../ui/NameEditButton";
 import NameEditModal from "../ui/NameEditModal";
 import ConversationModal from "../ui/ConversationModal";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { NpcManager } from "./npcs/NpcManager";
-import { IConversation } from "./npcs/interfaces/IConversation";
 import { getConversationForNpc } from "./npcs/interfaces/IConversation";
 import { INpc } from "./npcs/interfaces/INpc";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
@@ -20,46 +18,44 @@ import { BACKGROUND_UPDATE_INTERVAL, CORNER_MARGIN } from "@/config/constants";
 import VirtualPad from "@/ui/virtualControls/VirtualPad";
 import MenuBar from "@/ui/menuBar/menuBar";
 import { useTranslation } from "react-i18next";
+import { useGameConversation } from "../hooks/useGameConversation";
+import { useGameUiState } from "../hooks/useGameUiState";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
 
 const Game: React.FC = () => {
   const { i18n } = useTranslation();
-  const [cameraPosition, setCameraPosition] = useState({
-    position: { x: 0, y: 0, z: 0 },
-    rotation: { pitch: 0, yaw: 0, roll: 0 },
-  });
 
-  // Use the localStorage hook for player name persistence
+  // Use our custom hooks for more organized state management
+  const {
+    currentConversation,
+    isConversationOpen,
+    startConversation,
+    endConversation,
+  } = useGameConversation();
+
+  const {
+    showControlsInfo,
+    showCameraInfo,
+    minimapVisible,
+    isEditingName,
+    toggleControlsInfo,
+    toggleCameraInfo,
+    toggleMinimap,
+    setEditingName,
+  } = useGameUiState();
+
+  // Player state with localStorage integration
   const [playerName, setPlayerName] = useLocalStorage<string>(
     PLAYER_NAME_KEY,
     ""
   );
-
-  // Game has started if player has entered a name
   const [gameStarted, setGameStarted] = useState<boolean>(!!playerName);
-  // State for name editing modal
-  const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
-  // State for conversation
-  const [currentConversation, setCurrentConversation] =
-    useState<IConversation | null>(null);
-  const [isConversationOpen, setIsConversationOpen] = useState<boolean>(false);
-
-  // Create a state to store the player controller instance
+  // Game state
   const [playerController, setPlayerController] =
     useState<PlayerController | null>(null);
-
-  const [showControlsInfo, setShowControlsInfo] = useState<boolean>(false);
-
-  const [showSettings, setShowSettings] = useState<boolean>(false);
-
-  const [minimapVisible, setMinimapVisible] = useLocalStorage<boolean>(
-    "shinyeongPlanet.minimapVisible",
-    true
-  );
-
   const [npcState, setNpcState] = useState<
     Array<{
       type: string;
@@ -67,8 +63,10 @@ const Game: React.FC = () => {
       id: string;
     }>
   >([]);
-
-  const [showCameraInfo, setShowCameraInfo] = useState<boolean>(false);
+  const [cameraPosition, setCameraPosition] = useState({
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { pitch: 0, yaw: 0, roll: 0 },
+  });
 
   let lastBackgroundUpdateTime = 0;
 
@@ -87,43 +85,16 @@ const Game: React.FC = () => {
   };
 
   const handleEditName = () => {
-    setIsEditingName(true);
+    setEditingName(true);
   };
 
   const handleSaveName = (name: string) => {
     setPlayerName(name);
-    setIsEditingName(false);
+    setEditingName(false);
   };
 
   const handleCancelEdit = () => {
-    setIsEditingName(false);
-  };
-
-  // Function to start a conversation with an NPC
-  const startConversation = (conversation: IConversation) => {
-    setCurrentConversation(conversation);
-    setIsConversationOpen(true);
-  };
-
-  // Function to end the current conversation
-  const endConversation = () => {
-    setIsConversationOpen(false);
-    // Keep the conversation data for a moment before clearing it
-    // This prevents UI flicker during the closing animation if we had one
-    setTimeout(() => setCurrentConversation(null), 300);
-  };
-
-  const toggleControlsInfo = () => {
-    setShowControlsInfo(!showControlsInfo);
-
-    // If we're showing controls info, hide the settings
-    if (!showControlsInfo && showSettings) {
-      setShowSettings(false);
-    }
-  };
-
-  const toggleMinimap = () => {
-    setMinimapVisible(!minimapVisible);
+    setEditingName(false);
   };
 
   useEffect(() => {
@@ -180,7 +151,6 @@ const Game: React.FC = () => {
       lastTime = time;
 
       // Update player controller with deltaTime
-      // This will now also check for collisions with nearby NPCs only
       newPlayerController.update(deltaTime);
 
       // Update NPCs
@@ -194,7 +164,7 @@ const Game: React.FC = () => {
       // Update camera position state on each frame
       setCameraPosition(camera.getPerspectivePosition());
 
-      // Update background color every 5 minutes (300,000 milliseconds)
+      // Update background color every 5 minutes
       if (time - lastBackgroundUpdateTime > BACKGROUND_UPDATE_INTERVAL) {
         scene.updateBackgroundForTime();
         lastBackgroundUpdateTime = time;
@@ -240,7 +210,7 @@ const Game: React.FC = () => {
       // Dispose resources
       scene.destroy();
     };
-  }, [gameStarted]);
+  }, [gameStarted, startConversation, endConversation]);
 
   // Show name input if game hasn't started yet
   if (!gameStarted) {
@@ -254,16 +224,13 @@ const Game: React.FC = () => {
         playerName={playerName || ""}
         onEditName={handleEditName}
         onToggleControls={toggleControlsInfo}
-        onToggleCamera={() => setShowCameraInfo(!showCameraInfo)}
+        onToggleCamera={toggleCameraInfo}
         onChangeLanguage={i18n.changeLanguage}
         onToggleMinimap={toggleMinimap}
         currentLanguage={i18n.language}
       />
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />
-      {/* Settings UI */}
-      {playerName && showSettings && (
-        <NameEditButton onClick={handleEditName} />
-      )}
+
       {isEditingName && (
         <NameEditModal
           currentName={playerName || ""}
@@ -283,13 +250,16 @@ const Game: React.FC = () => {
 
       {showControlsInfo && <ControlsInfoDisplay />}
       {showCameraInfo && <CameraPositionDisplay perspective={cameraPosition} />}
-      {/* Minimap */}
+
+      {/* Minimap Toggle Button */}
       <ToggleButton
         isActive={!!minimapVisible}
         onToggle={toggleMinimap}
         icon="🗺️"
         position={{ bottom: CORNER_MARGIN, right: CORNER_MARGIN }}
       />
+
+      {/* Minimap */}
       {minimapVisible && playerController && (
         <Minimap
           playerPosition={playerController.getPosition()}
@@ -297,6 +267,7 @@ const Game: React.FC = () => {
           npcs={npcState}
         />
       )}
+
       <VirtualPad
         onMoveStart={handleVirtualControlStart}
         onMoveEnd={handleVirtualControlEnd}
