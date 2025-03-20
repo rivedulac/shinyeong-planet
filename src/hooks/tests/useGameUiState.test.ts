@@ -5,7 +5,7 @@ import { useState } from "react";
 
 // Mock the useLocalStorage hook
 vi.mock("../useLocalStorage", () => ({
-  default: vi.fn().mockImplementation((key, initialValue) => {
+  default: vi.fn().mockImplementation((_, initialValue) => {
     // Simple mock of localStorage behavior
     const [value, setValue] = useState(initialValue);
     return [value, setValue];

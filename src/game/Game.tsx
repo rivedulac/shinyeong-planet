@@ -4,7 +4,7 @@ import { PlayerController } from "./PlayerController";
 import CameraPositionDisplay from "../ui/informationDisplay/CameraPositionDisplay";
 import PlayerNameInput from "../ui/PlayerNameInput";
 import NameEditModal from "../ui/NameEditModal";
-import ConversationModal from "../ui/ConversationModal";
+import ConversationModal from "../ui/conversation/ConversationModal";
 import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { NpcManager } from "./npcs/NpcManager";

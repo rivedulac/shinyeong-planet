@@ -1,7 +1,12 @@
-import React, { useState } from "react";
-import { IConversation } from "../game/npcs/interfaces/IConversation";
+import React, { useReducer } from "react";
+import { IConversation } from "../../game/npcs/interfaces/IConversation";
 import { CORNER_MARGIN } from "@/config/constants";
 import { useGeminiService } from "@/hooks/useGeminiService";
+import {
+  conversationReducer,
+  initialConversationState,
+} from "./ConversationReducer";
+import { useTranslation } from "react-i18next";
 
 interface ConversationModalProps {
   conversation: IConversation;
@@ -11,32 +16,44 @@ interface ConversationModalProps {
 
 /**
  * Conversation Modal component that displays NPC dialogues
- * Now with AI-powered dynamic responses
+ * Now with AI-powered dynamic responses and state management via useReducer
  */
 const ConversationModal: React.FC<ConversationModalProps> = ({
   conversation,
   onClose,
   isOpen,
 }) => {
+  const { t } = useTranslation();
   const { sendMessage } = useGeminiService();
 
-  // State to track which message we're currently showing
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  // Use reducer for conversation state management
+  const [state, dispatch] = useReducer(
+    conversationReducer,
+    initialConversationState
+  );
 
-  // State for user input and AI responses
-  const [userInput, setUserInput] = useState("");
-  const [aiResponses, setAiResponses] = useState<string[]>([]);
-  const [isAiEnabled, setIsAiEnabled] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    currentMessageIndex,
+    userInput,
+    aiResponses,
+    isAiEnabled,
+    isLoading,
+    error,
+  } = state;
 
   // Don't render anything if modal is closed
   if (!isOpen) return null;
 
   // Current message to display
   const currentMessage = isAiEnabled
-    ? aiResponses[currentMessageIndex] || "I'm listening..."
+    ? aiResponses[currentMessageIndex] ||
+      t("conversation.placeholder", "I'm listening...")
     : conversation.messages[currentMessageIndex];
+
+  // Update user input field
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: "SET_USER_INPUT", payload: e.target.value });
+  };
 
   // Handle user input submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,38 +62,46 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
     if (!userInput.trim()) return;
 
     try {
-      setIsLoading(true);
-      setError(null);
+      dispatch({ type: "SET_LOADING", payload: true });
 
       // Send message to AI service
       const response = await sendMessage(userInput);
 
-      // Add response to the list
-      setAiResponses([...aiResponses, response]);
-
-      // Clear input field
-      setUserInput("");
-
-      // Move to the new response
-      setCurrentMessageIndex(aiResponses.length);
+      // Add response to the state
+      dispatch({ type: "ADD_AI_RESPONSE", payload: response });
     } catch (err) {
-      setError("Failed to get AI response. Please try again.");
+      dispatch({
+        type: "SET_ERROR",
+        payload: t(
+          "conversation.error",
+          "Failed to get AI response. Please try again."
+        ),
+      });
       console.error("Error getting AI response:", err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   // Toggle between scripted and AI conversation modes
   const toggleAiMode = () => {
-    if (!isAiEnabled && aiResponses.length === 0) {
-      // Initialize with a greeting when first switching to AI mode
-      setAiResponses([
-        "Hello! I'm an AI assistant. How can I help you learn more about Shinyeong?",
-      ]);
+    dispatch({ type: "TOGGLE_AI_MODE" });
+  };
+
+  // Navigate to previous message
+  const goToPreviousMessage = () => {
+    dispatch({ type: "PREVIOUS_MESSAGE" });
+  };
+
+  // Navigate to next message
+  const goToNextMessage = () => {
+    if (isAiEnabled) {
+      if (currentMessageIndex < aiResponses.length - 1) {
+        dispatch({ type: "NEXT_MESSAGE" });
+      }
+    } else {
+      if (currentMessageIndex < conversation.messages.length - 1) {
+        dispatch({ type: "NEXT_MESSAGE" });
+      }
     }
-    setIsAiEnabled(!isAiEnabled);
-    setCurrentMessageIndex(0);
   };
 
   return (
@@ -144,7 +169,9 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
             }}
             aria-label="Toggle AI chat mode"
           >
-            {isAiEnabled ? "Scripted Mode" : "AI Chat"}
+            {isAiEnabled
+              ? t("conversation.scriptedMode", "Scripted Mode")
+              : t("conversation.aiMode", "AI Chat")}
           </button>
           <button
             onClick={onClose}
@@ -163,7 +190,6 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
           </button>
         </div>
       </div>
-
       {/* Message content */}
       <div
         style={{
@@ -180,7 +206,9 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
       >
         {isLoading ? (
           <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <div style={{ marginBottom: "10px" }}>Thinking...</div>
+            <div style={{ marginBottom: "10px" }}>
+              {t("conversation.thinking", "Thinking...")}
+            </div>
             <div className="loading-spinner" />
           </div>
         ) : error ? (
@@ -193,7 +221,6 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
           currentMessage
         )}
       </div>
-
       {/* AI chat input */}
       {isAiEnabled && (
         <form
@@ -207,8 +234,8 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
           <input
             type="text"
             value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Ask me anything..."
+            onChange={handleInputChange}
+            placeholder={t("conversation.placeholder", "Ask me anything...")}
             style={{
               flex: 1,
               padding: "8px 12px",
@@ -232,7 +259,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
               opacity: isLoading || !userInput.trim() ? 0.5 : 1,
             }}
           >
-            Send
+            {t("conversation.send", "Send")}
           </button>
         </form>
       )}
@@ -240,6 +267,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
       {/* Message indicator dots - only for scripted mode */}
       {!isAiEnabled && (
         <div
+          data-testid="message-dots-container"
           style={{
             display: "flex",
             justifyContent: "center",
@@ -274,9 +302,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
         }}
       >
         <button
-          onClick={() =>
-            setCurrentMessageIndex(Math.max(0, currentMessageIndex - 1))
-          }
+          onClick={goToPreviousMessage}
           disabled={currentMessageIndex === 0}
           style={{
             padding: "4px 10px",
@@ -293,14 +319,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
 
         {!isAiEnabled && (
           <button
-            onClick={() =>
-              setCurrentMessageIndex(
-                Math.min(
-                  conversation.messages.length - 1,
-                  currentMessageIndex + 1
-                )
-              )
-            }
+            onClick={goToNextMessage}
             disabled={currentMessageIndex === conversation.messages.length - 1}
             style={{
               padding: "4px 10px",
@@ -324,11 +343,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
 
         {isAiEnabled && aiResponses.length > 0 && (
           <button
-            onClick={() =>
-              setCurrentMessageIndex(
-                Math.min(aiResponses.length - 1, currentMessageIndex + 1)
-              )
-            }
+            onClick={goToNextMessage}
             disabled={currentMessageIndex === aiResponses.length - 1}
             style={{
               padding: "4px 10px",
