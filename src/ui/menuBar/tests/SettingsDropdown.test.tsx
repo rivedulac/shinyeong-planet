@@ -73,7 +73,7 @@ describe("SettingsDropdown", () => {
     expect(screen.queryByText("Edit Name")).not.toBeInTheDocument();
   });
 
-  it("should render language options when onChangeLanguage is provided", () => {
+  it("should render language section when onChangeLanguage is provided", () => {
     render(
       <SettingsDropdown
         isOpen={true}
@@ -85,14 +85,9 @@ describe("SettingsDropdown", () => {
 
     // Check language section title is present
     expect(screen.getByText("Language")).toBeInTheDocument();
-
-    // Check some language options are rendered
-    expect(screen.getByText("English")).toBeInTheDocument();
-    expect(screen.getByText("한국어")).toBeInTheDocument();
-    expect(screen.getByText("Français")).toBeInTheDocument();
   });
 
-  it("should mark current language with checkmark", () => {
+  it("should toggle language menu when language title is clicked", () => {
     render(
       <SettingsDropdown
         isOpen={true}
@@ -101,6 +96,30 @@ describe("SettingsDropdown", () => {
         currentLanguage="en"
       />
     );
+
+    // Language options should not be visible initially
+    expect(screen.queryByText("English")).not.toBeInTheDocument();
+
+    // Click on language title to expand
+    fireEvent.click(screen.getByText("Language"));
+
+    // Language options should now be visible
+    expect(screen.getByText("English")).toBeInTheDocument();
+    expect(screen.getByText("한국어")).toBeInTheDocument();
+  });
+
+  it("should mark current language with checkmark when language menu is open", () => {
+    render(
+      <SettingsDropdown
+        isOpen={true}
+        onClose={() => {}}
+        onChangeLanguage={() => {}}
+        currentLanguage="en"
+      />
+    );
+
+    // Open language menu
+    fireEvent.click(screen.getByText("Language"));
 
     // Check English has a checkmark (✓)
     const englishOption = screen.getByText("English");
@@ -143,6 +162,9 @@ describe("SettingsDropdown", () => {
         currentLanguage="en"
       />
     );
+
+    // Open language menu
+    fireEvent.click(screen.getByText("Language"));
 
     // Click on Korean language option
     fireEvent.click(screen.getByText("한국어"));

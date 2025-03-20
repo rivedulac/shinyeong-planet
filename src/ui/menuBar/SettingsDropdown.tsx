@@ -1,6 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { DISPLAY_BACKGROUND_COLOR } from "@/config/constants";
+import {
+  settingsDropdownReducer,
+  initialSettingsDropdownState,
+} from "./SettingsDropdownReducer";
 
 interface SettingsDropdownProps {
   isOpen: boolean;
@@ -20,7 +24,13 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   currentLanguage = "en",
 }) => {
   const { t } = useTranslation();
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [state, dispatch] = useReducer(
+    settingsDropdownReducer,
+    initialSettingsDropdownState
+  );
+
+  // Use a React ref to reference the dropdown DOM element for click outside detection
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -58,6 +68,11 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
     onClose();
   };
 
+  const toggleLanguageMenu = () => {
+    dispatch({ type: "TOGGLE_LANGUAGE_MENU" });
+  };
+
+  // Don't render when the dropdown is closed
   if (!isOpen) return null;
 
   return (
@@ -108,51 +123,67 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
             borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
           }}
         >
-          <div style={{ marginBottom: "8px", fontSize: "14px", opacity: 0.8 }}>
+          <div
+            style={{
+              marginBottom: "8px",
+              fontSize: "14px",
+              opacity: 0.8,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={toggleLanguageMenu}
+          >
             {t("language.title")}
+            <span>{state.languageMenuOpen ? "▲" : "▼"}</span>
           </div>
 
-          {/* Language options */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-            {[
-              { code: "en", name: "English" },
-              { code: "ko", name: "한국어" },
-              { code: "fr", name: "Français" },
-              { code: "zh-CN", name: "简体中文" },
-              { code: "zh-TW", name: "繁體中文" },
-              { code: "de", name: "Deutsch" },
-              { code: "ja", name: "日本語" },
-            ].map((lang) => (
-              <div
-                key={lang.code}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "3px 0",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  opacity: currentLanguage === lang.code ? 1 : 0.7,
-                  transition: "opacity 0.2s ease",
-                }}
-                onClick={() => handleLanguageChange(lang.code)}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.opacity =
-                    currentLanguage === lang.code ? "1" : "0.7")
-                }
-              >
-                {currentLanguage === lang.code && <span>✓</span>}
-                <span
+          {/* Language options - show only if expanded */}
+          {state.languageMenuOpen && (
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "5px" }}
+            >
+              {[
+                { code: "en", name: "English" },
+                { code: "ko", name: "한국어" },
+                { code: "fr", name: "Français" },
+                { code: "zh-CN", name: "简体中文" },
+                { code: "zh-TW", name: "繁體中文" },
+                { code: "de", name: "Deutsch" },
+                { code: "ja", name: "日本語" },
+              ].map((lang) => (
+                <div
+                  key={lang.code}
                   style={{
-                    marginLeft: currentLanguage === lang.code ? "0" : "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "3px 0",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    opacity: currentLanguage === lang.code ? 1 : 0.7,
+                    transition: "opacity 0.2s ease",
                   }}
+                  onClick={() => handleLanguageChange(lang.code)}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.opacity =
+                      currentLanguage === lang.code ? "1" : "0.7")
+                  }
                 >
-                  {t(`language.${lang.code}`)}
-                </span>
-              </div>
-            ))}
-          </div>
+                  {currentLanguage === lang.code && <span>✓</span>}
+                  <span
+                    style={{
+                      marginLeft: currentLanguage === lang.code ? "0" : "12px",
+                    }}
+                  >
+                    {t(`language.${lang.code}`)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
