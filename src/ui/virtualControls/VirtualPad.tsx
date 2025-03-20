@@ -1,6 +1,7 @@
 // src/ui/VirtualControlPad.tsx
 import { CORNER_MARGIN } from "@/config/constants";
-import React, { useState } from "react";
+import React, { useReducer } from "react";
+import { virtualPadReducer, initialVirtualPadState } from "./VirtualPadReducer";
 
 interface VirtualControlPadProps {
   onMoveStart: (key: string) => void;
@@ -15,8 +16,10 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
   onMoveStart,
   onMoveEnd,
 }) => {
-  const [isActive, setIsActive] = useState(false);
-  const [currentDirections, setCurrentDirections] = useState<string[]>([]);
+  const [state, dispatch] = useReducer(
+    virtualPadReducer,
+    initialVirtualPadState
+  );
 
   // Calculate directions based on relative position
   const getDirectionsFromPosition = (relX: number, relY: number): string[] => {
@@ -57,15 +60,13 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    // Calculate position relative to center (-1 to 1 range)
     const relX = (clientX - rect.left - centerX) / centerX;
     const relY = (clientY - rect.top - centerY) / centerY;
 
-    // Get new directions
     const newDirections = getDirectionsFromPosition(relX, relY);
 
     // End directions that are no longer active
-    currentDirections.forEach((dir) => {
+    state.currentDirections.forEach((dir) => {
       if (!newDirections.includes(dir)) {
         onMoveEnd(dir);
       }
@@ -73,19 +74,19 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
 
     // Start new directions
     newDirections.forEach((dir) => {
-      if (!currentDirections.includes(dir)) {
+      if (!state.currentDirections.includes(dir)) {
         onMoveStart(dir);
       }
     });
 
-    // Update current directions
-    setCurrentDirections(newDirections);
+    // Update current directions through reducer
+    dispatch({ type: "UPDATE_DIRECTIONS", directions: newDirections });
   };
 
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
-    setIsActive(true);
+    dispatch({ type: "ACTIVATE" });
 
     if (e.touches.length > 0) {
       const touch = e.touches[0];
@@ -111,37 +112,33 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
   };
 
   const handleTouchEnd = () => {
-    setIsActive(false);
-
     // End all current directions
-    currentDirections.forEach((dir) => {
+    state.currentDirections.forEach((dir) => {
       onMoveEnd(dir);
     });
 
-    setCurrentDirections([]);
+    dispatch({ type: "DEACTIVATE" });
   };
 
   // Mouse event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
-    setIsActive(true);
+    dispatch({ type: "ACTIVATE" });
     updatePosition(e.clientX, e.clientY, e.currentTarget as HTMLElement);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (isActive) {
+    if (state.isActive) {
       updatePosition(e.clientX, e.clientY, e.currentTarget as HTMLElement);
     }
   };
 
   const handleMouseUp = () => {
-    setIsActive(false);
-
     // End all current directions
-    currentDirections.forEach((dir) => {
+    state.currentDirections.forEach((dir) => {
       onMoveEnd(dir);
     });
 
-    setCurrentDirections([]);
+    dispatch({ type: "DEACTIVATE" });
   };
 
   return (
@@ -185,7 +182,7 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
       />
 
       {/* Visual indicator of touch position (only shown when active) */}
-      {isActive && (
+      {state.isActive && (
         <div
           style={{
             position: "absolute",
