@@ -2,15 +2,12 @@
  * Service for communicating with the Gemini AI API
  */
 export class GeminiService {
-  private static instance: GeminiService;
   private apiEndpoint = "/api/gemini";
 
-  // Exceptional singleton pattern to ensure only one instance exists
-  public static getInstance(): GeminiService {
-    if (!GeminiService.instance) {
-      GeminiService.instance = new GeminiService();
+  constructor(endpoint?: string) {
+    if (endpoint) {
+      this.apiEndpoint = endpoint;
     }
-    return GeminiService.instance;
   }
 
   /**
@@ -45,6 +42,3 @@ export class GeminiService {
     }
   }
 }
-
-// Export a default instance
-export default GeminiService.getInstance();

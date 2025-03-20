@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IConversation } from "../game/npcs/interfaces/IConversation";
 import { CORNER_MARGIN } from "@/config/constants";
-import geminiService from "../services/GeminiService";
+import { useGeminiService } from "@/hooks/useGeminiService";
 
 interface ConversationModalProps {
   conversation: IConversation;
@@ -18,6 +18,8 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
   onClose,
   isOpen,
 }) => {
+  const { sendMessage } = useGeminiService();
+
   // State to track which message we're currently showing
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
@@ -47,7 +49,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
       setError(null);
 
       // Send message to AI service
-      const response = await geminiService.sendMessage(userInput);
+      const response = await sendMessage(userInput);
 
       // Add response to the list
       setAiResponses([...aiResponses, response]);
