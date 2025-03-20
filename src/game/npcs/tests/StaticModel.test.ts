@@ -13,7 +13,7 @@ import {
 // Mock the modelLoader module
 vi.mock("../../../utils/modelLoader", () => {
   return {
-    loadModelAsync: vi.fn().mockImplementation(() => {
+    loadModel: vi.fn().mockImplementation(() => {
       // Return a mock successful model loading result
       return Promise.resolve({
         scene: new THREE.Group(), // Empty group as a mock scene
@@ -77,10 +77,10 @@ describe("StaticModel", () => {
 
     it("should attempt to load the model when created", async () => {
       // Import the actual loadModelAsync function for verification
-      const { loadModelAsync } = await import("../../../utils/modelLoader");
+      const { loadModel } = await import("../../../utils/modelLoader");
 
       // Verify loadModelAsync was called with the correct path
-      expect(loadModelAsync).toHaveBeenCalledWith(testPath);
+      expect(loadModel).toHaveBeenCalledWith(testPath);
     });
   });
 
@@ -201,8 +201,8 @@ describe("StaticModel", () => {
   describe("Error handling", () => {
     it("should handle model loading errors gracefully", async () => {
       // Mock loadModelAsync to reject
-      const { loadModelAsync } = await import("../../../utils/modelLoader");
-      (loadModelAsync as any).mockRejectedValueOnce(
+      const { loadModel } = await import("../../../utils/modelLoader");
+      (loadModel as any).mockRejectedValueOnce(
         new Error("Failed to load model")
       );
 

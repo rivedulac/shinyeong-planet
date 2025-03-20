@@ -1,87 +1,62 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-// Type definition for loading results
+// Type definitions
 export interface ModelLoadResult {
   scene: THREE.Group;
   animations: THREE.AnimationClip[];
-  error?: string;
+  gltf: GLTF; // Add full GLTF object for advanced use cases
 }
 
-// Type definition for the success and error callbacks
-type OnLoadCallback = (result: ModelLoadResult) => void;
-type OnProgressCallback = (event: ProgressEvent) => void;
-type OnErrorCallback = (error: Error) => void;
+export interface LoaderOptions {
+  onProgress?: (event: ProgressEvent) => void;
+  dracoDecoderPath?: string;
+}
 
 /**
- * Load a GLB/GLTF model
- * @param path Path to the GLB/GLTF file
- * @param onLoad Callback when model is loaded successfully
- * @param onProgress Optional callback for load progress
- * @param onError Optional callback for load errors
- * @returns The loader instance (can be used to abort loading if needed)
+ * Creates and configures a GLTFLoader with DRACO compression support
  */
-export function loadModel(
-  path: string,
-  onLoad: OnLoadCallback,
-  onProgress?: OnProgressCallback,
-  onError?: OnErrorCallback
+function createConfiguredLoader(
+  dracoDecoderPath: string = "/draco/"
 ): GLTFLoader {
-  // Create a DRACO loader for compressed models
   const dracoLoader = new DRACOLoader();
-  // Specify the path to the Draco decoder (you'll need to include these files in your project)
-  dracoLoader.setDecoderPath("/draco/");
+  dracoLoader.setDecoderPath(dracoDecoderPath);
 
-  // Create a new GLTFLoader instance
   const loader = new GLTFLoader();
-
-  // Use Draco loader for compressed models (optional but recommended for production)
   loader.setDRACOLoader(dracoLoader);
-
-  // Start loading the model
-  loader.load(
-    // Path to the GLB/GLTF file
-    path,
-
-    // Called when the resource is loaded
-    (gltf) => {
-      console.log("Model loaded successfully:", path);
-      onLoad({
-        scene: gltf.scene,
-        animations: gltf.animations,
-      });
-    },
-
-    // Called while loading is progressing
-    onProgress,
-
-    // Called when loading has errors
-    (error) => {
-      console.error("Error loading model:", error);
-      if (onError) {
-        onError(error as Error);
-      }
-    }
-  );
 
   return loader;
 }
 
 /**
- * Asynchronous version of the model loader (returns a Promise)
+ * Load a GLB/GLTF model
  * @param path Path to the GLB/GLTF file
+ * @param options Optional configuration for the loader
  * @returns Promise that resolves with the loaded model
  */
-export function loadModelAsync(path: string): Promise<ModelLoadResult> {
-  return new Promise((resolve, reject) => {
-    loadModel(
-      path,
-      (result) => resolve(result),
-      undefined,
-      (error) => reject(error)
-    );
-  });
+export async function loadModel(
+  path: string,
+  options: LoaderOptions = {}
+): Promise<ModelLoadResult> {
+  const loader = createConfiguredLoader(options.dracoDecoderPath);
+
+  try {
+    const gltf = await new Promise<GLTF>((resolve, reject) => {
+      loader.load(path, resolve, options.onProgress, reject);
+    });
+
+    console.log("Model loaded successfully:", path);
+    return {
+      scene: gltf.scene,
+      animations: gltf.animations,
+      gltf,
+    };
+  } catch (error) {
+    console.error("Error loading model:", error);
+    throw error;
+  }
 }
 
 /**
@@ -97,43 +72,53 @@ export function createAnimationMixer(scene: THREE.Group): THREE.AnimationMixer {
  * Play an animation on a model
  * @param mixer The animation mixer
  * @param animations Array of animation clips
- * @param animationName Name of the animation to play (if not provided, plays the first animation)
- * @param loop Whether to loop the animation
+ * @param options Configuration options for the animation
  * @returns The animation action that was started
  */
 export function playAnimation(
   mixer: THREE.AnimationMixer,
   animations: THREE.AnimationClip[],
-  animationName?: string,
-  loop: THREE.AnimationActionLoopStyles = THREE.LoopRepeat
+  options: {
+    name?: string;
+    loop?: THREE.AnimationActionLoopStyles;
+    clampWhenFinished?: boolean;
+    timeScale?: number;
+  } = {}
 ): THREE.AnimationAction | null {
+  const {
+    name,
+    loop = THREE.LoopRepeat,
+    clampWhenFinished = false,
+    timeScale = 1.0,
+  } = options;
+
   if (animations.length === 0) {
     console.warn("No animations available to play");
     return null;
   }
 
-  let clip: THREE.AnimationClip;
-
   // Find the requested animation by name, or use the first one
-  if (animationName) {
-    const foundClip = animations.find((a) => a.name === animationName);
-    if (!foundClip) {
-      console.warn(
-        `Animation "${animationName}" not found. Available animations:`,
-        animations.map((a) => a.name)
-      );
-      return null;
-    }
-    clip = foundClip;
-  } else {
-    // Default to the first animation
-    clip = animations[0];
+  const clip = name ? animations.find((a) => a.name === name) : animations[0];
+
+  if (!clip) {
+    console.warn(
+      `Animation "${name}" not found. Available animations:`,
+      animations.map((a) => a.name)
+    );
+    return null;
   }
 
-  // Create and play the animation
+  // Create and configure the animation
   const action = mixer.clipAction(clip);
-  action.setLoop(loop, Infinity);
-  action.play();
+  action
+    .setLoop(loop, Infinity)
+    .setEffectiveTimeScale(timeScale)
+    .setEffectiveWeight(1.0);
 
+  if (clampWhenFinished) {
+    action.clampWhenFinished = true;
+  }
+
+  action.play();
   return action;
 }

@@ -8,7 +8,7 @@ import {
   DEFAULT_PERSON_CONVERSTAION,
 } from "../../config/constants";
 import { IConversation } from "./interfaces/IConversation";
-import { loadModelAsync } from "../../utils/modelLoader";
+import { loadModel as loadModelAsync } from "../../utils/modelLoader";
 
 /**
  * Person NPC - represents a human character on the planet
