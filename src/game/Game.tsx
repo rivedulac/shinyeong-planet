@@ -16,7 +16,7 @@ import ToggleButton from "../ui/common/ToggleButton";
 import * as THREE from "three";
 import { BACKGROUND_UPDATE_INTERVAL, CORNER_MARGIN } from "@/config/constants";
 import VirtualPad from "@/ui/virtualControls/VirtualPad";
-import MenuBar from "@/ui/menuBar/menuBar";
+import MenuBar from "@/ui/menuBar/MenuBar";
 import { useTranslation } from "react-i18next";
 import { useGameConversation } from "../hooks/useGameConversation";
 import { useGameUiState } from "../hooks/useGameUiState";

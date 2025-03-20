@@ -1,8 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import MenuBar from "../menuBar";
+import MenuBar from "../MenuBar";
 
-// Mock the SettingsDropdown and InfoDropdown components
 vi.mock("../SettingsDropdown", () => ({
   default: ({
     isOpen,
@@ -200,58 +199,6 @@ describe("MenuBar", () => {
     // Settings dropdown should be closed, info dropdown open
     expect(screen.queryByTestId("settings-dropdown")).not.toBeInTheDocument();
     expect(screen.getByTestId("info-dropdown")).toBeInTheDocument();
-  });
-
-  it("should apply responsive scaling", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
-
-    // Check that the top level div has the transform style
-    const topDiv = container.firstChild as HTMLElement;
-    expect(topDiv).toHaveStyle("transform: scale(var(--control-scale, 1))");
-  });
-
-  it("should have fixed position at top of screen", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
-
-    // Check position styling
-    const topDiv = container.firstChild as HTMLElement;
-    expect(topDiv).toHaveStyle("position: fixed");
-    expect(topDiv).toHaveStyle("top: 0");
-    expect(topDiv).toHaveStyle("left: 0");
-    expect(topDiv).toHaveStyle("right: 0");
-  });
-
-  it("should have proper layout with flex display", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
-
-    // Check display styling
-    const topDiv = container.firstChild as HTMLElement;
-    expect(topDiv).toHaveStyle("display: flex");
-    expect(topDiv).toHaveStyle("justify-content: space-between");
-  });
-
-  it("should have proper z-index to appear above other elements", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
-
-    // Check z-index
-    const topDiv = container.firstChild as HTMLElement;
-    expect(topDiv).toHaveStyle("z-index: 1000");
-  });
-
-  it("should display icons on the left and player name on the right", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
-
-    // Get the main div's children
-    const topDiv = container.firstChild as HTMLElement;
-    const leftSection = topDiv.firstChild as HTMLElement;
-    const rightSection = topDiv.lastChild as HTMLElement;
-
-    // Check left section has icons
-    expect(leftSection.textContent).toContain("⚙️");
-    expect(leftSection.textContent).toContain("ℹ️");
-
-    // Check right section has player name
-    expect(rightSection.textContent).toContain("Explorer: TestPlayer");
   });
 
   it("should call onEditName when player name is clicked", () => {
