@@ -281,11 +281,14 @@ export class Scene {
         100,
         Math.PI * 2
       );
+
+      // Use black color for prime meridian (0°), white for others
       const material = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
+        color: i === 0 ? 0x000000 : 0xffffff,
         transparent: true,
-        opacity: 0.3,
+        opacity: i === 0 ? 1.0 : 0.3, // More visible for prime meridian
       });
+
       const torus = new THREE.Mesh(geometry, material);
 
       // Rotate to create longitude lines
@@ -299,7 +302,8 @@ export class Scene {
 
     // Create latitude lines (horizontal circles)
     const latitudeCount = 12; // 12 horizontal lines
-    for (let i = 1; i < latitudeCount; i++) {
+    for (let i = 0; i < latitudeCount; i++) {
+      // Changed to start from 0 to include equator
       const radius = Math.sin((i / latitudeCount) * Math.PI) * PLANET_RADIUS;
       const height = Math.cos((i / latitudeCount) * Math.PI) * PLANET_RADIUS;
 
@@ -310,11 +314,15 @@ export class Scene {
         100,
         Math.PI * 2
       );
+
+      // Use black color for equator (when i = latitudeCount/2), white for others
+      const isEquator = i === Math.floor(latitudeCount / 2);
       const material = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
+        color: isEquator ? 0x000000 : 0xffffff,
         transparent: true,
-        opacity: 0.3,
+        opacity: isEquator ? 0.8 : 0.3, // More visible for equator
       });
+
       const torus = new THREE.Mesh(geometry, material);
 
       // Rotate to make horizontal
