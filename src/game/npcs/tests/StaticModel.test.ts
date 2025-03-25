@@ -86,7 +86,7 @@ describe("StaticModel", () => {
 
   describe("Positioning", () => {
     it("should position correctly on the planet surface", () => {
-      // Position at the equator (latitude = 0, longitude = 0)
+      // Position at the equator (0 degrees latitude, 0 degrees longitude)
       staticModel.setPositionOnPlanet(0, 0);
 
       const mesh = staticModel.getMesh();
@@ -100,8 +100,8 @@ describe("StaticModel", () => {
     });
 
     it("should handle positioning at the north pole", () => {
-      // Position at the north pole (latitude = PI/2, longitude = 0)
-      staticModel.setPositionOnPlanet(Math.PI / 2, 0);
+      // Position at the north pole (90 degrees latitude, 0 degrees longitude)
+      staticModel.setPositionOnPlanet(90, 0);
 
       const mesh = staticModel.getMesh();
 
@@ -114,29 +114,21 @@ describe("StaticModel", () => {
     });
 
     it("should handle positioning at an arbitrary location", () => {
-      // Position at some arbitrary location (latitude = PI/4, longitude = PI/4)
-      staticModel.setPositionOnPlanet(Math.PI / 4, Math.PI / 4);
+      // Position at 45 degrees latitude and longitude
+      staticModel.setPositionOnPlanet(90, 0);
+      const surfaceOffset = 0.2;
 
       const mesh = staticModel.getMesh();
 
-      // Calculate expected position
-      const phi = Math.PI / 2 - Math.PI / 4; // Convert latitude to phi
-      const theta = Math.PI / 4; // Longitude
+      const expectedPos = new THREE.Vector3(
+        PLANET_CENTER.x,
+        PLANET_CENTER.y + PLANET_RADIUS + surfaceOffset, // Adding offset in Y direction (for north pole)
+        PLANET_CENTER.z
+      );
 
-      const expectedX = PLANET_RADIUS * Math.sin(phi) * Math.cos(theta);
-      const expectedY = PLANET_RADIUS * Math.cos(phi);
-      const expectedZ = PLANET_RADIUS * Math.sin(phi) * Math.sin(theta);
-
-      // Account for the small offset and planet center
-      expect(mesh.position.x).toBeCloseTo(
-        PLANET_CENTER.x + expectedX + 0.2 * Math.sin(phi) * Math.cos(theta)
-      );
-      expect(mesh.position.y).toBeCloseTo(
-        PLANET_CENTER.y + expectedY + 0.2 * Math.cos(phi)
-      );
-      expect(mesh.position.z).toBeCloseTo(
-        PLANET_CENTER.z + expectedZ + 0.2 * Math.sin(phi) * Math.sin(theta)
-      );
+      expect(mesh.position.x).toBeCloseTo(expectedPos.x);
+      expect(mesh.position.y).toBeCloseTo(expectedPos.y);
+      expect(mesh.position.z).toBeCloseTo(expectedPos.z);
     });
 
     it("should apply ground offset correctly", () => {

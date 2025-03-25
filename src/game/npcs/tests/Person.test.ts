@@ -29,8 +29,8 @@ describe("Person NPC", () => {
   it("should position correctly on the planet surface", () => {
     const person = new Person("test-positioning", "John Doe");
 
-    // Position at the north pole (latitude = PI/2, longitude = 0)
-    person.setPositionOnPlanet(Math.PI / 2, 0);
+    // Position at the north pole (90 degrees latitude, 0 degrees longitude)
+    person.setPositionOnPlanet(90, 0);
 
     // Calculate expected position with a small offset
     const expectedPos = new THREE.Vector3(
@@ -49,7 +49,7 @@ describe("Person NPC", () => {
   it("should position correctly at the equator", () => {
     const person = new Person("test-positioning-equator", "John Doe");
 
-    // Position at the equator (latitude = 0, longitude = 0)
+    // Position at the equator (0 degrees latitude, 0 degrees longitude)
     person.setPositionOnPlanet(0, 0);
 
     // Calculate expected position with a small offset

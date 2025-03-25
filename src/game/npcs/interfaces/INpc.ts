@@ -18,8 +18,8 @@ export interface INpc {
 
   /**
    * Set the position of the NPC on the planet surface
-   * @param latitude The latitude in radians (0 at equator, π/2 at north pole)
-   * @param longitude The longitude in radians (0 to 2π)
+   * @param latitude The latitude in degrees (-90° at south pole, 0° at equator, 90° at north pole)
+   * @param longitude The longitude in degrees (-180° to 180° or 0° to 360°)
    */
   setPositionOnPlanet(latitude: number, longitude: number): void;
 

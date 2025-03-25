@@ -64,9 +64,13 @@ export class Flag implements INpc {
 
   /** Position the flag on the planet surface */
   public setPositionOnPlanet(latitude: number, longitude: number): void {
+    // Convert degrees to radians
+    const latRad = (latitude * Math.PI) / 180;
+    const lonRad = (longitude * Math.PI) / 180;
+
     // Convert spherical coordinates to Cartesian
-    const phi = Math.PI / 2 - latitude; // Convert latitude to phi angle
-    const theta = longitude; // Longitude maps directly to theta
+    const phi = Math.PI / 2 - latRad; // Convert latitude to phi angle
+    const theta = lonRad; // Longitude maps directly to theta
 
     // Calculate the position on the planet surface
     const x = PLANET_RADIUS * Math.sin(phi) * Math.cos(theta);

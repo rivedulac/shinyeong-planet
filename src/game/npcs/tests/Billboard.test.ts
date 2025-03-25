@@ -29,8 +29,8 @@ describe("Billboard NPC", () => {
     const billboard = new Billboard("test-positioning");
     const surfaceOffset = 7; // Same offset used in the class
 
-    // Position at the north pole (latitude = PI/2, longitude = 0)
-    billboard.setPositionOnPlanet(Math.PI / 2, 0);
+    // Position at the north pole (90 degrees latitude, 0 degrees longitude)
+    billboard.setPositionOnPlanet(90, 0);
 
     // Calculate expected position with offset
     const expectedPos = new THREE.Vector3(
@@ -50,7 +50,7 @@ describe("Billboard NPC", () => {
     const billboard = new Billboard("test-positioning-equator");
     const surfaceOffset = 7; // Same offset used in the class
 
-    // Position at the equator (latitude = 0, longitude = 0)
+    // Position at the equator (0 degrees latitude, 0 degrees longitude)
     billboard.setPositionOnPlanet(0, 0);
 
     // Calculate expected position with offset

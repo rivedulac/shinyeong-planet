@@ -30,8 +30,8 @@ describe("Flag NPC", () => {
   it("should position correctly on the planet surface with offset", () => {
     const flag = new Flag("test-positioning");
 
-    // Position at the north pole (latitude = PI/2, longitude = 0)
-    flag.setPositionOnPlanet(Math.PI / 2, 0);
+    // Position at the north pole (90 degrees latitude, 0 degrees longitude)
+    flag.setPositionOnPlanet(90, 0);
 
     // Calculate expected position on the surface (no offset)
     const expectedPos = new THREE.Vector3(
@@ -50,7 +50,7 @@ describe("Flag NPC", () => {
   it("should position correctly at the equator", () => {
     const flag = new Flag("test-positioning-equator");
 
-    // Position at the equator (latitude = 0, longitude = 0)
+    // Position at the equator (0 degrees latitude, 0 degrees longitude)
     flag.setPositionOnPlanet(0, 0);
 
     // Calculate expected position at the surface

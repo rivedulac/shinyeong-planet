@@ -32,32 +32,27 @@ export class NpcManager {
    */
   public initializeDefaultNpcs(): void {
     // Create a guest book billboard in front of the starting position
-    // The starting position is at the equator (longitude 0)
     const guestBook = new Billboard("guest-book", "Guest Book");
-
-    guestBook.setPositionOnPlanet(0.65, 0);
+    guestBook.setPositionOnPlanet(37.2, 0);
 
     // Set up a custom conversation for the guest book
     guestBook.setConversation(GUEST_BOOK_CONVERSTAION);
 
     this.addNpc(guestBook);
 
-    // Create and add a billboard NPC - original code
+    // Create and add a billboard NPC
     const billboard = new Billboard("resume-billboard", "My Resume");
-    // Position at a different location than the guest book
-    billboard.setPositionOnPlanet(1.5, -1.5);
+    billboard.setPositionOnPlanet(85.9, -85.9);
     this.addNpc(billboard);
 
     // Create and add a flag NPC
     const flag = new Flag("experience-usa", "🇺🇸", "2020 Internship");
-    // Position the flag at a different location
-    flag.setPositionOnPlanet(-1.5, -1.5);
+    flag.setPositionOnPlanet(-85.9, -85.9);
     this.addNpc(flag);
 
     // Create and add a person NPC
     const person = new Person("guide-person", "Jane");
-    // Position the person at a different place on the planet
-    person.setPositionOnPlanet(1.5, 0.35);
+    person.setPositionOnPlanet(85.9, 20.1);
     this.addNpc(person);
 
     // Create and add an animated person NPC
@@ -68,7 +63,7 @@ export class NpcManager {
       DEFAULT_PERSON_CONVERSTAION,
       -0.5
     );
-    alien.setPositionOnPlanet(0.4, -0.35);
+    alien.setPositionOnPlanet(22.9, -20.1);
     this.addNpc(alien);
 
     const iss = new StaticModel(
@@ -78,7 +73,7 @@ export class NpcManager {
       DEFAULT_PERSON_CONVERSTAION,
       100
     );
-    iss.setPositionOnPlanet(1.25, 0.2);
+    iss.setPositionOnPlanet(71.6, 11.5);
     this.addNpc(iss);
 
     const earth = new StaticModel(
@@ -89,7 +84,7 @@ export class NpcManager {
       100
     );
     earth.setScale(0.05);
-    earth.setPositionOnPlanet(1.25, 1.25);
+    earth.setPositionOnPlanet(71.6, 71.6);
     this.addNpc(earth);
 
     const astronaut = new StaticModel(
@@ -99,7 +94,7 @@ export class NpcManager {
       DEFAULT_PERSON_CONVERSTAION,
       40
     );
-    astronaut.setPositionOnPlanet(1.0, -0.5);
+    astronaut.setPositionOnPlanet(57.3, -28.6);
     astronaut.setScale(2);
     astronaut.getMesh().rotation.y = -Math.PI / 4;
     this.addNpc(astronaut);
