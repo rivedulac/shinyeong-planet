@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import MenuBar from "../menuBar";
+import MenuBar from "../MenuBar";
 
 // Mock the SettingsDropdown and InfoDropdown components
 vi.mock("../SettingsDropdown", () => ({
