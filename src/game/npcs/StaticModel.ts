@@ -1,11 +1,10 @@
 // src/game/npcs/PersonWithModel.ts
 import * as THREE from "three";
-import { INpc, NpcType } from "./interfaces/INpc";
 import {
   PLANET_CENTER,
   PLANET_RADIUS,
-  PERSON_RADIUS,
   DEFAULT_PERSON_CONVERSTAION,
+  DEFAULT_NPC_RADIUS,
 } from "../../config/constants";
 import { IConversation } from "./interfaces/IConversation";
 import { loadModel as loadModelAsync } from "../../utils/modelLoader";
@@ -14,13 +13,13 @@ import { loadModel as loadModelAsync } from "../../utils/modelLoader";
  * Person NPC - represents a human character on the planet
  * Now with support for GLB models
  */
-export class StaticModel implements INpc {
+export class StaticModel {
   private id: string;
   private mesh: THREE.Group;
   private name: string;
   private collisionRadius: number;
   private conversation: IConversation;
-  private modelPath: string;
+  private modelPath: string | undefined;
   private isModelLoaded: boolean = false;
   private scale: number = 0.75;
   private groundOffset: number;
@@ -35,30 +34,30 @@ export class StaticModel implements INpc {
   constructor(
     id: string,
     name: string,
-    modelPath: string,
     conversation: IConversation = DEFAULT_PERSON_CONVERSTAION,
-    zOffset: number = 0
+    zOffset: number = 0,
+    radius: number = DEFAULT_NPC_RADIUS,
+    mesh?: THREE.Group,
+    modelPath?: string
   ) {
     this.id = id;
     this.name = name;
-    this.collisionRadius = PERSON_RADIUS;
+    this.collisionRadius = radius;
+    this.mesh = mesh || new THREE.Group();
     this.modelPath = modelPath;
     // TODO: Optimize. For models that do not need to have a conversation with
     // the player, skip the conversation property
     this.conversation = conversation;
     this.groundOffset = zOffset;
-    this.mesh = new THREE.Group();
 
     // If a model path is provided, load it
-    this.loadModel();
+    if (this.modelPath) {
+      this.loadModel();
+    }
   }
 
   public getId(): string {
     return this.id;
-  }
-
-  public getType(): NpcType {
-    return NpcType.Person;
   }
 
   public getMesh(): THREE.Object3D {
@@ -78,6 +77,11 @@ export class StaticModel implements INpc {
    */
   private async loadModel(): Promise<void> {
     try {
+      if (!this.modelPath) {
+        console.error(`No model path provided for NPC ${this.id}`);
+        return;
+      }
+
       const result = await loadModelAsync(this.modelPath);
 
       // Clear any existing children from the mesh group
@@ -167,7 +171,7 @@ export class StaticModel implements INpc {
     this.mesh.setRotationFromMatrix(rotMatrix);
 
     // Additional rotation to face the right direction
-    this.mesh.rotateY((Math.PI / 4) * 3);
+    this.mesh.rotateY(Math.PI);
   }
 
   /** Get information about this person */

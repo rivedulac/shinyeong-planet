@@ -22,7 +22,6 @@ import {
   MINI_MAP_NPC_SIZE_SMALL,
   MINI_MAP_NPC_SIZE_LARGE,
 } from "../../config/constants";
-import { NpcType } from "@/game/npcs/interfaces/INpc";
 import { useTranslation } from "react-i18next";
 
 interface MinimapProps {
@@ -184,34 +183,6 @@ const Minimap: React.FC<MinimapProps> = ({
     }
   }, [playerPosition, npcs]);
 
-  // Get color for NPC type
-  const getNpcColor = (type: string): string => {
-    switch (type) {
-      case NpcType.Flag:
-        return MINI_MAP_FLAG_COLOR; // Green
-      case NpcType.Person:
-        return MINI_MAP_PERSON_COLOR; // Yellow/Gold
-      case NpcType.Billboard:
-        return MINI_MAP_BILLBOARD_COLOR; // Blue
-      default:
-        return MINI_MAP_DEFAULT_COLOR; // White fallback
-    }
-  };
-
-  // Get size for NPC marker based on type
-  const getNpcSize = (type: string): number => {
-    switch (type) {
-      case NpcType.Flag:
-        return MINI_MAP_NPC_SIZE_MEDIUM; // Square
-      case NpcType.Person:
-        return MINI_MAP_NPC_SIZE_SMALL; // Slightly smaller
-      case NpcType.Billboard:
-        return MINI_MAP_NPC_SIZE_LARGE; // Larger
-      default:
-        return MINI_MAP_NPC_SIZE_SMALL;
-    }
-  };
-
   return (
     <div
       style={{
@@ -349,7 +320,7 @@ const Minimap: React.FC<MinimapProps> = ({
 
         {/* NPCs */}
         {projectedNpcs.map((npc) => {
-          const size = getNpcSize(npc.type);
+          const size = MINI_MAP_NPC_SIZE_SMALL;
           return (
             <rect
               key={npc.id}
@@ -357,7 +328,7 @@ const Minimap: React.FC<MinimapProps> = ({
               y={npc.y - size / 2}
               width={size}
               height={size}
-              fill={getNpcColor(npc.type)}
+              fill={MINI_MAP_DEFAULT_COLOR}
               stroke="#000000"
               strokeWidth="0.5"
             />

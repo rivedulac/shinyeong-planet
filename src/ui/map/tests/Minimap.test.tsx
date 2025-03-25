@@ -8,7 +8,6 @@ import {
   MINI_MAP_RADIUS,
   PLANET_CENTER,
 } from "../../../config/constants";
-import { NpcType } from "@/game/npcs/interfaces/INpc";
 
 // Mock the projection utils module - needs to be before any reference to the variables
 vi.mock("../utils/projection", () => {
@@ -37,15 +36,13 @@ describe("Minimap", () => {
   const mockPlayerRotation = Math.PI / 4; // 45 degrees
   const mockPlayerLookDirection = new THREE.Vector3(1, 0, 1).normalize();
   const mockNpcs = [
-    { id: "npc1", type: NpcType.Flag, position: new THREE.Vector3(5, 5, 5) },
+    { id: "npc1", position: new THREE.Vector3(5, 5, 5) },
     {
       id: "npc2",
-      type: NpcType.Person,
       position: new THREE.Vector3(-5, 10, -5),
     },
     {
       id: "npc3",
-      type: NpcType.Billboard,
       position: new THREE.Vector3(15, 0, 15),
     },
   ];

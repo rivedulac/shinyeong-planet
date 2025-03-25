@@ -2,9 +2,10 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { PlayerController } from "../PlayerController";
 import { Camera } from "../../core/Camera";
 import { NpcManager } from "../npcs/NpcManager";
-import { INpc } from "../npcs/interfaces/INpc";
 import * as THREE from "three";
-import { Billboard } from "../npcs/Billboard";
+import { StaticModel } from "../npcs/StaticModel";
+import { DEFAULT_NPC_RADIUS } from "@/config/constants";
+import { DEFAULT_PERSON_CONVERSTAION } from "@/config/constants";
 
 // Mock the window object
 const mockAddEventListener = vi.fn();
@@ -26,15 +27,16 @@ const mockWindow = {
 vi.stubGlobal("window", mockWindow);
 
 class MockNpcManager extends NpcManager {
-  nearbyNpcs: INpc[] = [];
-  constructor(nearbyNpcs: INpc[]) {
+  private nearbyNpcs: StaticModel[] = [];
+
+  constructor(nearbyNpcs: StaticModel[]) {
     const mockScene = new THREE.Scene();
     super(mockScene);
     this.nearbyNpcs = nearbyNpcs;
   }
 
   // @ts-ignore: Mocking the NpcManager
-  getNearbyNpcs(position: THREE.Vector3): INpc[] {
+  getNearbyNpcs(position: THREE.Vector3): StaticModel[] {
     return this.nearbyNpcs;
   }
 }
@@ -277,7 +279,15 @@ describe("PlayerController", () => {
         .spyOn(npcManager, "getNearbyNpcs")
         .mockImplementation(() => {
           // Create an NPC that's close enough to cause a collision
-          const billboard = new Billboard("test-billboard");
+          const billboard = new StaticModel(
+            "test-billboard",
+            "test-billboard",
+            DEFAULT_PERSON_CONVERSTAION,
+            0,
+            DEFAULT_NPC_RADIUS,
+            undefined,
+            "test-billboard"
+          );
           const playerPos = playerController.getPosition();
           // Position billboard very close to the player
           billboard.getMesh().position.copy(playerPos);

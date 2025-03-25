@@ -58,7 +58,6 @@ const Game: React.FC = () => {
     useState<PlayerController | null>(null);
   const [npcState, setNpcState] = useState<
     Array<{
-      type: string;
       position: THREE.Vector3;
       id: string;
     }>
@@ -115,7 +114,6 @@ const Game: React.FC = () => {
 
     const allNpcs = npcManager.getAllNpcs();
     const npcsData = allNpcs.map((npc) => ({
-      type: npc.getType(),
       position: npc.getMesh().position.clone(),
       id: npc.getId(),
     }));
@@ -174,7 +172,6 @@ const Game: React.FC = () => {
       if (time % 100 < 16) {
         // Update roughly every 100ms
         const updatedNpcsData = allNpcs.map((npc) => ({
-          type: npc.getType(),
           position: npc.getMesh().position.clone(),
           id: npc.getId(),
         }));

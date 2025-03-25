@@ -1,13 +1,12 @@
 // src/game/npcs/tests/StaticModel.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { StaticModel } from "../StaticModel";
-import { NpcType } from "../interfaces/INpc";
 import * as THREE from "three";
 import {
   PLANET_RADIUS,
   PLANET_CENTER,
-  PERSON_RADIUS,
   DEFAULT_PERSON_CONVERSTAION,
+  DEFAULT_NPC_RADIUS,
 } from "../../../config/constants";
 
 // Mock the modelLoader module
@@ -34,14 +33,21 @@ describe("StaticModel", () => {
     vi.clearAllMocks();
 
     // Create a fresh instance for each test
-    staticModel = new StaticModel(testId, testName, testPath);
+    staticModel = new StaticModel(
+      testId,
+      testName,
+      DEFAULT_PERSON_CONVERSTAION,
+      0,
+      DEFAULT_NPC_RADIUS,
+      undefined,
+      testPath
+    );
   });
 
   describe("Initialization", () => {
     it("should initialize with the provided values", () => {
       expect(staticModel.getId()).toBe(testId);
-      expect(staticModel.getType()).toBe(NpcType.Person);
-      expect(staticModel.getCollisionRadius()).toBe(PERSON_RADIUS);
+      expect(staticModel.getCollisionRadius()).toBe(DEFAULT_NPC_RADIUS);
 
       const info = staticModel.getInfo();
       expect(info.name).toBe(testName);
@@ -66,8 +72,11 @@ describe("StaticModel", () => {
       const modelWithCustomConversation = new StaticModel(
         "custom-id",
         "Custom Name",
-        testPath,
-        customConversation
+        customConversation,
+        0,
+        DEFAULT_NPC_RADIUS,
+        undefined,
+        testPath
       );
 
       expect(modelWithCustomConversation.getConversation()).toBe(
@@ -136,9 +145,11 @@ describe("StaticModel", () => {
       const modelWithOffset = new StaticModel(
         "offset-model",
         "Offset Model",
-        testPath,
         DEFAULT_PERSON_CONVERSTAION,
-        groundOffset
+        groundOffset,
+        DEFAULT_NPC_RADIUS,
+        undefined,
+        testPath
       );
 
       // Position at the equator (latitude = 0, longitude = 0)
@@ -202,7 +213,15 @@ describe("StaticModel", () => {
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       // Create a new model which will trigger the error
-      new StaticModel("error-model", "Error Model", "wrong/path");
+      new StaticModel(
+        "error-model",
+        "Error Model",
+        DEFAULT_PERSON_CONVERSTAION,
+        0,
+        DEFAULT_NPC_RADIUS,
+        undefined,
+        "wrong/path"
+      );
 
       // Wait for async operations to complete
       await new Promise(process.nextTick);

@@ -1,68 +1,35 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { CollisionUtils } from "../CollisionUtils";
-import { INpc, NpcType } from "../interfaces/INpc";
+import { StaticModel } from "../StaticModel";
 import * as THREE from "three";
-import { INTERACTION_DISTANCE } from "@/config/constants";
-
-// Create a mock NPC implementation for testing
-class MockNpc implements INpc {
-  id: string;
-  mesh: THREE.Object3D;
-  collisionRadius: number;
-  isCollidingWith: Set<string>;
-
-  constructor(id: string, position: THREE.Vector3, collisionRadius: number) {
-    this.id = id;
-    this.mesh = new THREE.Object3D();
-    this.mesh.position.copy(position);
-    this.collisionRadius = collisionRadius;
-    this.isCollidingWith = new Set<string>();
-  }
-
-  getMesh(): THREE.Object3D {
-    return this.mesh;
-  }
-
-  setPositionOnPlanet(): void {
-    // No-op for test
-  }
-
-  getType(): NpcType {
-    return NpcType.Billboard; // Arbitrary type for testing
-  }
-
-  getId(): string {
-    return this.id;
-  }
-
-  getCollisionRadius(): number {
-    return this.collisionRadius;
-  }
-
-  getIsCollidingWith(): Set<string> {
-    return this.isCollidingWith;
-  }
-
-  addIsCollidingWith(id: string): void {
-    this.isCollidingWith.add(id);
-  }
-
-  removeIsCollidingWith(id: string): void {
-    this.isCollidingWith.delete(id);
-  }
-}
+import {
+  INTERACTION_DISTANCE,
+  DEFAULT_NPC_RADIUS,
+  DEFAULT_PERSON_CONVERSTAION,
+  PLAYER_RADIUS,
+} from "@/config/constants";
 
 describe("CollisionUtils", () => {
   let player: THREE.Object3D;
-  let npc: MockNpc;
+  let npc: StaticModel;
 
   beforeEach(() => {
     player = new THREE.Object3D();
-    npc = new MockNpc("npc1", new THREE.Vector3(10, 0, 0), 3);
+    npc = new StaticModel(
+      "npc1",
+      "npc1",
+      DEFAULT_PERSON_CONVERSTAION,
+      0,
+      PLAYER_RADIUS,
+      undefined,
+      "npc1"
+    );
   });
 
   describe("calculateDirection", () => {
     it("should calculate the direction vector from npc2 to npc1", () => {
+      player.position.set(0, 0, 0);
+      npc.getMesh().position.set(10, 0, 0);
       const direction = CollisionUtils.calculateDirection(
         player.position,
         npc.getMesh().position
@@ -102,10 +69,14 @@ describe("CollisionUtils", () => {
   describe("checkCollision", () => {
     it("should return false when NPCs do not have collision radii", () => {
       // Create an NPC without collision radii
-      const npcWithoutRadius = new MockNpc(
+      const npcWithoutRadius = new StaticModel(
         "npcWithoutRadius",
-        new THREE.Vector3(0, 0, 0),
-        0
+        "npcWithoutRadius",
+        DEFAULT_PERSON_CONVERSTAION,
+        0,
+        0,
+        undefined,
+        "npcWithoutRadius"
       );
 
       expect(CollisionUtils.checkCollision(player, npcWithoutRadius)).toBe(
@@ -114,7 +85,9 @@ describe("CollisionUtils", () => {
     });
 
     it("should return false when NPCs are not colliding", () => {
-      // 10 units apart, with radii 3 and 3, so they don't collide (10 > 3+3)
+      // 10 units apart, with radii 3 and 2, so they don't collide (10 > 3+2)
+      player.position.set(0, 0, 0);
+      npc.getMesh().position.set(10, 0, 0);
       expect(CollisionUtils.checkCollision(player, npc)).toBe(false);
     });
 

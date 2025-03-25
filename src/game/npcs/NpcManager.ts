@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { INpc } from "./interfaces/INpc";
-import { Billboard } from "./Billboard";
-import { Flag } from "./Flag";
-import { Person } from "./Person";
+import { createBillboardMesh } from "./Billboard";
+import { createFlagMesh } from "./Flag";
+import { createPersonMesh } from "./Person";
 import {
   NEARBY_DISTANCE,
   GUEST_BOOK_CONVERSTAION,
@@ -32,7 +32,15 @@ export class NpcManager {
    */
   public initializeDefaultNpcs(): void {
     // Create a guest book billboard in front of the starting position
-    const welcomeBillboard = new Billboard("welcome-billboard", "Welcome");
+    const billboardMesh = createBillboardMesh("Welcome");
+    const welcomeBillboard = new StaticModel(
+      "welcome-billboard",
+      "Welcome",
+      GUEST_BOOK_CONVERSTAION,
+      7,
+      2,
+      billboardMesh
+    );
     welcomeBillboard.setPositionOnPlanet(37.2, 0);
 
     // Set up a custom conversation for the guest book
@@ -40,26 +48,53 @@ export class NpcManager {
 
     this.addNpc(welcomeBillboard);
 
-    // Create and add a billboard NPC
-    // const billboard = new Billboard("resume-billboard", "My Resume");
-    // billboard.setPositionOnPlanet(85.9, -85.9);
-    // this.addNpc(billboard);
-
     // Create and add a flag NPC
-    const exchangeFlag = new Flag("exchange-france", "🇫🇷", "Exchange in Paris");
+    const exchangeFlagMesh = createFlagMesh("🇫🇷", "Exchange in Paris");
+    const exchangeFlag = new StaticModel(
+      "exchange-france",
+      "Exchange in Paris",
+      DEFAULT_PERSON_CONVERSTAION,
+      0,
+      1,
+      exchangeFlagMesh
+    );
     exchangeFlag.setPositionOnPlanet(48.86, 2.34);
     this.addNpc(exchangeFlag);
 
-    const internshipFlag = new Flag("internship-usa", "🇺🇸", "2020 Internship");
+    const internshipFlagMesh = createFlagMesh("🇺🇸", "2020 Internship");
+    const internshipFlag = new StaticModel(
+      "internship-usa",
+      "2020 Internship",
+      DEFAULT_PERSON_CONVERSTAION,
+      0,
+      2,
+      internshipFlagMesh
+    );
     internshipFlag.setPositionOnPlanet(37.77, -122.43);
     this.addNpc(internshipFlag);
 
-    const experienceFlag = new Flag("experience-korea", "🇰🇷", "2021~ SWE");
+    const experienceFlagMesh = createFlagMesh("🇰🇷", "2021~ SWE");
+    const experienceFlag = new StaticModel(
+      "experience-korea",
+      "2021~ SWE",
+      DEFAULT_PERSON_CONVERSTAION,
+      0,
+      2,
+      experienceFlagMesh
+    );
     experienceFlag.setPositionOnPlanet(37.53, 127.02);
     this.addNpc(experienceFlag);
 
     // Create and add a person NPC
-    const person = new Person("guide-person", "Jane");
+    const personMesh = createPersonMesh();
+    const person = new StaticModel(
+      "guide-person",
+      "Jane",
+      DEFAULT_PERSON_CONVERSTAION,
+      0,
+      2,
+      personMesh
+    );
     person.setPositionOnPlanet(85.9, 20.1);
     this.addNpc(person);
 
@@ -67,9 +102,11 @@ export class NpcManager {
     const alien = new StaticModel(
       "alien",
       "Jane Doe",
-      models.alien,
       DEFAULT_PERSON_CONVERSTAION,
-      -0.5
+      -0.5,
+      2.5,
+      undefined,
+      models.alien
     );
     alien.setPositionOnPlanet(22.9, -20.1);
     this.addNpc(alien);
@@ -77,9 +114,11 @@ export class NpcManager {
     const iss = new StaticModel(
       "iss",
       "ISS",
-      models.iss,
       DEFAULT_PERSON_CONVERSTAION,
-      100
+      100,
+      5,
+      undefined,
+      models.iss
     );
     iss.setPositionOnPlanet(71.6, 11.5);
     this.addNpc(iss);
@@ -87,9 +126,11 @@ export class NpcManager {
     const earth = new StaticModel(
       "earth",
       "Earth",
-      models.earth,
       DEFAULT_PERSON_CONVERSTAION,
-      100
+      100,
+      10,
+      undefined,
+      models.earth
     );
     earth.setScale(0.05);
     earth.setPositionOnPlanet(71.6, 71.6);
@@ -98,9 +139,11 @@ export class NpcManager {
     const astronaut = new StaticModel(
       "astronaut",
       "Astronaut",
-      models.astronaut,
       DEFAULT_PERSON_CONVERSTAION,
-      40
+      40,
+      2,
+      undefined,
+      models.astronaut
     );
     astronaut.setPositionOnPlanet(57.3, -28.6);
     astronaut.setScale(2);
