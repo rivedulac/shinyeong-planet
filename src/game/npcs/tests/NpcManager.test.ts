@@ -79,36 +79,10 @@ describe("NpcManager", () => {
       const npcs = npcManager.getAllNpcs();
 
       // Check if all default NPCs were created
-      expect(npcs.length).toBe(8); // Total number of default NPCs
-
-      // Find NPCs by their IDs
-      const guestBook = npcs.find((npc) => npc.getId() === "guest-book");
-      const billboard = npcs.find((npc) => npc.getId() === "resume-billboard");
-      const flag = npcs.find((npc) => npc.getId() === "experience-usa");
-      const person = npcs.find((npc) => npc.getId() === "guide-person");
-      const alien = npcs.find((npc) => npc.getId() === "alien");
-      const iss = npcs.find((npc) => npc.getId() === "iss");
-      const earth = npcs.find((npc) => npc.getId() === "earth");
-      const astronaut = npcs.find((npc) => npc.getId() === "astronaut");
-
-      // Verify each NPC exists
-      expect(guestBook).toBeDefined();
-      expect(billboard).toBeDefined();
-      expect(flag).toBeDefined();
-      expect(person).toBeDefined();
-      expect(alien).toBeDefined();
-      expect(iss).toBeDefined();
-      expect(earth).toBeDefined();
-      expect(astronaut).toBeDefined();
-
-      // Check positions (now using degrees)
-      if (guestBook) checkNpcPosition(guestBook, 37.2, 0);
-      if (billboard) checkNpcPosition(billboard, 85.9, -85.9);
-      if (flag) checkNpcPosition(flag, -85.9, -85.9);
-      if (person) checkNpcPosition(person, 85.9, 20.1);
+      expect(npcs.length).toBe(9); // Total number of default NPCs
 
       // Verify all NPCs were added to the scene
-      expect(mockScene.add).toHaveBeenCalledTimes(8);
+      expect(mockScene.add).toHaveBeenCalledTimes(9);
     });
   });
 

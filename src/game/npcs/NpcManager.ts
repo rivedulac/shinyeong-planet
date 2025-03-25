@@ -32,23 +32,31 @@ export class NpcManager {
    */
   public initializeDefaultNpcs(): void {
     // Create a guest book billboard in front of the starting position
-    const guestBook = new Billboard("guest-book", "Guest Book");
-    guestBook.setPositionOnPlanet(37.2, 0);
+    const welcomeBillboard = new Billboard("welcome-billboard", "Welcome");
+    welcomeBillboard.setPositionOnPlanet(37.2, 0);
 
     // Set up a custom conversation for the guest book
-    guestBook.setConversation(GUEST_BOOK_CONVERSTAION);
+    welcomeBillboard.setConversation(GUEST_BOOK_CONVERSTAION);
 
-    this.addNpc(guestBook);
+    this.addNpc(welcomeBillboard);
 
     // Create and add a billboard NPC
-    const billboard = new Billboard("resume-billboard", "My Resume");
-    billboard.setPositionOnPlanet(85.9, -85.9);
-    this.addNpc(billboard);
+    // const billboard = new Billboard("resume-billboard", "My Resume");
+    // billboard.setPositionOnPlanet(85.9, -85.9);
+    // this.addNpc(billboard);
 
     // Create and add a flag NPC
-    const flag = new Flag("experience-usa", "🇺🇸", "2020 Internship");
-    flag.setPositionOnPlanet(-85.9, -85.9);
-    this.addNpc(flag);
+    const exchangeFlag = new Flag("exchange-france", "🇫🇷", "Exchange in Paris");
+    exchangeFlag.setPositionOnPlanet(48.86, 2.34);
+    this.addNpc(exchangeFlag);
+
+    const internshipFlag = new Flag("internship-usa", "🇺🇸", "2020 Internship");
+    internshipFlag.setPositionOnPlanet(37.77, -122.43);
+    this.addNpc(internshipFlag);
+
+    const experienceFlag = new Flag("experience-korea", "🇰🇷", "2021~ SWE");
+    experienceFlag.setPositionOnPlanet(37.53, 127.02);
+    this.addNpc(experienceFlag);
 
     // Create and add a person NPC
     const person = new Person("guide-person", "Jane");
