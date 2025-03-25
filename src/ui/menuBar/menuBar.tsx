@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useResponsiveControls } from "@/hooks/useResponsiveControls";
 import {
@@ -8,7 +8,6 @@ import {
 } from "@/config/constants";
 import SettingsDropdown from "./SettingsDropdown";
 import InfoDropdown from "./InfoDropdown";
-import { menuBarReducer, initialMenuBarState } from "./MenuBarReducer";
 
 interface MenuBarProps {
   playerName: string;
@@ -32,9 +31,24 @@ const MenuBar: React.FC<MenuBarProps> = ({
   const { t, i18n } = useTranslation();
   useResponsiveControls(); // Apply responsive scaling
 
-  // Use reducer for state management
-  const [state, dispatch] = useReducer(menuBarReducer, initialMenuBarState);
-  const { settingsHovered, infoHovered, settingsOpen, infoOpen } = state;
+  // Track hover state for icons
+  const [settingsHovered, setSettingsHovered] = useState(false);
+  const [infoHovered, setInfoHovered] = useState(false);
+
+  // Track dropdown states
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+
+  // Toggle dropdown states
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen);
+    if (infoOpen) setInfoOpen(false);
+  };
+
+  const toggleInfo = () => {
+    setInfoOpen(!infoOpen);
+    if (settingsOpen) setSettingsOpen(false);
+  };
 
   return (
     <div
@@ -77,13 +91,9 @@ const MenuBar: React.FC<MenuBarProps> = ({
                   : "transparent",
               transition: "background-color 0.2s ease",
             }}
-            onClick={() => dispatch({ type: "TOGGLE_SETTINGS" })}
-            onMouseEnter={() =>
-              dispatch({ type: "SET_SETTINGS_HOVERED", payload: true })
-            }
-            onMouseLeave={() =>
-              dispatch({ type: "SET_SETTINGS_HOVERED", payload: false })
-            }
+            onClick={toggleSettings}
+            onMouseEnter={() => setSettingsHovered(true)}
+            onMouseLeave={() => setSettingsHovered(false)}
             title={t("settings.title", "Settings")}
           >
             ⚙️
@@ -91,7 +101,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
 
           <SettingsDropdown
             isOpen={settingsOpen}
-            onClose={() => dispatch({ type: "CLOSE_ALL_DROPDOWNS" })}
+            onClose={() => setSettingsOpen(false)}
             onEditName={onEditName}
             onToggleMinimap={onToggleMinimap}
             onChangeLanguage={onChangeLanguage}
@@ -117,13 +127,9 @@ const MenuBar: React.FC<MenuBarProps> = ({
                   : "transparent",
               transition: "background-color 0.2s ease",
             }}
-            onClick={() => dispatch({ type: "TOGGLE_INFO" })}
-            onMouseEnter={() =>
-              dispatch({ type: "SET_INFO_HOVERED", payload: true })
-            }
-            onMouseLeave={() =>
-              dispatch({ type: "SET_INFO_HOVERED", payload: false })
-            }
+            onClick={toggleInfo}
+            onMouseEnter={() => setInfoHovered(true)}
+            onMouseLeave={() => setInfoHovered(false)}
             title={t("info.title", "Information")}
           >
             ℹ️
@@ -131,7 +137,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
 
           <InfoDropdown
             isOpen={infoOpen}
-            onClose={() => dispatch({ type: "CLOSE_ALL_DROPDOWNS" })}
+            onClose={() => setInfoOpen(false)}
             onToggleControls={onToggleControls}
             onToggleCamera={onToggleCamera}
           />
