@@ -1,75 +1,104 @@
 // Vercel API Endpoint for Gemini API
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import fs from "fs";
+import fs from "fs/promises"; // Use promise-based fs
 import path from "path";
 
-let conversationHistory;
-try {
-  const historyPath = path.join(
-    process.cwd(),
-    "data",
-    "conversation-history.json"
-  );
-  conversationHistory = JSON.parse(fs.readFileSync(historyPath, "utf8"));
-} catch (error) {
-  console.warn(
-    "Could not load conversation history, using empty history",
-    error
-  );
-  conversationHistory = [];
+// Cache the API client and model instances
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.0-pro-exp-02-05",
+});
+
+// Configuration constants
+const GENERATION_CONFIG = {
+  temperature: 1,
+  topP: 0.95,
+  topK: 64,
+  maxOutputTokens: 8192,
+  responseMimeType: "text/plain",
+};
+
+// Cache conversation history with lazy loading
+let conversationHistoryPromise = null;
+
+async function loadConversationHistory() {
+  if (!conversationHistoryPromise) {
+    conversationHistoryPromise = (async () => {
+      try {
+        const historyPath = path.join(
+          process.cwd(),
+          "data",
+          "conversation-history.json"
+        );
+        const data = await fs.readFile(historyPath, "utf8");
+        return JSON.parse(data);
+      } catch (error) {
+        console.warn(
+          "Could not load conversation history, using empty history:",
+          error
+        );
+        return [];
+      }
+    })();
+  }
+  return conversationHistoryPromise;
 }
 
 export default async function handler(req, res) {
-  // Only allow POST requests
+  // Early return for non-POST requests
   if (req.method !== "POST") {
-    console.log("Method not allowed");
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed",
+      allowedMethods: ["POST"],
+    });
   }
 
   try {
     const { message } = req.body;
 
-    if (!message) {
-      console.log("Message is required");
-      return res.status(400).json({ error: "Message is required" });
+    // Validate request body
+    if (!message?.trim()) {
+      return res.status(400).json({
+        error: "Message is required",
+        details: "Please provide a non-empty message",
+      });
     }
 
-    // Initialize the API
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ error: "API key not configured" });
+    // Validate API key
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("API key not configured");
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-pro-exp-02-05",
-    });
+    // Load conversation history in parallel with other operations
+    const history = await loadConversationHistory();
 
-    const generationConfig = {
-      temperature: 1,
-      topP: 0.95,
-      topK: 64,
-      maxOutputTokens: 8192,
-      responseMimeType: "text/plain",
-    };
-
-    // Start chat with history
+    // Create chat session with cached config
     const chatSession = model.startChat({
-      generationConfig,
-      history: conversationHistory,
+      generationConfig: GENERATION_CONFIG,
+      history,
     });
 
-    // Send the message and get the response
+    // Send message and get response
     const result = await chatSession.sendMessage(message);
     const messageText = result.response.text();
 
-    // Return the response
-    res.status(200).json({ message: messageText });
+    // Return successful response
+    return res.status(200).json({
+      message: messageText,
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
-    res.status(500).json({
-      error: error.message || "Failed to process request",
-      details: error.toString(),
+    // Enhanced error handling
+    console.error("Error in Gemini API handler:", {
+      timestamp: new Date().toISOString(),
+      error: error.message,
+      stack: error.stack,
+    });
+
+    return res.status(500).json({
+      error: "Failed to process request",
+      message: error.message,
+      timestamp: new Date().toISOString(),
     });
   }
 }
