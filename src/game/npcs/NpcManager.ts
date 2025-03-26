@@ -1,12 +1,9 @@
 import * as THREE from "three";
-import { createBillboardMesh } from "./Billboard";
-import { createFlagMesh } from "./Flag";
-import { NEARBY_DISTANCE, WELCOME_CONVERSTAION } from "@/config/constants";
 import { CollisionUtils } from "./CollisionUtils";
 import { StaticModel } from "./StaticModel";
-import { models } from "../../../public/assets";
 import { AnimatedModel } from "./AnimatedModel";
-
+import { defaultNpcs } from "./config/defaultNpcs";
+import { NEARBY_DISTANCE } from "@/config/constants";
 export class NpcManager {
   private npcs: Map<string, StaticModel> = new Map();
   private scene: THREE.Scene;
@@ -26,136 +23,14 @@ export class NpcManager {
    * Initialize default NPCs in the game
    */
   public initializeDefaultNpcs(): void {
-    // Create a guest book billboard in front of the starting position
-    const billboardMesh = createBillboardMesh("Welcome");
-    const welcomeBillboard = new StaticModel(
-      "welcome-billboard",
-      "Welcome",
-      true,
-      7,
-      2,
-      billboardMesh
-    );
-    welcomeBillboard.setConversation(WELCOME_CONVERSTAION);
-    welcomeBillboard.setPositionOnPlanet(37.2, 0);
-    this.addNpc(welcomeBillboard);
+    // Clear any existing NPCs
+    this.clear();
 
-    // Create and add a flag NPC
-    const exchangeFlagMesh = createFlagMesh("🇫🇷", "Exchange in Paris");
-    const exchangeFlag = new StaticModel(
-      "exchange-france",
-      "Exchange in Paris",
-      true,
-      0,
-      1,
-      exchangeFlagMesh
-    );
-    exchangeFlag.setPositionOnPlanet(48.86, 2.34);
-    this.addNpc(exchangeFlag);
-
-    const internshipFlagMesh = createFlagMesh("🇺🇸", "2020 Internship");
-    const internshipFlag = new StaticModel(
-      "internship-usa",
-      "2020 Internship",
-      true,
-      0,
-      2,
-      internshipFlagMesh
-    );
-    internshipFlag.setPositionOnPlanet(37.77, -122.43);
-    this.addNpc(internshipFlag);
-
-    const experienceFlagMesh = createFlagMesh("🇰🇷", "2021~ SWE");
-    const experienceFlag = new StaticModel(
-      "experience-korea",
-      "2021~ SWE",
-      true,
-      0,
-      2,
-      experienceFlagMesh
-    );
-    experienceFlag.setPositionOnPlanet(37.53, 127.02);
-    this.addNpc(experienceFlag);
-
-    const alien = new StaticModel(
-      "alien",
-      "Jane Doe",
-      true,
-      -0.5,
-      2.5,
-      undefined,
-      models.alien
-    );
-    alien.setPositionOnPlanet(22.9, -20.1);
-    this.addNpc(alien);
-
-    const iss = new StaticModel(
-      "iss",
-      "ISS",
-      false,
-      100,
-      5,
-      undefined,
-      models.iss
-    );
-    iss.setPositionOnPlanet(71.6, 11.5);
-    this.addNpc(iss);
-
-    const earth = new StaticModel(
-      "earth",
-      "Earth",
-      false,
-      100,
-      10,
-      undefined,
-      models.earth
-    );
-    earth.setScale(0.05);
-    earth.setPositionOnPlanet(71.6, 71.6);
-    this.addNpc(earth);
-
-    const astronaut = new StaticModel(
-      "astronaut",
-      "Astronaut",
-      false,
-      40,
-      2,
-      undefined,
-      models.astronaut
-    );
-    astronaut.setPositionOnPlanet(57.3, -28.6);
-    astronaut.setScale(2);
-    astronaut.getMesh().rotation.y = -Math.PI / 4;
-    this.addNpc(astronaut);
-
-    // Add animated cow
-    const cow = new AnimatedModel(
-      "friendly-cow",
-      "Bessie",
-      true,
-      -1,
-      3,
-      undefined,
-      models.cow
-    );
-
-    cow.setPositionOnPlanet(30, 30);
-    cow.setScale(2);
-    cow.setInitialAnimation("Attack_Headbutt");
-
-    // Add cow conversation
-    const cowConversation = {
-      title: "Friendly Cow",
-      icon: "🐄",
-      messages: [
-        "Moooo! Welcome to my meadow!",
-        "I love walking around this planet!",
-        "The view from up here is amazing!",
-      ],
-    };
-    cow.setConversation(cowConversation);
-
-    this.addNpc(cow);
+    // Initialize all default NPCs
+    defaultNpcs.forEach((npcInit) => {
+      const npc = npcInit.create(this.scene);
+      this.addNpc(npc);
+    });
   }
 
   /**
