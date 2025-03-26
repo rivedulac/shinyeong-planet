@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { createBillboardMesh } from "./Billboard";
 import { createFlagMesh } from "./Flag";
-import { createPersonMesh } from "./Person";
 import {
   NEARBY_DISTANCE,
   GUEST_BOOK_CONVERSTAION,
@@ -84,20 +83,6 @@ export class NpcManager {
     experienceFlag.setPositionOnPlanet(37.53, 127.02);
     this.addNpc(experienceFlag);
 
-    // Create and add a person NPC
-    const personMesh = createPersonMesh();
-    const person = new StaticModel(
-      "guide-person",
-      "Jane",
-      DEFAULT_PERSON_CONVERSTAION,
-      0,
-      2,
-      personMesh
-    );
-    person.setPositionOnPlanet(85.9, 20.1);
-    this.addNpc(person);
-
-    // Create and add an animated person NPC
     const alien = new StaticModel(
       "alien",
       "Jane Doe",
