@@ -18,7 +18,8 @@ export class StaticModel {
   private mesh: THREE.Group;
   private name: string;
   private collisionRadius: number;
-  private conversation: IConversation;
+  private conversationEnabled: boolean;
+  private conversation: IConversation = DEFAULT_PERSON_CONVERSTAION;
   private modelPath: string | undefined;
   private isModelLoaded: boolean = false;
   private scale: number = 0.75;
@@ -34,7 +35,7 @@ export class StaticModel {
   constructor(
     id: string,
     name: string,
-    conversation: IConversation = DEFAULT_PERSON_CONVERSTAION,
+    conversationEnabled: boolean = true,
     zOffset: number = 0,
     radius: number = DEFAULT_NPC_RADIUS,
     mesh?: THREE.Group,
@@ -47,7 +48,7 @@ export class StaticModel {
     this.modelPath = modelPath;
     // TODO: Optimize. For models that do not need to have a conversation with
     // the player, skip the conversation property
-    this.conversation = conversation;
+    this.conversationEnabled = conversationEnabled;
     this.groundOffset = zOffset;
 
     // If a model path is provided, load it
@@ -183,6 +184,10 @@ export class StaticModel {
 
   public getCollisionRadius(): number {
     return this.collisionRadius;
+  }
+
+  public getConversationEnabled(): boolean {
+    return this.conversationEnabled;
   }
 
   /**

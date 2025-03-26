@@ -36,7 +36,7 @@ describe("StaticModel", () => {
     staticModel = new StaticModel(
       testId,
       testName,
-      DEFAULT_PERSON_CONVERSTAION,
+      true,
       0,
       DEFAULT_NPC_RADIUS,
       undefined,
@@ -60,28 +60,6 @@ describe("StaticModel", () => {
 
     it("should use default conversation if none provided", () => {
       expect(staticModel.getConversation()).toBe(DEFAULT_PERSON_CONVERSTAION);
-    });
-
-    it("should use custom conversation if provided", () => {
-      const customConversation = {
-        title: "Custom Title",
-        messages: ["Custom message"],
-        icon: "🔍",
-      };
-
-      const modelWithCustomConversation = new StaticModel(
-        "custom-id",
-        "Custom Name",
-        customConversation,
-        0,
-        DEFAULT_NPC_RADIUS,
-        undefined,
-        testPath
-      );
-
-      expect(modelWithCustomConversation.getConversation()).toBe(
-        customConversation
-      );
     });
 
     it("should attempt to load the model when created", async () => {
@@ -145,7 +123,7 @@ describe("StaticModel", () => {
       const modelWithOffset = new StaticModel(
         "offset-model",
         "Offset Model",
-        DEFAULT_PERSON_CONVERSTAION,
+        true,
         groundOffset,
         DEFAULT_NPC_RADIUS,
         undefined,
@@ -216,7 +194,7 @@ describe("StaticModel", () => {
       new StaticModel(
         "error-model",
         "Error Model",
-        DEFAULT_PERSON_CONVERSTAION,
+        true,
         0,
         DEFAULT_NPC_RADIUS,
         undefined,

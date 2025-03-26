@@ -5,7 +5,6 @@ import { NpcManager } from "../npcs/NpcManager";
 import * as THREE from "three";
 import { StaticModel } from "../npcs/StaticModel";
 import { DEFAULT_NPC_RADIUS } from "@/config/constants";
-import { DEFAULT_PERSON_CONVERSTAION } from "@/config/constants";
 
 // Mock the window object
 const mockAddEventListener = vi.fn();
@@ -282,7 +281,7 @@ describe("PlayerController", () => {
           const billboard = new StaticModel(
             "test-billboard",
             "test-billboard",
-            DEFAULT_PERSON_CONVERSTAION,
+            true,
             0,
             DEFAULT_NPC_RADIUS,
             undefined,

@@ -2,11 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { CollisionUtils } from "../CollisionUtils";
 import { StaticModel } from "../StaticModel";
 import * as THREE from "three";
-import {
-  INTERACTION_DISTANCE,
-  DEFAULT_PERSON_CONVERSTAION,
-  PLAYER_RADIUS,
-} from "@/config/constants";
+import { INTERACTION_DISTANCE, PLAYER_RADIUS } from "@/config/constants";
 
 describe("CollisionUtils", () => {
   let player: THREE.Object3D;
@@ -17,7 +13,7 @@ describe("CollisionUtils", () => {
     npc = new StaticModel(
       "npc1",
       "npc1",
-      DEFAULT_PERSON_CONVERSTAION,
+      true,
       0,
       PLAYER_RADIUS,
       undefined,
@@ -71,7 +67,7 @@ describe("CollisionUtils", () => {
       const npcWithoutRadius = new StaticModel(
         "npcWithoutRadius",
         "npcWithoutRadius",
-        DEFAULT_PERSON_CONVERSTAION,
+        true,
         0,
         0,
         undefined,

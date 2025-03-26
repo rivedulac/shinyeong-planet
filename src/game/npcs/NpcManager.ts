@@ -1,11 +1,7 @@
 import * as THREE from "three";
 import { createBillboardMesh } from "./Billboard";
 import { createFlagMesh } from "./Flag";
-import {
-  NEARBY_DISTANCE,
-  GUEST_BOOK_CONVERSTAION,
-  DEFAULT_PERSON_CONVERSTAION,
-} from "@/config/constants";
+import { NEARBY_DISTANCE, WELCOME_CONVERSTAION } from "@/config/constants";
 import { CollisionUtils } from "./CollisionUtils";
 import { StaticModel } from "./StaticModel";
 import { models } from "../../../public/assets";
@@ -34,16 +30,13 @@ export class NpcManager {
     const welcomeBillboard = new StaticModel(
       "welcome-billboard",
       "Welcome",
-      GUEST_BOOK_CONVERSTAION,
+      true,
       7,
       2,
       billboardMesh
     );
+    welcomeBillboard.setConversation(WELCOME_CONVERSTAION);
     welcomeBillboard.setPositionOnPlanet(37.2, 0);
-
-    // Set up a custom conversation for the guest book
-    welcomeBillboard.setConversation(GUEST_BOOK_CONVERSTAION);
-
     this.addNpc(welcomeBillboard);
 
     // Create and add a flag NPC
@@ -51,7 +44,7 @@ export class NpcManager {
     const exchangeFlag = new StaticModel(
       "exchange-france",
       "Exchange in Paris",
-      DEFAULT_PERSON_CONVERSTAION,
+      true,
       0,
       1,
       exchangeFlagMesh
@@ -63,7 +56,7 @@ export class NpcManager {
     const internshipFlag = new StaticModel(
       "internship-usa",
       "2020 Internship",
-      DEFAULT_PERSON_CONVERSTAION,
+      true,
       0,
       2,
       internshipFlagMesh
@@ -75,7 +68,7 @@ export class NpcManager {
     const experienceFlag = new StaticModel(
       "experience-korea",
       "2021~ SWE",
-      DEFAULT_PERSON_CONVERSTAION,
+      true,
       0,
       2,
       experienceFlagMesh
@@ -86,7 +79,7 @@ export class NpcManager {
     const alien = new StaticModel(
       "alien",
       "Jane Doe",
-      DEFAULT_PERSON_CONVERSTAION,
+      true,
       -0.5,
       2.5,
       undefined,
@@ -98,7 +91,7 @@ export class NpcManager {
     const iss = new StaticModel(
       "iss",
       "ISS",
-      DEFAULT_PERSON_CONVERSTAION,
+      false,
       100,
       5,
       undefined,
@@ -110,7 +103,7 @@ export class NpcManager {
     const earth = new StaticModel(
       "earth",
       "Earth",
-      DEFAULT_PERSON_CONVERSTAION,
+      false,
       100,
       10,
       undefined,
@@ -123,7 +116,7 @@ export class NpcManager {
     const astronaut = new StaticModel(
       "astronaut",
       "Astronaut",
-      DEFAULT_PERSON_CONVERSTAION,
+      false,
       40,
       2,
       undefined,
@@ -249,8 +242,11 @@ export class NpcManager {
     let closestDistance = Infinity;
 
     for (const npc of nearbyNpcs) {
-      // Check if player is close enough to interact
-      if (CollisionUtils.checkInteraction(position, npc.getMesh().position)) {
+      // Check if player is close enough to interact AND conversation is enabled
+      if (
+        npc.getConversationEnabled() &&
+        CollisionUtils.checkInteraction(position, npc.getMesh().position)
+      ) {
         // Calculate distance
         const distance = position.distanceTo(npc.getMesh().position);
 
@@ -269,7 +265,7 @@ export class NpcManager {
         this.onEndConversation();
       }
 
-      // Start new conversation
+      // Start new conversation only if it's enabled
       this.interactingNpc = closestNpc;
 
       if (this.onStartConversation) {

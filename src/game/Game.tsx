@@ -122,10 +122,13 @@ const Game: React.FC = () => {
 
     // Set up conversation callbacks
     npcManager.setOnStartConversation((npc: StaticModel) => {
-      // Get conversation data for this NPC
-      const conversation = getConversationForNpc(npc);
-      if (conversation) {
-        startConversation(conversation);
+      // Only start conversation if it's enabled for this NPC
+      if (npc.getConversationEnabled()) {
+        // Get conversation data for this NPC
+        const conversation = getConversationForNpc(npc);
+        if (conversation) {
+          startConversation(conversation);
+        }
       }
     });
 
