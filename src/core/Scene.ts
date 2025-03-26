@@ -8,6 +8,11 @@ import {
   BACKGROUND_RADIUS,
 } from "../config/constants";
 import { textures } from "../../public/assets";
+import { createConstellation } from "../ui/constellations/constellationGenerator";
+import {
+  bigDipperPattern,
+  positionBigDipperInNorthernSky,
+} from "@/ui/constellations/bigDipper";
 
 export class Scene {
   private container: HTMLDivElement;
@@ -23,6 +28,10 @@ export class Scene {
   private backgroundMesh: THREE.Mesh | null = null;
 
   private updateBackgroundInterval: NodeJS.Timeout | null = null;
+
+  private constellations: {
+    [name: string]: { stars: THREE.Points; lines?: THREE.LineSegments };
+  } = {};
 
   constructor(
     documentDI?: HTMLDivElement,
@@ -116,6 +125,8 @@ export class Scene {
 
     const starfield = this.createStarfield();
     this.scene.add(starfield);
+
+    this.addConstellations();
   }
 
   public loadTexture(path: string) {
@@ -464,6 +475,26 @@ export class Scene {
     starfield.name = "starfield";
 
     return starfield;
+  }
+
+  public addConstellations() {
+    this.addBigDipper();
+  }
+
+  public addBigDipper() {
+    const positionedStars = positionBigDipperInNorthernSky(300);
+    const bigDipper = createConstellation(positionedStars, {
+      name: "BigDipper",
+      drawLines: true,
+      linePattern: bigDipperPattern,
+    });
+
+    this.scene.add(bigDipper.stars);
+    if (bigDipper.lines) {
+      this.scene.add(bigDipper.lines);
+    }
+
+    this.constellations["BigDipper"] = bigDipper;
   }
 
   public destroy() {

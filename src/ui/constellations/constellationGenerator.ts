@@ -231,9 +231,9 @@ export function createConstellation(
     distance = 450,
     name = "constellation",
     drawLines = true,
-    lineColor = 0x4444aa,
-    lineOpacity = 0.3,
-    defaultStarSize = 2.0,
+    lineColor = 0xb0c4ff,
+    lineOpacity = 0.7,
+    defaultStarSize = 3.5,
     defaultStarColor = new THREE.Color().setHSL(0.6, 0.8, 0.9), // Bright blue-white
     linePattern,
   } = options;

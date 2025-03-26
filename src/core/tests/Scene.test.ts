@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { Scene } from "../Scene";
 import * as THREE from "three";
-import { getDaytimePeriod, BACKGROUND_GRADIENTS } from "../../config/constants";
 
 const createMockMesh = () => ({
   position: {
@@ -145,6 +144,7 @@ describe("Scene", () => {
     vi.spyOn(scene, "addGridHelper").mockImplementation(() => {});
     vi.spyOn(scene, "addLights").mockImplementation(() => {});
     vi.spyOn(scene, "createStarfield").mockReturnValue(new THREE.Points());
+    vi.spyOn(scene, "addConstellations").mockImplementation(() => {});
 
     const addSpy = vi.spyOn(scene.getScene(), "add");
 
