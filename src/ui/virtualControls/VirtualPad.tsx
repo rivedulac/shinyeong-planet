@@ -151,7 +151,8 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
         bottom: CORNER_MARGIN,
         borderRadius: "10px",
         border: "2px solid rgba(255, 255, 255, 0.3)",
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        background:
+          "radial-gradient(circle, rgba(64, 64, 64, 0.5) 0%, rgba(255, 255, 255, 0.1) 100%)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -178,10 +179,11 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
           borderRadius: "50%",
           backgroundColor: "white",
           opacity: 0.8,
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
         }}
       />
 
-      {/* Visual indicator of touch position (only shown when active) */}
+      {/* Visual indicator with gradient */}
       {state.isActive && (
         <div
           style={{
@@ -189,7 +191,8 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
             width: "1.5rem",
             height: "1.5rem",
             borderRadius: "50%",
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            background:
+              "radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%)",
           }}
         />
       )}
