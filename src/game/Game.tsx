@@ -9,7 +9,6 @@ import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { NpcManager } from "./npcs/NpcManager";
 import { getConversationForNpc } from "./npcs/interfaces/IConversation";
-import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 import { Minimap } from "../ui/map";
 import ToggleButton from "../ui/common/ToggleButton";
 import * as THREE from "three";
@@ -36,7 +35,6 @@ const Game: React.FC = () => {
   } = useGameConversation();
 
   const {
-    showControlsInfo,
     showCameraInfo,
     minimapVisible,
     isEditingName,
@@ -240,7 +238,6 @@ const Game: React.FC = () => {
         />
       )}
 
-      {showControlsInfo && <ControlsInfoDisplay />}
       {showCameraInfo && <CameraPositionDisplay perspective={cameraPosition} />}
 
       {/* Minimap Toggle Button */}
