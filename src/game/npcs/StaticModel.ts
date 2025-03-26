@@ -190,6 +190,14 @@ export class StaticModel {
     return this.conversationEnabled;
   }
 
+  public getName(): string {
+    return this.name;
+  }
+
+  public getScale(): number {
+    return this.scale;
+  }
+
   /**
    * Set the scale of the model
    * @param scale Scale factor
