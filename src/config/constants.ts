@@ -2,6 +2,7 @@ import { IConversation } from "@/game/npcs/interfaces/IConversation";
 import * as THREE from "three";
 
 export const PLANET_RADIUS = 25;
+export const BACKGROUND_RADIUS = 700;
 export const FIRST_PERSON_HEIGHT = 5;
 export const PLANET_CENTER = new THREE.Vector3(0, 0, 0);
 export const DEFAULT_CAMERA_PITCH = 0.35;
@@ -127,34 +128,52 @@ export const MINI_MAP_NPC_SIZE_LARGE = 6;
 export const BACKGROUND_COLOR_CODE = 0x00001a;
 export const BACKGROUND_COLOR_RGBA = "rgba(0, 0, 26, 1)";
 
-export const BACKGROUND_UPDATE_INTERVAL = 300000; // 5 minutes in milliseconds
+export const BACKGROUND_UPDATE_INTERVAL = 10000; // 10 seconds in milliseconds
 
-export const TIME_BASED_BACKGROUND_GRADIENTS = {
-  morning: {
-    top: new THREE.Color("rgba(255, 192, 203, 1)"),
-    middle: new THREE.Color("rgb(0, 140, 191)"),
-    bottom: new THREE.Color("rgb(30, 30, 118)"),
-  },
-  day: {
-    top: new THREE.Color("rgba(135, 206, 235, 1)"),
-    middle: new THREE.Color("rgba(22, 144, 255, 1)"),
-    bottom: new THREE.Color("rgba(70, 130, 180, 1)"),
-  },
-  evening: {
-    top: new THREE.Color("rgba(255, 69, 0, 1)"),
-    middle: new THREE.Color("rgba(25, 25, 112, 1)"),
-    bottom: new THREE.Color("rgba(139, 0, 0, 1)"),
-  },
-  night: {
-    top: new THREE.Color("rgba(0, 0, 0, 1)"),
-    middle: new THREE.Color("rgba(0, 0, 51, 1)"),
-    bottom: new THREE.Color("rgba(25, 25, 112, 1)"),
-  },
+export const BACKGROUND_GRADIENTS = {
+  dark: [
+    new THREE.Color("rgba(10, 10, 30, 1)"), // deep space blue
+    new THREE.Color("rgba(25, 25, 112, 1)"), // midnight blue
+    new THREE.Color("rgba(18, 18, 18, 1)"), // almost black
+    new THREE.Color("rgba(54, 69, 79, 1)"), // dark slate gray
+    new THREE.Color("rgba(72, 61, 139, 1)"), // dark slate blue
+    new THREE.Color("rgba(47, 79, 79, 1)"), // dark cyan-gray
+    new THREE.Color("rgba(0, 0, 0, 1)"), // pure black
+    new THREE.Color("rgba(28, 24, 50, 1)"), // galaxy purple
+    new THREE.Color("rgba(75, 0, 130, 1)"), // indigo
+    new THREE.Color("rgba(44, 44, 84, 1)"), // twilight blue
+  ],
+  medium: [
+    new THREE.Color("rgba(100, 149, 237, 1)"), // cornflower blue
+    new THREE.Color("rgba(144, 238, 144, 1)"), // light green
+    new THREE.Color("rgba(255, 160, 122, 1)"), // light salmon
+    new THREE.Color("rgba(186, 85, 211, 1)"), // medium orchid
+    new THREE.Color("rgba(255, 218, 185, 1)"), // peach puff
+    new THREE.Color("rgba(205, 133, 63, 1)"), // peru
+    new THREE.Color("rgba(147, 112, 219, 1)"), // medium purple
+    new THREE.Color("rgba(176, 196, 222, 1)"), // light steel blue
+    new THREE.Color("rgba(210, 180, 140, 1)"), // tan
+    new THREE.Color("rgba(244, 164, 96, 1)"), // sandy brown
+  ],
+  pale: [
+    new THREE.Color("rgba(255, 192, 203, 1)"),
+    new THREE.Color("rgba(135, 206, 235, 1)"),
+    new THREE.Color("rgba(173, 216, 230, 1)"),
+    new THREE.Color("rgba(255, 182, 193, 1)"),
+    new THREE.Color("rgba(255, 255, 224, 1)"),
+    new THREE.Color("rgba(221, 160, 221, 1)"),
+    new THREE.Color("rgba(144, 238, 144, 1)"),
+    new THREE.Color("rgba(255, 228, 225, 1)"),
+    new THREE.Color("rgba(240, 248, 255, 1)"),
+    new THREE.Color("rgba(255, 250, 240, 1)"),
+    new THREE.Color("rgba(224, 255, 255, 1)"),
+    new THREE.Color("rgba(250, 235, 215, 1)"),
+  ],
 };
 
-export function getDaytimePeriod(
-  date: Date = new Date()
-): keyof typeof TIME_BASED_BACKGROUND_GRADIENTS {
+export type TIME_BASED = "morning" | "day" | "evening" | "night";
+
+export function getDaytimePeriod(date: Date = new Date()): TIME_BASED {
   const hour = date.getHours();
   if (hour >= 5 && hour < 9) return "morning";
   if (hour >= 9 && hour < 17) return "day";

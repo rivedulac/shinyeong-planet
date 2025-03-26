@@ -2,8 +2,10 @@ import * as THREE from "three";
 import {
   PLANET_CENTER,
   PLANET_RADIUS,
-  TIME_BASED_BACKGROUND_GRADIENTS,
+  BACKGROUND_GRADIENTS,
   getDaytimePeriod,
+  BACKGROUND_UPDATE_INTERVAL,
+  BACKGROUND_RADIUS,
 } from "../config/constants";
 import { textures } from "../../public/assets";
 
@@ -19,6 +21,8 @@ export class Scene {
   private planet: THREE.Mesh | null = null;
 
   private backgroundMesh: THREE.Mesh | null = null;
+
+  private updateBackgroundInterval: NodeJS.Timeout | null = null;
 
   constructor(
     documentDI?: HTMLDivElement,
@@ -69,7 +73,7 @@ export class Scene {
 
   private createBackgroundMesh(texture: THREE.Texture): THREE.Mesh {
     // Create a large sphere to act as background
-    const geometry = new THREE.SphereGeometry(500, 32, 32);
+    const geometry = new THREE.SphereGeometry(BACKGROUND_RADIUS, 32, 32);
     const material = new THREE.MeshBasicMaterial({
       map: texture,
       side: THREE.BackSide,
@@ -89,11 +93,11 @@ export class Scene {
 
   public setup() {
     // Determine current time period and set background
-    const timePeriod = getDaytimePeriod();
-    const gradientColors =
-      TIME_BASED_BACKGROUND_GRADIENTS[
-        timePeriod as keyof typeof TIME_BASED_BACKGROUND_GRADIENTS
-      ];
+    const gradientColors = {
+      top: BACKGROUND_GRADIENTS.medium[0],
+      middle: BACKGROUND_GRADIENTS.pale[0],
+      bottom: BACKGROUND_GRADIENTS.dark[0],
+    };
 
     // Create gradient texture
     const gradientTexture = this.createGradientTexture(
@@ -183,7 +187,7 @@ export class Scene {
     top: THREE.Color,
     middle: THREE.Color,
     bottom: THREE.Color,
-    duration: number = 2000
+    duration: number = 5000
   ) {
     if (!this.backgroundMesh) return;
 
@@ -245,15 +249,59 @@ export class Scene {
     return blendedTexture;
   }
 
+  public setUpdateBackgroundInterval() {
+    if (this.updateBackgroundInterval) {
+      clearInterval(this.updateBackgroundInterval);
+    }
+    this.updateBackgroundInterval = setInterval(() => {
+      this.updateBackgroundForTime();
+    }, BACKGROUND_UPDATE_INTERVAL);
+  }
+
   /**
    * Check and update background based on current time
    */
   public updateBackgroundForTime() {
     const timePeriod = getDaytimePeriod();
-    const gradientColors =
-      TIME_BASED_BACKGROUND_GRADIENTS[
-        timePeriod as keyof typeof TIME_BASED_BACKGROUND_GRADIENTS
-      ];
+    const darkLength = BACKGROUND_GRADIENTS.dark.length;
+    const mediumLength = BACKGROUND_GRADIENTS.medium.length;
+    const paleLength = BACKGROUND_GRADIENTS.pale.length;
+    let gradientColors;
+    if (timePeriod === "morning") {
+      gradientColors = {
+        top: BACKGROUND_GRADIENTS.pale[Math.floor(Math.random() * paleLength)],
+        middle:
+          BACKGROUND_GRADIENTS.medium[Math.floor(Math.random() * mediumLength)],
+        bottom:
+          BACKGROUND_GRADIENTS.dark[Math.floor(Math.random() * darkLength)],
+      };
+    } else if (timePeriod === "day") {
+      gradientColors = {
+        top: BACKGROUND_GRADIENTS.medium[
+          Math.floor(Math.random() * mediumLength)
+        ],
+        middle:
+          BACKGROUND_GRADIENTS.medium[Math.floor(Math.random() * mediumLength)],
+        bottom:
+          BACKGROUND_GRADIENTS.pale[Math.floor(Math.random() * paleLength)],
+      };
+    } else if (timePeriod === "evening") {
+      gradientColors = {
+        top: BACKGROUND_GRADIENTS.dark[Math.floor(Math.random() * darkLength)],
+        middle:
+          BACKGROUND_GRADIENTS.medium[Math.floor(Math.random() * mediumLength)],
+        bottom:
+          BACKGROUND_GRADIENTS.pale[Math.floor(Math.random() * paleLength)],
+      };
+    } else {
+      gradientColors = {
+        top: BACKGROUND_GRADIENTS.dark[Math.floor(Math.random() * darkLength)],
+        middle:
+          BACKGROUND_GRADIENTS.medium[Math.floor(Math.random() * mediumLength)],
+        bottom:
+          BACKGROUND_GRADIENTS.medium[Math.floor(Math.random() * mediumLength)],
+      };
+    }
 
     this.transitionBackground(
       gradientColors.top,

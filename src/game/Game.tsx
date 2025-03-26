@@ -104,6 +104,9 @@ const Game: React.FC = () => {
     const scene = new Scene();
     const camera = new Camera();
 
+    // Update background color
+    scene.setUpdateBackgroundInterval();
+
     // Initialize player controller with the camera
     const newPlayerController = new PlayerController(camera);
     setPlayerController(newPlayerController);
@@ -161,12 +164,6 @@ const Game: React.FC = () => {
 
       // Update camera position state on each frame
       setCameraPosition(camera.getPerspectivePosition());
-
-      // Update background color every 5 minutes
-      if (time - lastBackgroundUpdateTime > BACKGROUND_UPDATE_INTERVAL) {
-        scene.updateBackgroundForTime();
-        lastBackgroundUpdateTime = time;
-      }
 
       // Update npc states periodically (for minimap and any other UI that needs it)
       if (time % 100 < 16) {

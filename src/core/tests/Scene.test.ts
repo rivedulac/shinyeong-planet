@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { Scene } from "../Scene";
 import * as THREE from "three";
+import { getDaytimePeriod, BACKGROUND_GRADIENTS } from "../../config/constants";
 
 const createMockMesh = () => ({
   position: {
@@ -106,6 +107,12 @@ describe("Scene", () => {
       testContainer,
       mockRenderer as unknown as THREE.WebGLRenderer
     );
+
+    // Reset all mocks before each test
+    vi.clearAllMocks();
+
+    // Mock the transitionBackground method
+    scene.transitionBackground = vi.fn();
   });
 
   afterEach(() => {
@@ -254,13 +261,26 @@ describe("Scene", () => {
     expect(scene.getHeight()).toBe(600);
   });
 
-  it("should update background based on time of day", () => {
-    // Mock the transitionBackground method to avoid calling it
-    vi.spyOn(scene as any, "transitionBackground").mockImplementation(() => {});
+  describe("updateBackgroundForTime", () => {
+    it("should use different random colors from the gradient arrays", () => {
+      // Mock Math.random to return different values
+      const mockRandom = vi.spyOn(Math, "random");
+      mockRandom
+        .mockReturnValueOnce(0) // First call returns first color
+        .mockReturnValueOnce(0.5) // Second call returns middle color
+        .mockReturnValueOnce(0.9); // Third call returns last color
 
-    scene.updateBackgroundForTime();
+      vi.mock("src/config/constants", () => ({
+        getDaytimePeriod: vi.fn().mockReturnValue("morning"),
+      }));
 
-    // Test passes if no errors are thrown
-    expect(true).toBe(true);
+      scene.updateBackgroundForTime();
+
+      // Verify that Math.random was called for each gradient
+      expect(mockRandom).toHaveBeenCalledTimes(3);
+
+      // Clean up
+      mockRandom.mockRestore();
+    });
   });
 });
