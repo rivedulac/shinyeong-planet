@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { INpc } from "./interfaces/INpc";
 import { createBillboardMesh } from "./Billboard";
 import { createFlagMesh } from "./Flag";
 import { createPersonMesh } from "./Person";
@@ -13,10 +12,10 @@ import { StaticModel } from "./StaticModel";
 import { models } from "../../../public/assets";
 
 export class NpcManager {
-  private npcs: Map<string, INpc> = new Map();
+  private npcs: Map<string, StaticModel> = new Map();
   private scene: THREE.Scene;
-  private interactingNpc: INpc | null = null;
-  private onStartConversation: ((npc: INpc) => void) | null = null;
+  private interactingNpc: StaticModel | null = null;
+  private onStartConversation: ((npc: StaticModel) => void) | null = null;
   private onEndConversation: (() => void) | null = null;
 
   /**
@@ -155,7 +154,7 @@ export class NpcManager {
    * Add an NPC to the game
    * @param npc The NPC to add
    */
-  public addNpc(npc: INpc): void {
+  public addNpc(npc: StaticModel): void {
     const id = npc.getId();
 
     // Add to our internal map
@@ -184,18 +183,18 @@ export class NpcManager {
    * Get an NPC by ID
    * @param id The ID of the NPC to get
    */
-  public getNpc(id: string): INpc | undefined {
+  public getNpc(id: string): StaticModel | undefined {
     return this.npcs.get(id);
   }
 
   /**
    * Get all NPCs
    */
-  public getAllNpcs(): INpc[] {
+  public getAllNpcs(): StaticModel[] {
     return Array.from(this.npcs.values());
   }
 
-  public getInteractingNpc(): INpc | null {
+  public getInteractingNpc(): StaticModel | null {
     return this.interactingNpc;
   }
 
@@ -210,8 +209,8 @@ export class NpcManager {
   public getNearbyNpcs(
     position: THREE.Vector3,
     maxDistance: number = NEARBY_DISTANCE
-  ): INpc[] {
-    const nearbyNpcs: INpc[] = [];
+  ): StaticModel[] {
+    const nearbyNpcs: StaticModel[] = [];
 
     // Calculate squared max distance for more efficient comparison
     const maxDistanceSquared = maxDistance * maxDistance;
@@ -239,7 +238,7 @@ export class NpcManager {
    * Set callback for when player starts conversation with an NPC
    * @param callback The callback function to call when starting a conversation
    */
-  public setOnStartConversation(callback: (npc: INpc) => void): void {
+  public setOnStartConversation(callback: (npc: StaticModel) => void): void {
     this.onStartConversation = callback;
   }
 
@@ -261,7 +260,7 @@ export class NpcManager {
     const nearbyNpcs = this.getNearbyNpcs(position);
 
     // Find the closest NPC that player can interact with
-    let closestNpc: INpc | null = null;
+    let closestNpc: StaticModel | null = null;
     let closestDistance = Infinity;
 
     for (const npc of nearbyNpcs) {
@@ -301,17 +300,6 @@ export class NpcManager {
 
       this.interactingNpc = null;
     }
-  }
-
-  /**
-   * Update all NPCs
-   * @param deltaTime Time elapsed since the last update in seconds
-   */
-  public update(deltaTime: number): void {
-    // Update each NPC
-    this.npcs.forEach((npc) => {
-      npc.update?.(deltaTime);
-    });
   }
 
   /**

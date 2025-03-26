@@ -4,7 +4,6 @@ import { StaticModel } from "../StaticModel";
 import * as THREE from "three";
 import {
   INTERACTION_DISTANCE,
-  DEFAULT_NPC_RADIUS,
   DEFAULT_PERSON_CONVERSTAION,
   PLAYER_RADIUS,
 } from "@/config/constants";

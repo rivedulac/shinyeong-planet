@@ -1,4 +1,4 @@
-import { INpc } from "./INpc";
+import { StaticModel } from "../StaticModel";
 
 /**
  * Interface for NPC conversation data
@@ -19,7 +19,9 @@ export interface IConversation {
  * @param npc The NPC to get conversation data for
  * @returns Conversation data for the NPC
  */
-export function getConversationForNpc(npc: INpc): IConversation | undefined {
+export function getConversationForNpc(
+  npc: StaticModel
+): IConversation | undefined {
   // Try to get custom conversation data from the NPC
   return npc.getConversation?.();
 }

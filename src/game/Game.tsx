@@ -9,17 +9,17 @@ import { Scene } from "../core/Scene";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { NpcManager } from "./npcs/NpcManager";
 import { getConversationForNpc } from "./npcs/interfaces/IConversation";
-import { INpc } from "./npcs/interfaces/INpc";
 import ControlsInfoDisplay from "../ui/informationDisplay/ControlsInfoDisplay";
 import { Minimap } from "../ui/map";
 import ToggleButton from "../ui/common/ToggleButton";
 import * as THREE from "three";
-import { BACKGROUND_UPDATE_INTERVAL, CORNER_MARGIN } from "@/config/constants";
+import { CORNER_MARGIN } from "@/config/constants";
 import VirtualPad from "@/ui/virtualControls/VirtualPad";
 import MenuBar from "@/ui/menuBar/MenuBar";
 import { useTranslation } from "react-i18next";
 import { useGameConversation } from "../hooks/useGameConversation";
 import { useGameUiState } from "../hooks/useGameUiState";
+import { StaticModel } from "./npcs/StaticModel";
 
 // Use a consistent key for the player name in localStorage
 const PLAYER_NAME_KEY = "shinyeongPlanet.playerName";
@@ -66,8 +66,6 @@ const Game: React.FC = () => {
     position: { x: 0, y: 0, z: 0 },
     rotation: { pitch: 0, yaw: 0, roll: 0 },
   });
-
-  let lastBackgroundUpdateTime = 0;
 
   // Handlers for virtual controls
   const handleVirtualControlStart = (key: string) => {
@@ -123,7 +121,7 @@ const Game: React.FC = () => {
     setNpcState(npcsData);
 
     // Set up conversation callbacks
-    npcManager.setOnStartConversation((npc: INpc) => {
+    npcManager.setOnStartConversation((npc: StaticModel) => {
       // Get conversation data for this NPC
       const conversation = getConversationForNpc(npc);
       if (conversation) {
@@ -153,9 +151,6 @@ const Game: React.FC = () => {
 
       // Update player controller with deltaTime
       newPlayerController.update(deltaTime);
-
-      // Update NPCs
-      npcManager.update(deltaTime);
 
       // Check for NPC interactions
       npcManager.checkInteractions(

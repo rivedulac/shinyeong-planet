@@ -1,5 +1,5 @@
 import { PLAYER_RADIUS, INTERACTION_DISTANCE } from "@/config/constants";
-import { INpc } from "./interfaces/INpc";
+import { StaticModel } from "./StaticModel";
 import * as THREE from "three";
 
 export class CollisionUtils {
@@ -17,7 +17,7 @@ export class CollisionUtils {
    * Check if two NPCs are colliding
    * @returns null if no collision, or collision data if colliding
    */
-  static checkCollision(player: THREE.Object3D, npc: INpc): boolean {
+  static checkCollision(player: THREE.Object3D, npc: StaticModel): boolean {
     // Ensure both NPCs have collision radii defined
     if (!npc.getCollisionRadius()) {
       return false;

@@ -3,49 +3,12 @@ import { NpcManager } from "../NpcManager";
 import { StaticModel } from "../StaticModel";
 import * as THREE from "three";
 import { INTERACTION_DISTANCE } from "@/config/constants";
-import { PLANET_CENTER, PLANET_RADIUS } from "@/config/constants";
 
 // Mock Three.js Scene
 const mockScene = {
   add: vi.fn(),
   remove: vi.fn(),
 } as unknown as THREE.Scene;
-
-// Helper function to check positions (now using degrees and accounting for offsets)
-const checkNpcPosition = (
-  npc: StaticModel,
-  expectedLat: number,
-  expectedLon: number,
-  surfaceOffset: number = 0
-) => {
-  const position = npc.getMesh().position;
-  const latRad = (expectedLat * Math.PI) / 180;
-  const lonRad = (expectedLon * Math.PI) / 180;
-
-  // Convert to Cartesian coordinates
-  const phi = Math.PI / 2 - latRad;
-  const theta = lonRad;
-
-  // Determine the surface offset based on NPC type
-  const radius = PLANET_RADIUS + surfaceOffset;
-
-  const expectedX = radius * Math.sin(phi) * Math.cos(theta);
-  const expectedY = radius * Math.cos(phi);
-  const expectedZ = radius * Math.sin(phi) * Math.sin(theta);
-
-  // Allow for some floating point imprecision
-  const tolerance = 0.001;
-
-  expect(Math.abs(position.x - (PLANET_CENTER.x + expectedX))).toBeLessThan(
-    tolerance
-  );
-  expect(Math.abs(position.y - (PLANET_CENTER.y + expectedY))).toBeLessThan(
-    tolerance
-  );
-  expect(Math.abs(position.z - (PLANET_CENTER.z + expectedZ))).toBeLessThan(
-    tolerance
-  );
-};
 
 describe("NpcManager", () => {
   let npcManager: NpcManager;

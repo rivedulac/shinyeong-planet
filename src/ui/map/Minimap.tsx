@@ -10,17 +10,12 @@ import {
   MINI_MAP_RADIUS,
   MINI_MAP_CENTER_X,
   MINI_MAP_CENTER_Y,
-  MINI_MAP_PERSON_COLOR,
-  MINI_MAP_BILLBOARD_COLOR,
   MINI_MAP_DEFAULT_COLOR,
-  MINI_MAP_FLAG_COLOR,
   MINI_MAP_GRID_COLOR,
   MINI_MAP_PLAYER_COLOR,
   MINI_MAP_VISIBLE_DISTANCE_THRESHOLD,
   PLANET_CENTER,
-  MINI_MAP_NPC_SIZE_MEDIUM,
   MINI_MAP_NPC_SIZE_SMALL,
-  MINI_MAP_NPC_SIZE_LARGE,
 } from "../../config/constants";
 import { useTranslation } from "react-i18next";
 
@@ -29,7 +24,6 @@ interface MinimapProps {
   playerRotation?: number;
   playerLookDirection?: THREE.Vector3;
   npcs?: Array<{
-    type: string;
     position: THREE.Vector3;
     id: string;
   }>;
@@ -58,7 +52,6 @@ const Minimap: React.FC<MinimapProps> = ({
   const [projectedNpcs, setProjectedNpcs] = useState<
     Array<{
       id: string;
-      type: string;
       x: number;
       y: number;
     }>
@@ -172,7 +165,6 @@ const Minimap: React.FC<MinimapProps> = ({
 
           return {
             id: npc.id,
-            type: npc.type,
             x: MINI_MAP_CENTER_X + projection.x,
             y: MINI_MAP_CENTER_Y + projection.y,
           };
