@@ -150,8 +150,11 @@ const Game: React.FC = () => {
       const deltaTime = lastTime === 0 ? 0 : (time - lastTime) / 1000;
       lastTime = time;
 
-      // Update player controller with deltaTime
+      // Update player controller
       newPlayerController.update(deltaTime);
+
+      // Update NPCs (this will handle all animated models)
+      npcManager.update(deltaTime);
 
       // Check for NPC interactions
       npcManager.checkInteractions(

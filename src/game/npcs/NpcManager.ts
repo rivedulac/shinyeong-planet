@@ -5,6 +5,7 @@ import { NEARBY_DISTANCE, WELCOME_CONVERSTAION } from "@/config/constants";
 import { CollisionUtils } from "./CollisionUtils";
 import { StaticModel } from "./StaticModel";
 import { models } from "../../../public/assets";
+import { AnimatedModel } from "./AnimatedModel";
 
 export class NpcManager {
   private npcs: Map<string, StaticModel> = new Map();
@@ -126,6 +127,35 @@ export class NpcManager {
     astronaut.setScale(2);
     astronaut.getMesh().rotation.y = -Math.PI / 4;
     this.addNpc(astronaut);
+
+    // Add animated cow
+    const cow = new AnimatedModel(
+      "friendly-cow",
+      "Bessie",
+      true,
+      -1,
+      3,
+      undefined,
+      models.cow
+    );
+
+    cow.setPositionOnPlanet(30, 30);
+    cow.setScale(2);
+    cow.setInitialAnimation("Attack_Headbutt");
+
+    // Add cow conversation
+    const cowConversation = {
+      title: "Friendly Cow",
+      icon: "🐄",
+      messages: [
+        "Moooo! Welcome to my meadow!",
+        "I love walking around this planet!",
+        "The view from up here is amazing!",
+      ],
+    };
+    cow.setConversation(cowConversation);
+
+    this.addNpc(cow);
   }
 
   /**
@@ -294,5 +324,18 @@ export class NpcManager {
 
     // Clear the map
     this.npcs.clear();
+  }
+
+  /**
+   * Update method to be called in the animation loop
+   * @param deltaTime Time elapsed since last frame
+   */
+  public update(deltaTime: number): void {
+    // Update all animated NPCs
+    this.npcs.forEach((npc) => {
+      if (npc instanceof AnimatedModel) {
+        npc.update(deltaTime);
+      }
+    });
   }
 }

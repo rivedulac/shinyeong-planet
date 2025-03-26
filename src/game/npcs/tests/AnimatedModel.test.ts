@@ -27,8 +27,8 @@ vi.mock("../../../utils/modelLoader", () => {
     createAnimationMixer: vi.fn().mockImplementation(() => {
       return new THREE.AnimationMixer(new THREE.Object3D());
     }),
-    playAnimation: vi.fn().mockImplementation(() => {
-      // Mock animation action
+    playAnimation: vi.fn().mockImplementation((_1, _2, options) => {
+      // Enhanced mock animation action
       return {
         reset: vi.fn().mockReturnThis(),
         fadeIn: vi.fn().mockReturnThis(),
@@ -37,6 +37,7 @@ vi.mock("../../../utils/modelLoader", () => {
         fadeOut: vi.fn(),
         paused: false,
         clampWhenFinished: false,
+        getClip: vi.fn().mockReturnValue({ name: options.name || "test" }), // Add getClip method
         setLoop: vi.fn().mockReturnThis(),
         setEffectiveTimeScale: vi.fn().mockReturnThis(),
         setEffectiveWeight: vi.fn().mockReturnThis(),
@@ -179,6 +180,94 @@ describe("AnimatedModel", () => {
       // Check for existing and non-existing animations
       expect(animatedModel.hasAnimation("idle")).toBe(true);
       expect(animatedModel.hasAnimation("run")).toBe(false);
+    });
+  });
+
+  describe("Initial Animation", () => {
+    it("should set and store initial animation name", () => {
+      const animationName = "Attack_Headbutt";
+      animatedModel.setInitialAnimation(animationName);
+
+      // We need to access the private property for testing
+      // @ts-ignore - accessing private property for testing
+      expect(animatedModel["initialAnimation"]).toBe(animationName);
+    });
+
+    it("should play initial animation when model loads", async () => {
+      const animationName = "Attack_Headbutt";
+      animatedModel.setInitialAnimation(animationName);
+
+      // Manually trigger model loading
+      // @ts-ignore - accessing protected method for testing
+      await animatedModel.loadAnimatedModel("test/path.glb");
+
+      // Verify that playAnimation was called with the initial animation name
+      expect(modelLoader.playAnimation).toHaveBeenCalled();
+    });
+
+    it("should fall back to default animation if initial animation not found", async () => {
+      animatedModel.setInitialAnimation("nonexistent_animation");
+
+      // Manually trigger model loading
+      // @ts-ignore - accessing protected method for testing
+      await animatedModel.loadAnimatedModel("test/path.glb");
+
+      // Should play the first available animation
+      expect(modelLoader.playAnimation).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.objectContaining({
+          name: "idle", // First animation in our mock
+          loop: THREE.LoopOnce,
+        })
+      );
+    });
+  });
+
+  describe("Model Loading", () => {
+    it("should clear existing mesh children before adding new model", async () => {
+      // Add some dummy children to the mesh
+      const mesh = animatedModel.getMesh();
+      const dummyChild1 = new THREE.Object3D();
+      const dummyChild2 = new THREE.Object3D();
+      mesh.add(dummyChild1, dummyChild2);
+
+      // Verify children were added
+      expect(mesh.children.length).toBe(3);
+
+      // Trigger model loading
+      // @ts-ignore - accessing protected method for testing
+      await animatedModel.loadAnimatedModel("test/path.glb");
+
+      // Verify only the new model scene is present
+      expect(mesh.children.length).toBe(1);
+      // The only child should be the mock scene from our modelLoader mock
+      expect(mesh.children[0]).toBeInstanceOf(THREE.Group);
+    });
+
+    it("should apply scale to the loaded model", async () => {
+      const testScale = 2;
+      animatedModel.setScale(testScale);
+
+      // Trigger model loading
+      // @ts-ignore - accessing protected method for testing
+      await animatedModel.loadAnimatedModel("test/path.glb");
+
+      // Get the loaded model (first child of the mesh)
+      const modelScene = animatedModel.getMesh().children[0];
+      expect(modelScene.scale.x).toBe(testScale);
+      expect(modelScene.scale.y).toBe(testScale);
+      expect(modelScene.scale.z).toBe(testScale);
+    });
+  });
+
+  describe("Animation State", () => {
+    it("should return current animation name", () => {
+      const animations = [new THREE.AnimationClip("test", 1, [])];
+      animatedModel.setAnimations(animations);
+
+      animatedModel.playAnimation("test");
+      expect(animatedModel.getCurrentAnimationName()).toBe("test");
     });
   });
 });

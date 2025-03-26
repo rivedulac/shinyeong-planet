@@ -24,10 +24,10 @@ describe("NpcManager", () => {
       const npcs = npcManager.getAllNpcs();
 
       // Check if all default NPCs were created
-      expect(npcs.length).toBe(8); // Total number of default NPCs
+      expect(npcs.length).toBe(9); // Total number of default NPCs
 
       // Verify all NPCs were added to the scene
-      expect(mockScene.add).toHaveBeenCalledTimes(8);
+      expect(mockScene.add).toHaveBeenCalledTimes(9);
     });
   });
 

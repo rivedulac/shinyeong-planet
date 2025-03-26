@@ -16,6 +16,7 @@ export class AnimatedModel extends StaticModel {
   private animations: THREE.AnimationClip[] = [];
   private currentAnimation: THREE.AnimationAction | null = null;
   private clock: THREE.Clock;
+  private initialAnimation: string | null = null;
 
   /**
    * Create a new AnimatedModel
@@ -56,13 +57,25 @@ export class AnimatedModel extends StaticModel {
   }
 
   /**
+   * Set the initial animation to play after model loads
+   * @param animationName Name of the animation to play
+   */
+  public setInitialAnimation(animationName: string): void {
+    this.initialAnimation = animationName;
+  }
+
+  /**
    * Load the animated model
    * @param modelPath Path to the model file
    */
-  private async loadAnimatedModel(modelPath: string): Promise<void> {
+  protected async loadAnimatedModel(modelPath: string): Promise<void> {
     try {
-      // Load the model
       const result = await loadModel(modelPath);
+
+      // Clear any existing children from the mesh
+      while (this.getMesh().children.length > 0) {
+        this.getMesh().remove(this.getMesh().children[0]);
+      }
 
       // Add the model to the mesh
       this.getMesh().add(result.scene);
@@ -73,6 +86,14 @@ export class AnimatedModel extends StaticModel {
       // Set up animations if available
       if (result.animations && result.animations.length > 0) {
         this.setAnimations(result.animations);
+
+        // Play initial animation if specified, otherwise play default
+        if (this.initialAnimation && this.hasAnimation(this.initialAnimation)) {
+          this.playAnimation(this.initialAnimation, THREE.LoopRepeat, 0.5);
+        } else {
+          this.playDefaultAnimation();
+        }
+
         console.log(
           `${result.animations.length} animations loaded for ${this.getName()}`
         );
@@ -222,5 +243,22 @@ export class AnimatedModel extends StaticModel {
    */
   public getCurrentAnimation(): THREE.AnimationAction | null {
     return this.currentAnimation;
+  }
+
+  /**
+   * Play the default animation (usually the first one)
+   * Can be overridden by child classes to specify a different default animation
+   */
+  public playDefaultAnimation(): void {
+    if (this.animations.length > 0) {
+      this.playAnimation(this.animations[0].name, THREE.LoopOnce, 0.5);
+    }
+  }
+
+  /**
+   * Get the name of the currently playing animation
+   */
+  public getCurrentAnimationName(): string | null {
+    return this.currentAnimation?.getClip().name || null;
   }
 }
