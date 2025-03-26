@@ -68,12 +68,12 @@ const Game: React.FC = () => {
   });
 
   // Handlers for virtual controls
-  const handleVirtualControlStart = (key: string) => {
-    playerController?.triggerKeyDown(key);
+  const handleVirtualControlPressed = (movement: string) => {
+    playerController?.triggerMovement(movement, true);
   };
 
-  const handleVirtualControlEnd = (key: string) => {
-    playerController?.triggerKeyUp(key);
+  const handleVirtualControlReleased = (movement: string) => {
+    playerController?.triggerMovement(movement, false);
   };
 
   const handleNameSubmit = (name: string) => {
@@ -261,8 +261,8 @@ const Game: React.FC = () => {
       )}
 
       <VirtualPad
-        onMoveStart={handleVirtualControlStart}
-        onMoveEnd={handleVirtualControlEnd}
+        onMoveStart={handleVirtualControlPressed}
+        onMoveEnd={handleVirtualControlReleased}
       />
     </>
   );

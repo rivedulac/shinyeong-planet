@@ -1,4 +1,3 @@
-// src/ui/tests/VirtualControlPad.test.tsx
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import VirtualControlPad, {
@@ -83,10 +82,10 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: moveX, clientY: moveY });
 
     // Should trigger the 'w' key (forward movement)
-    expect(mockMoveStart).toHaveBeenCalledWith("w");
+    expect(mockMoveStart).toHaveBeenCalledWith("forward");
 
     // Should not trigger look up (not beyond LOOK_THRESHOLD)
-    expect(mockMoveStart).not.toHaveBeenCalledWith("arrowup");
+    expect(mockMoveStart).not.toHaveBeenCalledWith("up");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -121,10 +120,10 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: 150, clientY: lookY });
 
     // Should trigger the 'arrowup' key (look up)
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowup");
+    expect(mockMoveStart).toHaveBeenCalledWith("up");
 
     // Also should trigger forward movement
-    expect(mockMoveStart).toHaveBeenCalledWith("w");
+    expect(mockMoveStart).toHaveBeenCalledWith("forward");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -160,10 +159,10 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: moveX, clientY: moveY });
 
     // Should trigger the 's' key (backward movement)
-    expect(mockMoveStart).toHaveBeenCalledWith("s");
+    expect(mockMoveStart).toHaveBeenCalledWith("backward");
 
     // Should not trigger look down (not beyond LOOK_THRESHOLD)
-    expect(mockMoveStart).not.toHaveBeenCalledWith("arrowdown");
+    expect(mockMoveStart).not.toHaveBeenCalledWith("down");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -198,10 +197,10 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: 150, clientY: lookY });
 
     // Should trigger the 'arrowdown' key (look down)
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowdown");
+    expect(mockMoveStart).toHaveBeenCalledWith("down");
 
     // Also should trigger backward movement
-    expect(mockMoveStart).toHaveBeenCalledWith("s");
+    expect(mockMoveStart).toHaveBeenCalledWith("backward");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -236,11 +235,11 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: rotateX, clientY: 100 });
 
     // Should trigger the 'arrowleft' key
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowleft");
+    expect(mockMoveStart).toHaveBeenCalledWith("left");
 
     // Should NOT trigger forward/backward when beyond MOVE_THRESHOLD
-    expect(mockMoveStart).not.toHaveBeenCalledWith("w");
-    expect(mockMoveStart).not.toHaveBeenCalledWith("s");
+    expect(mockMoveStart).not.toHaveBeenCalledWith("forward");
+    expect(mockMoveStart).not.toHaveBeenCalledWith("backward");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -275,11 +274,11 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: rotateX, clientY: 100 });
 
     // Should trigger the 'arrowright' key
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowright");
+    expect(mockMoveStart).toHaveBeenCalledWith("right");
 
     // Should NOT trigger forward/backward when beyond MOVE_THRESHOLD
-    expect(mockMoveStart).not.toHaveBeenCalledWith("w");
-    expect(mockMoveStart).not.toHaveBeenCalledWith("s");
+    expect(mockMoveStart).not.toHaveBeenCalledWith("forward");
+    expect(mockMoveStart).not.toHaveBeenCalledWith("backward");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -318,8 +317,8 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: moveX, clientY: moveY });
 
     // Since X is within MOVE_THRESHOLD and ROTATE_THRESHOLD range, only right rotation should happen
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowright");
-    expect(mockMoveStart).not.toHaveBeenCalledWith("w");
+    expect(mockMoveStart).toHaveBeenCalledWith("right");
+    expect(mockMoveStart).not.toHaveBeenCalledWith("forward");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -348,7 +347,7 @@ describe("VirtualControlPad", () => {
 
     // Position directly above center (should trigger forward)
     fireEvent.mouseDown(controlPad, { clientX: 150, clientY: 40 });
-    expect(mockMoveStart).toHaveBeenCalledWith("w");
+    expect(mockMoveStart).toHaveBeenCalledWith("forward");
 
     // Clear mocks to check just the end events
     mockMoveStart.mockClear();
@@ -357,7 +356,7 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseUp(controlPad);
 
     // Should end the active direction
-    expect(mockMoveEnd).toHaveBeenCalledWith("w");
+    expect(mockMoveEnd).toHaveBeenCalledWith("forward");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -386,7 +385,7 @@ describe("VirtualControlPad", () => {
 
     // Position far left (should trigger left rotation)
     fireEvent.mouseDown(controlPad, { clientX: 50, clientY: 100 });
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowleft");
+    expect(mockMoveStart).toHaveBeenCalledWith("left");
 
     // Clear mocks to check just the end events
     mockMoveStart.mockClear();
@@ -395,7 +394,7 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseLeave(controlPad);
 
     // Should end the active direction
-    expect(mockMoveEnd).toHaveBeenCalledWith("arrowleft");
+    expect(mockMoveEnd).toHaveBeenCalledWith("left");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -433,7 +432,7 @@ describe("VirtualControlPad", () => {
 
     // Should trigger right rotation (X position far right)
     // Should also trigger forward (Y position in upper half)
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowright");
+    expect(mockMoveStart).toHaveBeenCalledWith("right");
 
     // Clear mocks
     mockMoveStart.mockClear();
@@ -442,7 +441,7 @@ describe("VirtualControlPad", () => {
     fireEvent.touchEnd(controlPad);
 
     // Should end the active direction
-    expect(mockMoveEnd).toHaveBeenCalledWith("arrowright");
+    expect(mockMoveEnd).toHaveBeenCalledWith("right");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;
@@ -473,7 +472,7 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseDown(controlPad, { clientX: 50, clientY: 150 });
 
     // Should trigger 'arrowleft' only, since X is too far left for backward
-    expect(mockMoveStart).toHaveBeenCalledWith("arrowleft");
+    expect(mockMoveStart).toHaveBeenCalledWith("left");
 
     // Clear mocks
     mockMoveStart.mockClear();
@@ -483,10 +482,10 @@ describe("VirtualControlPad", () => {
     fireEvent.mouseMove(controlPad, { clientX: 150, clientY: 50 });
 
     // Should end the previous direction
-    expect(mockMoveEnd).toHaveBeenCalledWith("arrowleft");
+    expect(mockMoveEnd).toHaveBeenCalledWith("left");
 
     // And start the new direction
-    expect(mockMoveStart).toHaveBeenCalledWith("w");
+    expect(mockMoveStart).toHaveBeenCalledWith("forward");
 
     // Restore original method
     controlPad.getBoundingClientRect = originalGetBoundingClientRect;

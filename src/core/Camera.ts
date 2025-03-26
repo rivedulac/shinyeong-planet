@@ -154,6 +154,7 @@ export class Camera {
    * Moves the camera sideways (strafing) on the planet surface
    * @param distance Distance to strafe (positive for right, negative for left)
    */
+  // TODO: Deprecate this method
   public strafeOnPlanet(distance: number): void {
     // Skip if distance is effectively zero
     if (Math.abs(distance) < EPSILON) return;

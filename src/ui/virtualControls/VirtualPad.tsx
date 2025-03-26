@@ -4,8 +4,8 @@ import React, { useReducer } from "react";
 import { virtualPadReducer, initialVirtualPadState } from "./VirtualPadReducer";
 
 interface VirtualControlPadProps {
-  onMoveStart: (key: string) => void;
-  onMoveEnd: (key: string) => void;
+  onMoveStart: (movement: string) => void;
+  onMoveEnd: (movement: string) => void;
 }
 
 export const MOVE_THRESHOLD = 0.6;
@@ -26,25 +26,25 @@ const VirtualControlPad: React.FC<VirtualControlPadProps> = ({
     const directions: string[] = [];
 
     if (relY < -LOOK_THRESHOLD) {
-      directions.push("arrowup");
+      directions.push("up");
     } else if (relY > LOOK_THRESHOLD) {
-      directions.push("arrowdown");
+      directions.push("down");
     }
 
     // Forward/backward movement
     if (relX > -MOVE_THRESHOLD && relX < MOVE_THRESHOLD) {
       if (relY < 0) {
-        directions.push("w"); // Forward
+        directions.push("forward"); // Forward
       } else if (relY > 0) {
-        directions.push("s"); // Backward
+        directions.push("backward"); // Backward
       }
     }
 
     // Left/right rotation
     if (relX < -ROTATE_THRESHOLD) {
-      directions.push("arrowleft"); // Left
+      directions.push("left"); // Left
     } else if (relX > ROTATE_THRESHOLD) {
-      directions.push("arrowright"); // Right
+      directions.push("right"); // Right
     }
 
     return directions;

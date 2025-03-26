@@ -9,175 +9,114 @@ export class PlayerController {
   private handleKeyDown: (event: KeyboardEvent) => void = () => {};
   private handleKeyUp: (event: KeyboardEvent) => void = () => {};
   private movementSpeed = 10;
-  private strafeSpeed = 8; // Slightly slower than forward/backward movement
   private rotationSpeed = 1;
   private pitchSpeed = 0.5;
   private fovAdjustSpeed = 20;
   private npcManager: NpcManager | null = null;
 
-  // Input state
-  private keys: {
-    w: boolean;
-    s: boolean;
-    a: boolean;
-    d: boolean;
-    arrowleft: boolean;
-    arrowright: boolean;
-    arrowup: boolean;
-    arrowdown: boolean;
+  private movement: {
+    forward: boolean;
+    backward: boolean;
+    left: boolean;
+    right: boolean;
+    up: boolean;
+    down: boolean;
     plus: boolean;
     minus: boolean;
   };
 
-  // Virtual input methods for external components to trigger
-  public triggerKeyDown(key: string): void {
-    this.updateKeyState(key.toLowerCase(), true);
-  }
-
-  public triggerKeyUp(key: string): void {
-    this.updateKeyState(key.toLowerCase(), false);
+  public triggerMovement(movement: string, isPressed: boolean): void {
+    switch (movement) {
+      case "forward":
+        this.movement.forward = isPressed;
+        break;
+      case "backward":
+        this.movement.backward = isPressed;
+        break;
+      case "left":
+        this.movement.left = isPressed;
+        break;
+      case "right":
+        this.movement.right = isPressed;
+        break;
+      case "up":
+        this.movement.up = isPressed;
+        break;
+      case "down":
+        this.movement.down = isPressed;
+        break;
+      case "plus":
+        this.movement.plus = isPressed;
+        break;
+      case "minus":
+        this.movement.minus = isPressed;
+        break;
+    }
   }
 
   constructor(camera: Camera) {
     this.camera = camera;
     this.perspectiveCamera = camera.getPerspectiveCamera();
 
-    this.keys = {
-      w: false,
-      s: false,
-      a: false,
-      d: false,
-      arrowleft: false,
-      arrowright: false,
-      arrowup: false,
-      arrowdown: false,
+    this.movement = {
+      forward: false,
+      backward: false,
+      left: false,
+      right: false,
+      up: false,
+      down: false,
       plus: false,
       minus: false,
     };
-
-    // Set up event listeners for keyboard input
-    this.setupInputListeners();
   }
 
   public setNpcManager(npcManager: NpcManager): void {
     this.npcManager = npcManager;
   }
 
-  // Helper method to update key state (used by both keyboard and virtual inputs)
-  private updateKeyState(key: string, isPressed: boolean): void {
-    switch (key) {
-      case "w":
-      case "ㅈ":
-        this.keys.w = isPressed;
-        break;
-      case "s":
-      case "ㄴ":
-        this.keys.s = isPressed;
-        break;
-      case "a":
-      case "ㅁ":
-        this.keys.a = isPressed;
-        break;
-      case "d":
-      case "ㅇ":
-        this.keys.d = isPressed;
-        break;
-      case "arrowleft":
-        this.keys.arrowleft = isPressed;
-        break;
-      case "arrowright":
-        this.keys.arrowright = isPressed;
-        break;
-      case "arrowup":
-        this.keys.arrowup = isPressed;
-        break;
-      case "arrowdown":
-        this.keys.arrowdown = isPressed;
-        break;
-      case "+":
-      case "=": // Same key on most keyboards
-        this.keys.plus = isPressed;
-        break;
-      case "-":
-      case "_": // Same key on most keyboards
-        this.keys.minus = isPressed;
-        break;
-    }
-  }
-
-  private setupInputListeners(): void {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      this.updateKeyState(event.key.toLowerCase(), true);
-    };
-
-    const handleKeyUp = (event: KeyboardEvent) => {
-      this.updateKeyState(event.key.toLowerCase(), false);
-    };
-
-    // Add event listeners
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    // Store the functions to be able to remove them later
-    this.handleKeyDown = handleKeyDown;
-    this.handleKeyUp = handleKeyUp;
-  }
-
   public update(deltaTime: number = 1): void {
     let movementDistance = 0;
-    let strafeDistance = 0;
 
     // Apply movement based on keys pressed
-    if (this.keys.w) {
+    if (this.movement.forward) {
       // Move forward
       movementDistance = this.movementSpeed * deltaTime;
     }
 
-    if (this.keys.s) {
+    if (this.movement.backward) {
       // Move backward
       movementDistance = -this.movementSpeed * deltaTime;
     }
 
-    // Apply strafe movement
-    if (this.keys.a) {
-      // Strafe left
-      strafeDistance = -this.strafeSpeed * deltaTime;
-    }
-
-    if (this.keys.d) {
-      // Strafe right
-      strafeDistance = this.strafeSpeed * deltaTime;
-    }
-
     // Apply left/right rotation (yaw)
-    if (this.keys.arrowleft) {
+    if (this.movement.left) {
       // Rotate left
       this.camera.rotateYaw(this.rotationSpeed * deltaTime);
     }
 
-    if (this.keys.arrowright) {
+    if (this.movement.right) {
       // Rotate right
       this.camera.rotateYaw(-this.rotationSpeed * deltaTime);
     }
 
     // Apply up/down rotation (pitch) - looking up and down
-    if (this.keys.arrowup) {
+    if (this.movement.up) {
       // Look up (positive angle to look up)
       this.camera.rotatePitch(this.pitchSpeed * deltaTime);
     }
 
-    if (this.keys.arrowdown) {
+    if (this.movement.down) {
       // Look down (negative angle to look down)
       this.camera.rotatePitch(-this.pitchSpeed * deltaTime);
     }
 
     // Handle FOV adjustments
-    if (this.keys.plus) {
+    if (this.movement.plus) {
       // Decrease FOV (zoom in)
       this.camera.adjustFOV(-this.fovAdjustSpeed * deltaTime);
     }
 
-    if (this.keys.minus) {
+    if (this.movement.minus) {
       // Increase FOV (zoom out)
       this.camera.adjustFOV(this.fovAdjustSpeed * deltaTime);
     }
@@ -188,11 +127,6 @@ export class PlayerController {
     // First move forward/backward
     if (movementDistance !== 0) {
       this.camera.moveOnPlanet(movementDistance);
-    }
-
-    // Then strafe
-    if (strafeDistance !== 0) {
-      this.camera.strafeOnPlanet(strafeDistance);
     }
 
     // Check for collisions after movement

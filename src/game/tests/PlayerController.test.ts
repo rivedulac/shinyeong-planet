@@ -43,8 +43,6 @@ class MockNpcManager extends NpcManager {
 describe("PlayerController", () => {
   let playerController: PlayerController;
   let camera: Camera;
-  let keydownHandler: (event: KeyboardEvent) => void;
-  let keyupHandler: (event: KeyboardEvent) => void;
   let npcManager: MockNpcManager;
 
   beforeEach(() => {
@@ -58,17 +56,6 @@ describe("PlayerController", () => {
     playerController = new PlayerController(camera);
     npcManager = new MockNpcManager([]);
     playerController.setNpcManager(npcManager);
-
-    // Extract the event handlers from the mock calls
-    const keydownCall = mockAddEventListener.mock.calls.find(
-      (call) => call[0] === "keydown"
-    );
-    const keyupCall = mockAddEventListener.mock.calls.find(
-      (call) => call[0] === "keyup"
-    );
-
-    if (keydownCall) keydownHandler = keydownCall[1];
-    if (keyupCall) keyupHandler = keyupCall[1];
   });
 
   afterEach(() => {
@@ -83,75 +70,6 @@ describe("PlayerController", () => {
       expect(position.y).toBe(0);
       expect(position.z).toBe(0);
     });
-
-    it("should set up input listeners on initialization", () => {
-      expect(mockAddEventListener).toHaveBeenCalledWith(
-        "keydown",
-        expect.any(Function)
-      );
-      expect(mockAddEventListener).toHaveBeenCalledWith(
-        "keyup",
-        expect.any(Function)
-      );
-    });
-  });
-
-  describe("Physical keyboard input", () => {
-    it("should move forward when W key is pressed", () => {
-      const moveSpy = vi.spyOn(camera, "moveOnPlanet");
-
-      // Simulate W key press
-      if (keydownHandler) {
-        keydownHandler(new KeyboardEvent("keydown", { key: "w" }));
-      } else {
-        throw new Error("Keydown handler not found");
-      }
-
-      // Update with a delta time of 1 second
-      playerController.update(1);
-
-      // Check that moveOnPlanet was called with a positive value (moving forward)
-      expect(moveSpy).toHaveBeenCalled();
-      const callValue = moveSpy.mock.calls[0][0];
-      expect(callValue).toBeGreaterThan(0);
-    });
-
-    it("should move backward when S key is pressed", () => {
-      const moveSpy = vi.spyOn(camera, "moveOnPlanet");
-
-      // Simulate S key press
-      if (keydownHandler) {
-        keydownHandler(new KeyboardEvent("keydown", { key: "s" }));
-      } else {
-        throw new Error("Keydown handler not found");
-      }
-
-      // Update with a delta time of 1 second
-      playerController.update(1);
-
-      // Check that moveOnPlanet was called with a negative value (moving backward)
-      expect(moveSpy).toHaveBeenCalled();
-      const callValue = moveSpy.mock.calls[0][0];
-      expect(callValue).toBeLessThan(0);
-    });
-
-    it("should stop moving when key is released", () => {
-      const moveSpy = vi.spyOn(camera, "moveOnPlanet");
-
-      // Simulate W key press and release
-      if (keydownHandler && keyupHandler) {
-        keydownHandler(new KeyboardEvent("keydown", { key: "w" }));
-        keyupHandler(new KeyboardEvent("keyup", { key: "w" }));
-      } else {
-        throw new Error("Key handlers not found");
-      }
-
-      // Update with a delta time of 1 second
-      playerController.update(1);
-
-      // Check that moveOnPlanet was not called since key was released
-      expect(moveSpy).not.toHaveBeenCalled();
-    });
   });
 
   describe("Virtual input methods", () => {
@@ -159,7 +77,7 @@ describe("PlayerController", () => {
       const moveSpy = vi.spyOn(camera, "moveOnPlanet");
 
       // Trigger a virtual W key press
-      playerController.triggerKeyDown("w");
+      playerController.triggerMovement("forward", true);
 
       // Update with a delta time of 1 second
       playerController.update(1);
@@ -174,8 +92,8 @@ describe("PlayerController", () => {
       const moveSpy = vi.spyOn(camera, "moveOnPlanet");
 
       // Trigger a virtual W key press and release
-      playerController.triggerKeyDown("w");
-      playerController.triggerKeyUp("w");
+      playerController.triggerMovement("forward", true);
+      playerController.triggerMovement("forward", false);
 
       // Update with a delta time of 1 second
       playerController.update(1);
@@ -188,7 +106,7 @@ describe("PlayerController", () => {
       const moveSpy = vi.spyOn(camera, "moveOnPlanet");
 
       // Trigger with uppercase W
-      playerController.triggerKeyDown("W");
+      playerController.triggerMovement("forward", true);
 
       // Update with a delta time of 1 second
       playerController.update(1);
@@ -203,71 +121,36 @@ describe("PlayerController", () => {
   describe("Multiple simultaneous inputs", () => {
     it("should handle multiple physical key presses", () => {
       const moveSpy = vi.spyOn(camera, "moveOnPlanet");
-      const strafeSpy = vi.spyOn(camera, "strafeOnPlanet");
 
-      // Simulate W and A key presses
-      if (keydownHandler) {
-        keydownHandler(new KeyboardEvent("keydown", { key: "w" }));
-        keydownHandler(new KeyboardEvent("keydown", { key: "a" }));
-      } else {
-        throw new Error("Keydown handler not found");
-      }
+      // Simulate forward move and left rotation
+      playerController.triggerMovement("forward", true);
+      playerController.triggerMovement("left", true);
 
       // Update with a delta time of 1 second
       playerController.update(1);
 
       // Check that both functions were called
       expect(moveSpy).toHaveBeenCalled();
-      expect(strafeSpy).toHaveBeenCalled();
 
       // Check correct values: positive for forward, negative for left
       expect(moveSpy.mock.calls[0][0]).toBeGreaterThan(0);
-      expect(strafeSpy.mock.calls[0][0]).toBeLessThan(0);
     });
 
     it("should handle multiple virtual key presses", () => {
       const moveSpy = vi.spyOn(camera, "moveOnPlanet");
-      const strafeSpy = vi.spyOn(camera, "strafeOnPlanet");
 
       // Trigger virtual W and A key presses
-      playerController.triggerKeyDown("w");
-      playerController.triggerKeyDown("a");
+      playerController.triggerMovement("forward", true);
+      playerController.triggerMovement("left", true);
 
       // Update with a delta time of 1 second
       playerController.update(1);
 
       // Check that both functions were called
       expect(moveSpy).toHaveBeenCalled();
-      expect(strafeSpy).toHaveBeenCalled();
 
       // Check correct values: positive for forward, negative for left
       expect(moveSpy.mock.calls[0][0]).toBeGreaterThan(0);
-      expect(strafeSpy.mock.calls[0][0]).toBeLessThan(0);
-    });
-
-    it("should handle mix of physical and virtual inputs", () => {
-      const moveSpy = vi.spyOn(camera, "moveOnPlanet");
-      const strafeSpy = vi.spyOn(camera, "strafeOnPlanet");
-
-      // Simulate physical W key press and virtual A key press
-      if (keydownHandler) {
-        keydownHandler(new KeyboardEvent("keydown", { key: "w" }));
-      } else {
-        throw new Error("Keydown handler not found");
-      }
-
-      playerController.triggerKeyDown("a");
-
-      // Update with a delta time of 1 second
-      playerController.update(1);
-
-      // Check that both functions were called
-      expect(moveSpy).toHaveBeenCalled();
-      expect(strafeSpy).toHaveBeenCalled();
-
-      // Check correct values
-      expect(moveSpy.mock.calls[0][0]).toBeGreaterThan(0);
-      expect(strafeSpy.mock.calls[0][0]).toBeLessThan(0);
     });
   });
 
@@ -295,7 +178,7 @@ describe("PlayerController", () => {
         });
 
       // Try to move forward (movement will be prevented by collision)
-      playerController.triggerKeyDown("w");
+      playerController.triggerMovement("forward", true);
 
       // Store the original position before update
       const originalPosition = playerController.getPosition().clone();
@@ -321,7 +204,7 @@ describe("PlayerController", () => {
       const moveSpy = vi.spyOn(camera, "moveOnPlanet");
 
       // Try to move forward
-      playerController.triggerKeyDown("w");
+      playerController.triggerMovement("forward", true);
       playerController.update(1);
 
       // Verify that movement function was called
