@@ -245,3 +245,107 @@ describe("PlayerController", () => {
     });
   });
 });
+
+describe("PlayerController - Key Controls", () => {
+  let playerController: PlayerController;
+  let camera: Camera;
+  let keyDownHandler: Function;
+  let keyUpHandler: Function;
+
+  beforeEach(() => {
+    // Reset mocks before creating new instances
+    vi.clearAllMocks();
+
+    camera = new Camera();
+    playerController = new PlayerController(camera);
+
+    // Get the most recent handlers from the mock calls
+    const mockCalls = mockAddEventListener.mock.calls;
+    keyDownHandler = mockCalls[mockCalls.length - 2][1]; // Second to last call (keydown)
+    keyUpHandler = mockCalls[mockCalls.length - 1][1]; // Last call (keyup)
+  });
+
+  afterEach(() => {
+    playerController.dispose();
+    vi.clearAllMocks();
+  });
+
+  it("should handle arrow key down events", () => {
+    // Arrow Up
+    keyDownHandler({ key: "ArrowUp" });
+    expect(playerController["movement"].forward).toBe(true);
+    expect(playerController["movement"].backward).toBe(false);
+
+    // Arrow Down
+    keyDownHandler({ key: "ArrowDown" });
+    expect(playerController["movement"].backward).toBe(true);
+    expect(playerController["movement"].forward).toBe(true);
+
+    // Arrow Left
+    keyDownHandler({ key: "ArrowLeft" });
+    expect(playerController["movement"].left).toBe(true);
+    expect(playerController["movement"].right).toBe(false);
+
+    // Arrow Right
+    keyDownHandler({ key: "ArrowRight" });
+    expect(playerController["movement"].right).toBe(true);
+    expect(playerController["movement"].left).toBe(true);
+  });
+
+  it("should handle arrow key up events", () => {
+    // First press keys
+    keyDownHandler({ key: "ArrowUp" });
+    keyDownHandler({ key: "ArrowLeft" });
+
+    // Then release them
+    keyUpHandler({ key: "ArrowUp" });
+    expect(playerController["movement"].forward).toBe(false);
+
+    keyUpHandler({ key: "ArrowLeft" });
+    expect(playerController["movement"].left).toBe(false);
+  });
+
+  it("should ignore non-arrow keys", () => {
+    keyDownHandler({ key: "a" });
+    expect(playerController["movement"].forward).toBe(false);
+    expect(playerController["movement"].backward).toBe(false);
+    expect(playerController["movement"].left).toBe(false);
+    expect(playerController["movement"].right).toBe(false);
+  });
+
+  it("should properly clean up event listeners on dispose", () => {
+    playerController.dispose();
+    expect(mockRemoveEventListener).toHaveBeenCalledWith(
+      "keydown",
+      expect.any(Function)
+    );
+    expect(mockRemoveEventListener).toHaveBeenCalledWith(
+      "keyup",
+      expect.any(Function)
+    );
+  });
+
+  it("should update movement state through update method", () => {
+    const deltaTime = 1 / 60; // Simulate 60 FPS
+    const moveSpy = vi.spyOn(camera, "moveOnPlanet");
+
+    // Press forward key
+    keyDownHandler({ key: "ArrowUp" });
+    playerController.update(deltaTime);
+
+    // Verify that camera.moveOnPlanet was called with positive movement
+    expect(moveSpy).toHaveBeenCalledWith(expect.any(Number));
+    expect(moveSpy).toHaveBeenLastCalledWith(
+      playerController["movementSpeed"] * deltaTime
+    );
+
+    // Press backward key
+    keyDownHandler({ key: "ArrowDown" });
+    playerController.update(deltaTime);
+
+    // Verify that camera.moveOnPlanet was called with negative movement
+    expect(moveSpy).toHaveBeenLastCalledWith(
+      -playerController["movementSpeed"] * deltaTime
+    );
+  });
+});

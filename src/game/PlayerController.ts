@@ -68,6 +68,45 @@ export class PlayerController {
       plus: false,
       minus: false,
     };
+
+    // Initialize key handlers
+    this.handleKeyDown = (event: KeyboardEvent): void => {
+      switch (event.key) {
+        case "ArrowUp":
+          this.movement.forward = true;
+          break;
+        case "ArrowDown":
+          this.movement.backward = true;
+          break;
+        case "ArrowLeft":
+          this.movement.left = true;
+          break;
+        case "ArrowRight":
+          this.movement.right = true;
+          break;
+      }
+    };
+
+    this.handleKeyUp = (event: KeyboardEvent): void => {
+      switch (event.key) {
+        case "ArrowUp":
+          this.movement.forward = false;
+          break;
+        case "ArrowDown":
+          this.movement.backward = false;
+          break;
+        case "ArrowLeft":
+          this.movement.left = false;
+          break;
+        case "ArrowRight":
+          this.movement.right = false;
+          break;
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("keyup", this.handleKeyUp);
   }
 
   public setNpcManager(npcManager: NpcManager): void {
