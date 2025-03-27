@@ -140,6 +140,8 @@ const Game: React.FC = () => {
     // Initial camera position
     setCameraPosition(camera.getPerspectivePosition());
 
+    scene.addCameraLight(camera.getPerspectiveCamera());
+
     scene.setup();
 
     // Animation loop
@@ -173,6 +175,9 @@ const Game: React.FC = () => {
         }));
         setNpcState(updatedNpcsData);
       }
+
+      // Update camera light position
+      scene.updateCameraLight(camera.getPerspectiveCamera());
 
       animationId = requestAnimationFrame(animate);
       scene.render(camera.getPerspectiveCamera());

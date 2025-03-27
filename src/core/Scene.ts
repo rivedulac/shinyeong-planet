@@ -33,6 +33,8 @@ export class Scene {
     [name: string]: { stars: THREE.Points; lines?: THREE.LineSegments };
   } = {};
 
+  private cameraLight: THREE.SpotLight | null = null;
+
   constructor(
     documentDI?: HTMLDivElement,
     renderer?: THREE.WebGLRenderer,
@@ -171,11 +173,17 @@ export class Scene {
       planetMaterial = new THREE.MeshStandardMaterial({
         color: color,
         side: THREE.FrontSide,
+        metalness: 0.0,
+        roughness: 0.5,
+        emissive: new THREE.Color(0x111111), // Slight self-illumination
       });
     } else if (texture) {
       planetMaterial = new THREE.MeshStandardMaterial({
         map: texture,
         side: THREE.FrontSide,
+        metalness: 0.0,
+        roughness: 0.5,
+        emissive: new THREE.Color(0x111111), // Slight self-illumination
       });
     } else {
       throw new Error("No planet material provided");
@@ -396,12 +404,35 @@ export class Scene {
   }
 
   public addLights() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Very bright ambient light to ensure base visibility
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0); // Increased to maximum
     this.scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 10, 7.5);
-    this.scene.add(directionalLight);
+    // Brighter hemisphere light
+    const hemisphereLight = new THREE.HemisphereLight(
+      0xffffff, // Sky color
+      0xffffff, // Ground color - changed to white for maximum brightness
+      1.0 // Maximum intensity
+    );
+    hemisphereLight.position.set(0, 50, 0);
+    this.scene.add(hemisphereLight);
+
+    // Multiple directional lights for better coverage
+    const directions = [
+      { pos: [5, 10, 7.5], intensity: 1.0 },
+      { pos: [-5, 10, -7.5], intensity: 1.0 },
+      { pos: [0, -10, 0], intensity: 0.5 },
+    ];
+
+    directions.forEach(({ pos, intensity }) => {
+      const directionalLight = new THREE.DirectionalLight(0xffffff, intensity);
+      directionalLight.position.set(pos[0], pos[1], pos[2]);
+      this.scene.add(directionalLight);
+    });
+
+    // Enable shadow mapping in the renderer
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   }
 
   public createStarfield(): THREE.Points {
@@ -497,11 +528,87 @@ export class Scene {
     this.constellations["BigDipper"] = bigDipper;
   }
 
+  /**
+   * Add a spotlight that follows the camera perspective
+   * @param camera The camera to follow
+   */
+  public addCameraLight(camera: THREE.Camera) {
+    if (this.cameraLight) {
+      this.scene.remove(this.cameraLight);
+    }
+
+    // Create multiple lights for better coverage
+    this.cameraLight = new THREE.SpotLight(0xffffff, 1.0); // Maximum intensity
+    this.cameraLight.angle = Math.PI / 2.5; // Even wider angle
+    this.cameraLight.penumbra = 0.5; // Increased soft edges
+    this.cameraLight.decay = 0.5; // Reduced decay significantly
+    this.cameraLight.distance = 200; // Increased range further
+
+    // Disable shadows for spotlight to improve performance and prevent dark areas
+    this.cameraLight.castShadow = false;
+
+    // Add a point light at camera position for omnidirectional lighting
+    const pointLight = new THREE.PointLight(0xffffff, 1.0, 50);
+    this.cameraLight.add(pointLight); // Attach to spotlight
+
+    this.updateCameraLight(camera);
+    this.scene.add(this.cameraLight);
+  }
+
+  /**
+   * Update the camera light position to follow the camera
+   * @param camera The camera to follow
+   */
+  public updateCameraLight(camera: THREE.Camera) {
+    if (!this.cameraLight || !camera) return;
+
+    try {
+      const perspCamera = camera as THREE.PerspectiveCamera;
+
+      // Create camera direction vector
+      const cameraDirection = new THREE.Vector3(0, 0, -1);
+      if (perspCamera.quaternion) {
+        cameraDirection.applyQuaternion(perspCamera.quaternion);
+      }
+
+      // Position light closer to camera
+      const offset = new THREE.Vector3(0, 2, 0); // Changed to be right above camera
+      if (perspCamera.quaternion) {
+        offset.applyQuaternion(perspCamera.quaternion);
+      }
+
+      if (perspCamera.position) {
+        this.cameraLight.position.copy(perspCamera.position).add(offset);
+
+        // Point the light further ahead
+        const targetPos = new THREE.Vector3();
+        targetPos
+          .copy(perspCamera.position)
+          .add(cameraDirection.multiplyScalar(20));
+
+        if (this.cameraLight.target) {
+          this.cameraLight.target.position.copy(targetPos);
+
+          if (!this.scene.children.includes(this.cameraLight.target)) {
+            this.scene.add(this.cameraLight.target);
+          }
+        }
+      }
+    } catch (error) {
+      console.warn("Error updating camera light:", error);
+    }
+  }
+
   public destroy() {
     if (this.container && this.renderer.domElement) {
       this.container.removeChild(this.renderer.domElement);
     }
     this.scene.clear();
+    if (this.cameraLight) {
+      this.scene.remove(this.cameraLight);
+      this.scene.remove(this.cameraLight.target);
+      this.cameraLight = null;
+    }
   }
 
   public getScene() {

@@ -32,6 +32,10 @@ vi.mock("three", async () => {
       setSize: vi.fn(),
       render: vi.fn(),
       domElement: document.createElement("canvas"),
+      shadowMap: {
+        enabled: false,
+        type: null,
+      },
     })),
 
     // @ts-ignore: actual.Texture type error
@@ -83,6 +87,10 @@ describe("Scene", () => {
     setSize: ReturnType<typeof vi.fn>;
     render: ReturnType<typeof vi.fn>;
     domElement: HTMLCanvasElement;
+    shadowMap: {
+      enabled: boolean;
+      type: THREE.TextureDataType | null;
+    };
   };
 
   beforeEach(() => {
@@ -97,6 +105,10 @@ describe("Scene", () => {
       setSize: vi.fn(),
       render: vi.fn(),
       domElement: document.createElement("canvas"),
+      shadowMap: {
+        enabled: false,
+        type: null,
+      },
     };
 
     // Add the renderer's domElement to the container immediately
@@ -220,7 +232,7 @@ describe("Scene", () => {
   it("should add lights", () => {
     const addSpy = vi.spyOn(scene.getScene(), "add");
     scene.addLights();
-    expect(addSpy).toHaveBeenCalledTimes(2);
+    expect(addSpy).toHaveBeenCalledTimes(5);
   });
 
   it("should call renderer.setSize when setSize is called", () => {

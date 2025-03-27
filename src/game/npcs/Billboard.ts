@@ -19,6 +19,8 @@ export const createBillboardMesh = (title: string): THREE.Group => {
   const boardMaterial = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     roughness: 0.5,
+    metalness: 0.0,
+    emissive: new THREE.Color(0x111111), // Slight self-illumination
   });
   const board = new THREE.Mesh(boardGeometry, boardMaterial);
 
@@ -34,6 +36,8 @@ export const createBillboardMesh = (title: string): THREE.Group => {
   const frameMaterial = new THREE.MeshStandardMaterial({
     color: 0x8b4513, // Brown wood-like color
     roughness: 0.8,
+    metalness: 0.0,
+    emissive: new THREE.Color(0x111111), // Slight self-illumination
   });
   const frame = new THREE.Mesh(frameGeometry, frameMaterial);
   frame.position.z = -frameDepth / 2;
@@ -43,6 +47,8 @@ export const createBillboardMesh = (title: string): THREE.Group => {
   const postMaterial = new THREE.MeshStandardMaterial({
     color: 0x8b4513, // Brown wood-like color
     roughness: 0.9,
+    metalness: 0.0,
+    emissive: new THREE.Color(0x111111), // Slight self-illumination
   });
 
   const leftPost = new THREE.Mesh(postGeometry, postMaterial);

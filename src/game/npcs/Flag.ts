@@ -21,6 +21,8 @@ export const createFlagMesh = (
   const poleMaterial = new THREE.MeshStandardMaterial({
     color: 0x8b4513, // Brown wood-like color
     roughness: 0.9,
+    metalness: 0.0,
+    emissive: new THREE.Color(0x111111), // Slight self-illumination
   });
   const pole = new THREE.Mesh(poleGeometry, poleMaterial);
 
@@ -35,6 +37,8 @@ export const createFlagMesh = (
     map: createFlagTexture(country, description),
     side: THREE.DoubleSide,
     transparent: true,
+    metalness: 0.0,
+    emissive: new THREE.Color(0x111111), // Slight self-illumination
   });
   const flag = new THREE.Mesh(flagGeometry, flagMaterial);
 
