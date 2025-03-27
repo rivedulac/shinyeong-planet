@@ -11,12 +11,13 @@ import InfoDropdown from "./InfoDropdown";
 
 interface MenuBarProps {
   playerName: string;
-  onEditName?: () => void;
-  onToggleControls?: () => void;
-  onToggleCamera?: () => void;
-  onChangeLanguage?: (lang: string) => void;
-  onToggleMinimap?: () => void;
-  currentLanguage?: string;
+  onEditName: () => void;
+  onToggleControls: () => void;
+  onToggleCamera: () => void;
+  onChangeLanguage: (lang: string) => void;
+  onToggleMinimap: () => void;
+  onResetPosition: () => void;
+  currentLanguage: string;
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({
@@ -26,9 +27,10 @@ const MenuBar: React.FC<MenuBarProps> = ({
   onToggleCamera,
   onChangeLanguage,
   onToggleMinimap,
+  onResetPosition,
   currentLanguage,
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   useResponsiveControls(); // Apply responsive scaling
 
   // Track hover state for icons
@@ -105,7 +107,8 @@ const MenuBar: React.FC<MenuBarProps> = ({
             onEditName={onEditName}
             onToggleMinimap={onToggleMinimap}
             onChangeLanguage={onChangeLanguage}
-            currentLanguage={currentLanguage || i18n.language}
+            onResetPosition={onResetPosition}
+            currentLanguage={currentLanguage}
           />
         </div>
 
@@ -151,11 +154,10 @@ const MenuBar: React.FC<MenuBarProps> = ({
           alignItems: "center",
           padding: "6px 12px",
           borderRadius: "4px",
-          cursor: onEditName ? "pointer" : "default",
           fontSize: SMALL_FONT_SIZE,
         }}
         onClick={onEditName}
-        title={onEditName ? t("playerName.edit", "Edit Name") : ""}
+        title={t("playerName.edit", "Edit Name")}
       >
         {playerName ? (
           <div>{t("playerName.display", { name: playerName })}</div>

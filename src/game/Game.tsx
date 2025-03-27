@@ -92,6 +92,14 @@ const Game: React.FC = () => {
     setEditingName(false);
   };
 
+  const handleResetPosition = () => {
+    if (playerController) {
+      // Reset camera to initial position
+      const camera = playerController["camera"]; // Access the camera instance
+      camera.resetToInitialPosition();
+    }
+  };
+
   useEffect(() => {
     // Only initialize the game after player has entered their name
     if (!gameStarted) return;
@@ -225,6 +233,7 @@ const Game: React.FC = () => {
         onToggleCamera={toggleCameraInfo}
         onChangeLanguage={i18n.changeLanguage}
         onToggleMinimap={toggleMinimap}
+        onResetPosition={handleResetPosition}
         currentLanguage={i18n.language}
       />
       <div id="game-container" style={{ width: "100%", height: "100vh" }} />

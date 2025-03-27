@@ -12,6 +12,7 @@ interface SettingsDropdownProps {
   onEditName?: () => void;
   onToggleMinimap?: () => void;
   onChangeLanguage?: (lang: string) => void;
+  onResetPosition?: () => void;
   currentLanguage?: string;
 }
 
@@ -21,6 +22,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   onEditName,
   onToggleMinimap,
   onChangeLanguage,
+  onResetPosition,
   currentLanguage = "en",
 }) => {
   const { t } = useTranslation();
@@ -70,6 +72,11 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
 
   const toggleLanguageMenu = () => {
     dispatch({ type: "TOGGLE_LANGUAGE_MENU" });
+  };
+
+  const handleResetPosition = () => {
+    if (onResetPosition) onResetPosition();
+    onClose();
   };
 
   // Don't render when the dropdown is closed
@@ -184,6 +191,31 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Add Reset Position button before the last item */}
+      {onResetPosition && (
+        <div
+          style={{
+            padding: "10px 15px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+            transition: "background-color 0.2s ease",
+          }}
+          onClick={handleResetPosition}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "transparent")
+          }
+        >
+          <span style={{ fontSize: "14px" }}>🔄</span>
+          <span>{t("position.reset", "Reset Position")}</span>
         </div>
       )}
 

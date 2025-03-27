@@ -34,6 +34,9 @@ export class Camera {
   private minFOV: number = 45;
   private maxFOV: number = 120;
 
+  private initialPosition: THREE.Vector3;
+  private initialRotation: THREE.Euler;
+
   constructor() {
     this.camera = new THREE.PerspectiveCamera(
       this.defaultFOV, // More realistic vertical FOV
@@ -74,6 +77,10 @@ export class Camera {
     // Apply a slight downward tilt for better visual orientation
     this.currentPitch = -DEFAULT_CAMERA_PITCH;
     this.applyStoredPitch();
+
+    // Store initial position and rotation
+    this.initialPosition = this.camera.position.clone();
+    this.initialRotation = this.camera.rotation.clone();
   }
 
   getPerspectiveCamera() {
@@ -446,5 +453,11 @@ export class Camera {
     const newPosition = new THREE.Vector3();
     newPosition.addVectors(PLANET_CENTER, radialVector);
     this.camera.position.copy(newPosition);
+  }
+
+  public resetToInitialPosition(): void {
+    // Reset position
+    this.camera.position.copy(this.initialPosition);
+    this.camera.rotation.copy(this.initialRotation);
   }
 }

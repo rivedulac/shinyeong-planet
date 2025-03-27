@@ -19,6 +19,7 @@ vi.mock("react-i18next", () => ({
           "language.de": "Deutsch",
           "language.ja": "日本語",
           "toggle.minimap": "Toggle Minimap",
+          "position.reset": "Reset Position",
         };
         return translations[str] || str;
       },
@@ -204,6 +205,46 @@ describe("SettingsDropdown", () => {
 
     // Verify callbacks were called
     expect(mockToggleMinimap).toHaveBeenCalledTimes(1);
+    expect(mockClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render reset position option when onResetPosition is provided", () => {
+    render(
+      <SettingsDropdown
+        isOpen={true}
+        onClose={() => {}}
+        onResetPosition={() => {}}
+      />
+    );
+
+    // Check for Reset Position option
+    expect(screen.getByText("Reset Position")).toBeInTheDocument();
+  });
+
+  it("should not render reset position option when onResetPosition is not provided", () => {
+    render(<SettingsDropdown isOpen={true} onClose={() => {}} />);
+
+    // Check that Reset Position option is not rendered
+    expect(screen.queryByText("Reset Position")).not.toBeInTheDocument();
+  });
+
+  it("should call onResetPosition when reset position option is clicked", () => {
+    const mockResetPosition = vi.fn();
+    const mockClose = vi.fn();
+
+    render(
+      <SettingsDropdown
+        isOpen={true}
+        onClose={mockClose}
+        onResetPosition={mockResetPosition}
+      />
+    );
+
+    // Click on reset position option
+    fireEvent.click(screen.getByText("Reset Position"));
+
+    // Verify callbacks were called
+    expect(mockResetPosition).toHaveBeenCalledTimes(1);
     expect(mockClose).toHaveBeenCalledTimes(1);
   });
 });

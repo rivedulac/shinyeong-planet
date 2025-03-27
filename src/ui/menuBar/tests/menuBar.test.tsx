@@ -101,14 +101,36 @@ vi.mock("@/hooks/useResponsiveControls", () => ({
 
 describe("MenuBar", () => {
   it("should render with correct player name", () => {
-    render(<MenuBar playerName="TestPlayer" />);
+    render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Check that player name is displayed correctly
     expect(screen.getByText("Explorer: TestPlayer")).toBeInTheDocument();
   });
 
   it("should render settings and information icons", () => {
-    render(<MenuBar playerName="TestPlayer" />);
+    render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Check for settings icon
     const settingsIcon = screen.getByText("⚙️");
@@ -120,7 +142,18 @@ describe("MenuBar", () => {
   });
 
   it("should handle empty player name", () => {
-    render(<MenuBar playerName="" />);
+    render(
+      <MenuBar
+        playerName=""
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Should still render the menu bar without player name
     const settingsIcon = screen.getByText("⚙️");
@@ -131,7 +164,18 @@ describe("MenuBar", () => {
     expect(playerNameElement).not.toBeInTheDocument();
 
     // Right section should still exist but be empty
-    const { container } = render(<MenuBar playerName="" />);
+    const { container } = render(
+      <MenuBar
+        playerName=""
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
     const topDiv = container.firstChild as HTMLElement;
     const rightSection = topDiv.lastChild as HTMLElement;
     expect(rightSection.children.length).toBe(0);
@@ -143,7 +187,12 @@ describe("MenuBar", () => {
       <MenuBar
         playerName="TestPlayer"
         onEditName={mockEditName}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
         onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
       />
     );
 
@@ -162,7 +211,16 @@ describe("MenuBar", () => {
   it("should toggle info dropdown when info icon is clicked", () => {
     const mockToggleControls = vi.fn();
     render(
-      <MenuBar playerName="TestPlayer" onToggleControls={mockToggleControls} />
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={mockToggleControls}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
     );
 
     // Info dropdown should be hidden initially
@@ -183,6 +241,11 @@ describe("MenuBar", () => {
         playerName="TestPlayer"
         onEditName={vi.fn()}
         onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
       />
     );
 
@@ -203,7 +266,18 @@ describe("MenuBar", () => {
   });
 
   it("should apply responsive scaling", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
+    const { container } = render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Check that the top level div has the transform style
     const topDiv = container.firstChild as HTMLElement;
@@ -211,7 +285,18 @@ describe("MenuBar", () => {
   });
 
   it("should have fixed position at top of screen", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
+    const { container } = render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Check position styling
     const topDiv = container.firstChild as HTMLElement;
@@ -222,7 +307,18 @@ describe("MenuBar", () => {
   });
 
   it("should have proper layout with flex display", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
+    const { container } = render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Check display styling
     const topDiv = container.firstChild as HTMLElement;
@@ -231,7 +327,18 @@ describe("MenuBar", () => {
   });
 
   it("should have proper z-index to appear above other elements", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
+    const { container } = render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Check z-index
     const topDiv = container.firstChild as HTMLElement;
@@ -239,7 +346,18 @@ describe("MenuBar", () => {
   });
 
   it("should display icons on the left and player name on the right", () => {
-    const { container } = render(<MenuBar playerName="TestPlayer" />);
+    const { container } = render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={vi.fn()}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Get the main div's children
     const topDiv = container.firstChild as HTMLElement;
@@ -256,7 +374,18 @@ describe("MenuBar", () => {
 
   it("should call onEditName when player name is clicked", () => {
     const mockEditName = vi.fn();
-    render(<MenuBar playerName="TestPlayer" onEditName={mockEditName} />);
+    render(
+      <MenuBar
+        playerName="TestPlayer"
+        onEditName={mockEditName}
+        onToggleControls={vi.fn()}
+        onToggleCamera={vi.fn()}
+        onChangeLanguage={vi.fn()}
+        onToggleMinimap={vi.fn()}
+        onResetPosition={vi.fn()}
+        currentLanguage="en"
+      />
+    );
 
     // Find and click the player name
     const playerName = screen.getByText("Explorer: TestPlayer");
